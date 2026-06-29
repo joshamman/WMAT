@@ -24,6 +24,15 @@ const ogImage = new URL('/assets/images/wmat-theme-preview.jpg', Astro.site).hre
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0JV4T0QSJ" is:inline></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-R0JV4T0QSJ');
+    </script>
   </head>
   <body>
     <!-- Watercolor turbulence filters (referenced by .wash / .wmat-wash) -->
