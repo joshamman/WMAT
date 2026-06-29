@@ -1,0 +1,18 @@
+# Brand source files — large Illustrator originals & raw concept exports.
+# Kept locally only; export web-ready assets into assets/ instead.
+/brand-source/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Node (if we add a build step later)
+node_modules/
+npm-debug.log*
+
+# Local WP / env overrides
+.env
+*.local
