@@ -19,3 +19,6 @@ npm-debug.log*
 # Local WP / env overrides
 .env
 *.local
+
+# Local static preview (regenerated, not shipped)
+home-preview.html

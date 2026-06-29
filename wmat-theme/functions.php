@@ -55,6 +55,24 @@ if ( ! function_exists( 'wmat_enqueue_assets' ) ) {
 			$version,
 			true
 		);
+
+		// Immersive "Visual Journey" homepage: parallax, reveals, watercolor
+		// paint canvas. Loaded only on the front page.
+		if ( is_front_page() ) {
+			wp_enqueue_style(
+				'wmat-journey',
+				get_template_directory_uri() . '/assets/css/journey.css',
+				array( 'wmat-style' ),
+				$version
+			);
+			wp_enqueue_script(
+				'wmat-journey',
+				get_template_directory_uri() . '/assets/js/journey.js',
+				array(),
+				$version,
+				true
+			);
+		}
 	}
 }
 add_action( 'wp_enqueue_scripts', 'wmat_enqueue_assets' );

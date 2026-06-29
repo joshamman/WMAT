@@ -182,6 +182,7 @@ html {
 
 	/* Motion */
 	--ease-out: cubic-bezier(0.22,0.61,0.36,1);
+	--ease-in-out: cubic-bezier(0.45,0.05,0.55,0.95);
 	--ease-gentle: cubic-bezier(0.34,0.8,0.4,1);
 	--dur-fast: 140ms; --dur-base: 240ms;
 }
