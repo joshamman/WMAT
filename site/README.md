@@ -58,10 +58,12 @@ The form on `/contact` POSTs to **`/contact.php`**, which emails
 `amy@westmichiganarttherapy.com` and redirects to `/thanks/`. Settings (recipient,
 From address) are at the top of `public/contact.php`.
 
+- **Recommended: SMTP.** Fill the `$SMTP` block at the top of `contact.php` with the
+  mailbox's host / port / username / password for reliable delivery (PHPMailer is
+  bundled in `public/lib/PHPMailer/`, nothing to install). Leave `host` blank to use
+  PHP `mail()` instead.
 - The `From` address should be on your domain (`no-reply@westmichiganarttherapy.com`)
-  so it isn't rejected.
-- If `mail()` is unreliable on your server, switch to **SMTP** (PHPMailer with your
-  mailbox credentials) — there's a note at the bottom of `contact.php`.
+  so it isn't rejected; the visitor's address goes in `Reply-To`.
 - Local `npm run dev` can't run PHP; test the form on the server, or run the built
   site with `php -S localhost:8000 -t dist`.
 
