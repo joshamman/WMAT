@@ -2,6 +2,9 @@
 # Kept locally only; export web-ready assets into assets/ instead.
 /brand-source/
 
+# Packaged theme zip (build artifact)
+*.zip
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
