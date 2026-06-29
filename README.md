@@ -39,24 +39,29 @@ UI Amy uses.
 
 ### Signature motifs
 - **Watercolor washes** — `.wmat-wash` blobs distorted by SVG turbulence filters
-  (`#wc-edge` / `#wc-soft`, injected via `functions.php`) for a bleeding, painted
-  edge. Used in the hero. CSS lives in `style.css`; respects reduced-motion.
-- **Wave divider** — the `wmat/wave-divider` pattern; layered lakeshore bands.
+  (`#wc-edge` / `#wc-soft`, injected via `functions.php`); CSS in `style.css`,
+  respects reduced-motion.
+- **Wave divider** — layered lakeshore bands (in the footer + `wmat/wave-divider`).
+- **Lucide icons** — inline stroke icons via the `wmat_icon()` helper in
+  `functions.php` (no external requests).
 
 ## Theme structure (`wmat-theme/`)
 
 ```
 wmat-theme/
 ├── theme.json          Design tokens + global styles (the system)
-├── style.css           Theme header, brand utilities, watercolor CSS
-├── functions.php       Enqueue, editor styles, pattern category, SVG filters
-├── templates/          front-page, index, page, single, archive, 404, page-no-title
-├── parts/              header, footer
-├── patterns/           hero, services, about-intro, cta-contact, wave-divider
+├── style.css           Theme header, DS tokens, component CSS, watercolor
+├── functions.php       Enqueue, editor styles, pattern categories, SVG filters, wmat_icon()
+├── templates/          front-page, page-about, page-services, page-contact,
+│                       index, page, single, archive, 404, page-no-title
+├── parts/              header (sticky/blur), footer (wave + navy)
+├── patterns/           hero, home-what-is, home-services, home-testimonial,
+│                       page-about, page-services, page-contact, cta-contact, wave-divider
 ├── styles/             alternate style variations (e.g. evening)
 └── assets/
-    ├── fonts/          self-hosted variable woff2
-    └── images/         logo + web-ready imagery
+    ├── fonts/          self-hosted variable woff2 (Newsreader, Hanken Grotesk, Caveat)
+    ├── js/             wmat.js (rotating hero taglines, progressive enhancement)
+    └── images/         logo, lakeshore photo, portrait stand-in
 ```
 
 ## Install
@@ -70,12 +75,22 @@ ln -s "/Volumes/Work Drive/Sites/WestMichiganArtTherapy/wmat-theme" \
 ```
 
 Then **wp-admin → Appearance → Themes** → activate *West Michigan Art Therapy*.
-Set the home page under **Settings → Reading → A static page** so
-`front-page.html` applies, and build a menu under **Appearance → Editor →
-Navigation**.
+
+### Getting the full design live
+1. **Home** — Settings → Reading → *A static page* → choose/create a page for the
+   home (the `front-page.html` template renders the full home design automatically).
+2. **About / Services / Contact** — create Pages with the slugs `about`,
+   `services`, and `contact`. The matching `page-{slug}.html` templates apply the
+   full page designs automatically — no manual layout needed.
+3. **Menu** — Appearance → Editor → Navigation: add Home, About, Services, Contact.
+
+The page designs are also available as insertable patterns (inserter → *Full
+pages*) if you'd rather edit the content per-page in the block editor.
 
 ## Status
 
-Foundation + design-system alignment complete: tokens, fonts, and the watercolor
-hero now match the v1 design-system export. Next: real logo, full page content,
-contact form, and (optionally) the immersive scrollytelling homepage.
+Full v2 design system implemented: lakeshore tokens, Newsreader/Hanken
+Grotesk/Caveat fonts, watercolor + wave motifs, Lucide icons, and all four pages
+(Home, About, Services, Contact) with real copy, pricing, FAQ, testimonial, and a
+styled inquiry form (mailto fallback). Next: real logo + photography of Amy/the
+studio, and wiring the contact form to a proper handler (form plugin).
