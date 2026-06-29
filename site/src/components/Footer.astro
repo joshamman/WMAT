@@ -1,0 +1,59 @@
+---
+import Icon from './Icon.astro';
+---
+<svg class="wmat-wave-divider" viewBox="0 0 1440 90" preserveAspectRatio="none" role="presentation" aria-hidden="true" style="display:block;width:100%;height:clamp(48px,7vw,90px);background:var(--cream-50);margin-bottom:-1px">
+  <path d="M0,30 C240,66 480,6 720,30 C960,54 1200,12 1440,36 L1440,90 L0,90 Z" fill="#8FC6DE" opacity="0.55"/>
+  <path d="M0,48 C260,78 520,22 760,48 C1000,74 1220,34 1440,56 L1440,90 L0,90 Z" fill="#266F70" opacity="0.85"/>
+  <path d="M0,66 C300,90 560,48 820,66 C1080,84 1240,58 1440,72 L1440,90 L0,90 Z" fill="#142F49"/>
+</svg>
+
+<footer class="wmat-footer">
+  <div class="wmat-footer-grid">
+    <div class="wmat-footer-brand">
+      <p class="wmat-foot-label">West Michigan</p>
+      <p class="wmat-foot-name">Art Therapy</p>
+      <p class="wmat-foot-blurb">Person-centered art therapy for all ages, serving the West Michigan coast — Grand Rapids, Holland, West Olive &amp; Grand Haven.</p>
+    </div>
+    <div>
+      <p class="wmat-foot-label">Explore</p>
+      <nav class="wmat-foot-links" aria-label="Footer">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/services">Services</a>
+        <a href="/blog">Blog</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </div>
+    <div>
+      <p class="wmat-foot-label">Reach Amy</p>
+      <p class="wmat-foot-line"><a href="mailto:amy@westmichiganarttherapy.com">amy@westmichiganarttherapy.com</a></p>
+      <p class="wmat-foot-line wmat-foot-muted">West Olive, Michigan</p>
+      <p class="wmat-foot-social">
+        <a href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noopener"><Icon name="facebook" /></a>
+        <a href="https://www.linkedin.com/" aria-label="LinkedIn" target="_blank" rel="noopener"><Icon name="linkedin" /></a>
+      </p>
+    </div>
+  </div>
+  <div class="wmat-footer-bar">
+    <p>© {new Date().getFullYear()} West Michigan Art Therapy · Amy Rostollan-Hamman, ATR-BC</p>
+  </div>
+</footer>
+
+<style>
+  .wmat-footer { background: var(--navy-900); color: var(--cream-50); padding: clamp(36px,6vw,64px) clamp(20px,5vw,56px) 32px; }
+  .wmat-footer-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
+  @media (max-width: 700px) { .wmat-footer-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .wmat-footer a { color: var(--cream-50); text-decoration: none; }
+  .wmat-footer a:hover { color: var(--sky-300); }
+  .wmat-foot-label { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-300); margin: 0 0 12px; }
+  .wmat-footer-brand .wmat-foot-label { margin-bottom: 4px; }
+  .wmat-foot-name { font-family: var(--font-display); font-size: 28px; font-weight: 600; line-height: 1.1; margin: 0; }
+  .wmat-foot-blurb { font-size: 14px; line-height: 1.6; color: color-mix(in srgb, var(--cream-50) 75%, transparent); margin: 12px 0 0; max-width: 320px; }
+  .wmat-foot-links { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+  .wmat-foot-line { font-size: 14px; margin: 0 0 8px; }
+  .wmat-foot-muted { color: color-mix(in srgb, var(--cream-50) 75%, transparent); }
+  .wmat-foot-social { display: flex; gap: 10px; margin-top: 16px; font-size: 18px; }
+  .wmat-foot-social a { display: inline-flex; }
+  .wmat-footer-bar { max-width: 1080px; margin: 28px auto 0; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--cream-50) 18%, transparent); }
+  .wmat-footer-bar p { font-size: 12px; color: color-mix(in srgb, var(--cream-50) 60%, transparent); margin: 0; }
+</style>

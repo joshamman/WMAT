@@ -1,0 +1,61 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Icon from '../components/Icon.astro';
+
+const rows = [
+  { ic: 'mail', l: 'Email', v: 'amy@westmichiganarttherapy.com', href: 'mailto:amy@westmichiganarttherapy.com' },
+  { ic: 'map-pin', l: 'Studio', v: 'West Olive, Michigan' },
+  { ic: 'clock', l: 'Response', v: 'All inquiries answered promptly' },
+];
+---
+<PageLayout title="Contact — West Michigan Art Therapy" description="Reach out to Amy Rostollan-Hamman, ATR-BC, to ask a question or schedule a first art therapy consultation on the West Michigan coast.">
+  <section class="wrap" style="padding-block:clamp(44px,6vw,80px);max-width:1000px">
+    <div class="wmat-split is-top" style="grid-template-columns:0.9fr 1.1fr">
+      <div>
+        <p class="wmat-eyebrow" style="color:var(--teal-600);margin:0 0 10px">Contact</p>
+        <h1>Let's begin a conversation</h1>
+        <p class="wmat-lead" style="margin-top:14px">Ready to start, or just have questions? Send a note and Amy will respond promptly to talk through services, pricing, or logistics.</p>
+        <div class="wmat-contact-rows" style="margin-top:28px">
+          {rows.map((r) => (
+            <div class="wmat-contact-row">
+              <span class="wmat-chip is-sm is-teal"><Icon name={r.ic} /></span>
+              <div>
+                <div class="l">{r.l}</div>
+                <div class="v">{r.href ? <a href={r.href} style="color:inherit;text-decoration:none">{r.v}</a> : r.v}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="wmat-form-card">
+        <form class="wmat-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thanks">
+          <input type="hidden" name="form-name" value="contact" />
+          <p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+          <div class="wmat-form-row">
+            <div class="wmat-field"><label for="name">Your name</label><input id="name" name="name" type="text" placeholder="First and last" required /></div>
+            <div class="wmat-field"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="you@email.com" required /></div>
+          </div>
+          <div class="wmat-field">
+            <label for="interest">I'm interested in…</label>
+            <select id="interest" name="interest">
+              <option value="" selected>Choose a service</option>
+              <option>Individual Sessions</option>
+              <option>Group Sessions</option>
+              <option>Workshops</option>
+              <option>Online Supervision</option>
+              <option>Educational Presentations</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="wmat-field">
+            <label for="message">Your message</label>
+            <textarea id="message" name="message" rows="4" maxlength="180" placeholder="Tell me a little about what you're looking for…"></textarea>
+          </div>
+          <label class="wmat-check"><input type="checkbox" name="sliding-scale" value="yes" /> I'd like to hear about sliding-scale options</label>
+          <button class="wmat-btn is-primary is-lg is-full" type="submit">Send Message <Icon name="send" stroke={2.2} /></button>
+        </form>
+      </div>
+    </div>
+  </section>
+</PageLayout>

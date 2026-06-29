@@ -1,0 +1,28 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Where uploaded images are committed in the repo, and their public URL.
+media_folder: "site/public/assets/uploads"
+public_folder: "/assets/uploads"
+
+site_url: https://westmichiganarttherapy.com
+display_url: https://westmichiganarttherapy.com
+logo_url: /assets/images/mark-dunes.jpg
+
+collections:
+  - name: blog
+    label: Blog posts
+    label_singular: Blog post
+    description: Write and publish posts for the studio blog.
+    folder: "site/src/content/blog"
+    create: true
+    slug: "{{slug}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Publish date, name: date, widget: datetime, date_format: "YYYY-MM-DD", time_format: false, format: "YYYY-MM-DD" }
+      - { label: Short summary, name: excerpt, widget: text, required: false, hint: "One or two sentences shown on the blog list." }
+      - { label: Featured image, name: image, widget: image, required: false }
+      - { label: Save as draft (hide from site), name: draft, widget: boolean, default: false, required: false }
+      - { label: Body, name: body, widget: markdown }

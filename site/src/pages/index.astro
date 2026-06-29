@@ -1,0 +1,219 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/journey.css';
+---
+<BaseLayout title="West Michigan Art Therapy — Heal Through Creativity">
+  <header class="j-header">
+    <a class="j-logo" href="/">
+      <img src="/assets/images/mark-dunes.jpg" alt="West Michigan Art Therapy" />
+      <b>Art Therapy</b>
+    </a>
+    <nav class="j-nav">
+      <a class="hide-sm" href="/about">About</a>
+      <a class="hide-sm" href="/services">Services</a>
+      <a class="hide-sm" href="/blog">Blog</a>
+      <a class="hide-sm" href="/contact">Contact</a>
+      <a class="j-cta" href="/contact">Begin</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <img class="hero-photo" src="/assets/images/lake_michigan_hoffmaster_beach.jpg" alt="Lake Michigan shoreline at West Olive" data-speed="0.12" />
+      <div class="hero-veil"></div>
+      <div class="wash drift" style="width:46vw;height:46vw;left:-10vw;top:8vh;background:radial-gradient(circle at 40% 40%, var(--teal-500), transparent 68%);opacity:.32;z-index:2" data-speed="0.05"></div>
+      <div class="wash drift2" style="width:38vw;height:38vw;right:-8vw;bottom:-6vh;background:radial-gradient(circle at 50% 50%, var(--gold-400), transparent 66%);opacity:.28;z-index:2" data-speed="0.08"></div>
+      <div class="hero-inner">
+        <div class="dateline"><span class="j-loc">&#9678;&nbsp; West Olive &middot; Michigan&rsquo;s Art Coast</span></div>
+        <h1>Heal through<span class="ink">creativity</span></h1>
+        <p class="sub">Person-centered art therapy on the Lake&nbsp;Michigan shore, for every age, and every story.</p>
+      </div>
+      <div class="scrollcue"><span>Scroll</span><span class="line"></span></div>
+    </section>
+
+    <!-- 01 · MAKE A MARK -->
+    <section class="mark" id="mark">
+      <div class="wrap">
+        <div class="chapter-num" data-reveal>Chapter 01 · the first mark</div>
+        <h2 class="display" data-reveal style="font-size:clamp(30px,5vw,64px);margin:10px 0 0">It begins with a single mark.</h2>
+        <p data-reveal style="max-width:52ch;margin:18px auto 0;font-size:clamp(16px,1.6vw,19px);line-height:1.7;color:var(--ink-700)">Art therapy doesn&rsquo;t start with the right words. It starts with color, motion, and permission. Go ahead, drag across the paper. There is no wrong mark.</p>
+      </div>
+      <div class="mark-stage" id="mark-stage" data-reveal>
+        <canvas id="mark-canvas"></canvas>
+        <div class="mark-hint" id="mark-hint">
+          <span class="script">make a mark</span>
+          <small>drag anywhere &middot; watch it bloom</small>
+        </div>
+        <button class="mark-clear" id="mark-clear" type="button">&#8635;&nbsp; Start fresh</button>
+      </div>
+    </section>
+
+    <!-- 02 · WHAT IT IS -->
+    <section class="what" id="what">
+      <div class="wash soft drift" style="width:40vw;height:40vw;left:-12vw;top:6%;background:radial-gradient(circle, var(--sky-300), transparent 70%);opacity:.5" data-speed="0.06"></div>
+      <div class="wrap" style="display:grid;gap:clamp(28px,5vw,72px);align-items:center;grid-template-columns:1.15fr .85fr">
+        <div data-reveal="left">
+          <div class="eyebrow-line chapter-num" style="margin-bottom:20px">Chapter 02 · what art therapy is</div>
+          <p class="what-quote">Have you ever made something with your hands and felt, quietly, <em>better?</em></p>
+        </div>
+        <div data-reveal>
+          <p class="what-body">That feeling is where we begin. Art therapy blends the creative process with the guidance of a <strong>board-certified art therapist</strong>, a way to explore feelings, ease what&rsquo;s heavy, and notice what&rsquo;s growing.</p>
+          <p class="what-body" style="margin-top:18px">It&rsquo;s the <em class="serif-italic">process</em>, never the product. You don&rsquo;t need a single ounce of &ldquo;talent,&rdquo; only a willingness to show up and make a mark.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03-06 · THE JOURNEY -->
+    <section class="journey" id="journey">
+      <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path id="journey-path" d="M 78 2 C 30 14, 18 24, 50 36 S 86 56, 40 64 S 12 80, 60 90 S 64 98, 48 100" fill="none" stroke="var(--teal-500)" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="2 2.4" vector-effect="non-scaling-stroke" opacity="0.5"/>
+      </svg>
+      <div class="wrap">
+        <div style="text-align:center;max-width:36ch;margin:0 auto clamp(20px,4vw,40px)" data-reveal>
+          <div class="chapter-num">the work, unhurried</div>
+          <h2 class="display" style="font-size:clamp(30px,5vw,66px);margin:10px 0 0">A path you set the pace for</h2>
+        </div>
+        <div class="chapter">
+          <div class="c-art" data-reveal>
+            <div class="wash tear drift" style="inset:-6% -4% -6% -4%;background:radial-gradient(circle at 50% 50%, var(--teal-400), transparent 72%);opacity:.55"></div>
+            <div class="frame"><img src="/assets/images/mark-landscape.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
+          </div>
+          <div class="c-txt" data-reveal>
+            <span class="chapter-num">Chapter 03</span>
+            <h3>Arrive</h3>
+            <p>Come as you are, no plan, no pressure. We get comfortable with the space and the materials, and begin gently.</p>
+          </div>
+        </div>
+        <div class="chapter flip">
+          <div class="c-art" data-reveal>
+            <div class="wash tear drift2" style="inset:-6% -4% -6% -4%;background:radial-gradient(circle at 50% 50%, var(--gold-400), transparent 72%);opacity:.5"></div>
+            <div class="frame"><img src="/assets/images/mark-swirl.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
+          </div>
+          <div class="c-txt" data-reveal>
+            <span class="chapter-num">Chapter 04</span>
+            <h3>Explore</h3>
+            <p>Follow the color. We notice what surfaces in the making, curiosity over judgment, every time.</p>
+          </div>
+        </div>
+        <div class="chapter">
+          <div class="c-art" data-reveal>
+            <div class="wash tear drift" style="inset:-6% -4% -6% -4%;background:radial-gradient(circle at 50% 50%, var(--sage-400), transparent 72%);opacity:.55"></div>
+            <div class="frame"><img src="/assets/images/mark-heart.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
+          </div>
+          <div class="c-txt" data-reveal>
+            <span class="chapter-num">Chapter 05</span>
+            <h3>Express</h3>
+            <p>Let it out where words can&rsquo;t reach. The page holds what&rsquo;s hard to say, safely and without hurry.</p>
+          </div>
+        </div>
+        <div class="chapter flip">
+          <div class="c-art" data-reveal>
+            <div class="wash tear drift2" style="inset:-6% -4% -6% -4%;background:radial-gradient(circle at 50% 50%, var(--clay-400), transparent 72%);opacity:.5"></div>
+            <div class="frame"><img src="/assets/images/portrait-placeholder.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
+          </div>
+          <div class="c-txt" data-reveal>
+            <span class="chapter-num">Chapter 06</span>
+            <h3>Grow</h3>
+            <p>Carry it forward. What you discover on the page becomes something you can keep, a little more rooted, a little more whole.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section class="services" id="services">
+      <div class="wash soft drift2" style="width:44vw;height:44vw;right:-14vw;top:10%;background:radial-gradient(circle, var(--sand-300), transparent 70%);opacity:.45" data-speed="0.05"></div>
+      <div class="wrap">
+        <div style="max-width:40ch" data-reveal>
+          <div class="chapter-num">how we can work together</div>
+          <h2 class="display" style="font-size:clamp(32px,5.4vw,72px);margin:10px 0 0">Ways in</h2>
+          <p style="margin-top:16px;font-size:clamp(16px,1.5vw,19px);line-height:1.7;color:var(--ink-700);max-width:46ch">Every session is offered virtually or in person, here on the West Olive coast, and shaped entirely around you.</p>
+        </div>
+        <div class="svc-grid">
+          <div class="svc a" data-reveal>
+            <span class="smear" style="background:radial-gradient(circle, var(--teal-400), transparent 70%)"></span>
+            <h4>Individual Sessions</h4>
+            <p>One-on-one art therapy, 45-60 minutes, designed around your goals.</p>
+            <div class="price">$100<small>/ session</small></div>
+          </div>
+          <div class="svc b" data-reveal>
+            <span class="tag">Most loved</span>
+            <span class="smear" style="background:radial-gradient(circle, var(--gold-400), transparent 70%)"></span>
+            <h4>Group Sessions</h4>
+            <p>Collective creativity and shared healing in a small, supportive circle, themed for stress, grief, or growth. 90 minutes.</p>
+            <div class="price">$150<small>/ session</small></div>
+          </div>
+          <div class="svc c" data-reveal>
+            <span class="smear" style="background:radial-gradient(circle, var(--sage-400), transparent 70%)"></span>
+            <h4>Workshops</h4>
+            <p>Immersive experiences for teams &amp; organizations.</p>
+            <div class="price">$200-350</div>
+          </div>
+          <div class="svc d" data-reveal>
+            <span class="smear" style="background:radial-gradient(circle, var(--sky-400), transparent 70%)"></span>
+            <h4>Online Supervision</h4>
+            <p>Guidance toward ATR credentials, online or near West Olive.</p>
+            <div class="price">$75<small>/ hour</small></div>
+          </div>
+          <div class="svc e" data-reveal>
+            <span class="smear" style="background:radial-gradient(circle, var(--clay-400), transparent 70%)"></span>
+            <h4>Presentations</h4>
+            <p>Talks on art therapy for schools &amp; healthcare groups.</p>
+            <div class="price">$150-200</div>
+          </div>
+        </div>
+        <p data-reveal style="margin-top:22px;font-size:13px;color:var(--ink-500)">Sliding scale available for individual sessions &middot; Cash, check &amp; PayPal welcome &middot; Insurance not currently accepted.</p>
+      </div>
+    </section>
+
+    <!-- AMY -->
+    <section class="amy" id="amy">
+      <div class="wash soft drift" style="width:38vw;height:38vw;left:-12vw;bottom:-8%;background:radial-gradient(circle, var(--teal-400), transparent 70%);opacity:.4" data-speed="0.05"></div>
+      <div class="wrap amy-grid">
+        <div class="amy-portrait" data-reveal="left">
+          <div class="wash tear drift2" style="inset:-7%;background:radial-gradient(circle at 50% 50%, var(--gold-300), transparent 72%);opacity:.55;z-index:0"></div>
+          <img src="/assets/images/mark-landscape-wide.jpg" alt="Amy Rostollan-Hamman" style="position:relative;z-index:2;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:20px;display:block" />
+          <div class="badge"><b>15+</b><span>years of practice</span></div>
+        </div>
+        <div data-reveal>
+          <div class="chapter-num">the person across the table</div>
+          <h2>Meet Amy<br/>Rostollan-Hamman, <span class="serif-italic" style="color:var(--teal-600)">ATR-BC</span></h2>
+          <p>Amy is a Board-Certified Art Therapist with more than fifteen years of experience helping people of all ages find healing through creative expression. Her approach is warm and deeply person-centered, she meets you where you are and follows your lead.</p>
+          <p style="margin-top:16px">She practices along Michigan&rsquo;s &ldquo;art coast&rdquo; in <strong>West Olive</strong>, where she believes healing and artistic expression belong, always, side by side.</p>
+          <a class="btn-paint gold" href="/contact" style="margin-top:26px">Work with Amy &rarr;</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSING (dusk) -->
+    <section class="closing" id="begin">
+      <img class="hero-photo" src="/assets/images/lake_michigan_hoffmaster_beach.jpg" alt="" data-speed="0.1" style="height:130%;top:-15%;opacity:.34;filter:saturate(.7) brightness(.7)" />
+      <div class="wash drift" style="width:52vw;height:52vw;left:50%;top:0;transform:translateX(-50%);background:radial-gradient(circle, var(--gold-400), transparent 64%);opacity:.4;z-index:1" data-speed="0.06"></div>
+      <div class="wrap" style="position:relative;z-index:3">
+        <div class="dateline" style="color:var(--gold-300);margin-bottom:20px" data-reveal>&#9678;&nbsp; West Olive, Michigan</div>
+        <h2 data-reveal>Begin where<span class="ink">you are.</span></h2>
+        <p class="sub" data-reveal>Whether you&rsquo;re ready to start or just have questions, send a note, Amy answers every one, warmly and promptly.</p>
+        <div class="btn-row" data-reveal>
+          <a class="btn-paint gold" href="mailto:amy@westmichiganarttherapy.com">&#9993;&nbsp; Email Amy</a>
+          <a class="btn-paint ghost" href="/services">See the services</a>
+        </div>
+      </div>
+      <div class="footer">
+        <div class="footer-in">
+          <a class="j-logo" href="/" style="gap:11px">
+            <img src="/assets/images/mark-dunes.jpg" alt="" style="width:38px;height:38px;border-radius:11px;object-fit:cover" />
+            <span style="display:flex;flex-direction:column;line-height:1.1">
+              <b style="font-family:var(--font-display);font-size:18px;color:var(--cream-50)">West Michigan Art Therapy</b>
+              <span class="muted">Amy Rostollan-Hamman, ATR-BC</span>
+            </span>
+          </a>
+          <span class="loc">&#9678;&nbsp; West Olive, Michigan</span>
+          <a href="mailto:amy@westmichiganarttherapy.com" class="muted">amy@westmichiganarttherapy.com</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/assets/js/journey.js" is:inline></script>
+</BaseLayout>

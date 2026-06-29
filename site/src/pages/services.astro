@@ -1,0 +1,87 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import Icon from '../components/Icon.astro';
+
+const services = [
+  { icon: 'user', tone: 'teal', title: 'Individual Sessions', blurb: 'Transform your journey through one-on-one art therapy, available virtually and in-person. A safe space for exploration and growth.', features: ['45–60 minute sessions', 'Personalized approach & materials', 'Flexible scheduling options'], price: '$100', note: 'per session' },
+  { icon: 'users', tone: 'gold', title: 'Group Sessions', blurb: 'Experience the power of collective creativity and shared healing — themed for stress, grief support, or personal growth.', features: ['90-minute sessions', 'Small group settings', 'Structured creative activities'], price: '$150', note: 'per session', featured: true },
+  { icon: 'presentation', tone: 'sage', title: 'Workshops', blurb: 'Immersive experiences for organizations, teams, or special interest groups exploring art therapy techniques in depth.', features: ['Team-building opportunities', 'Comprehensive programming', 'Customized to group needs'], price: '$200–350', note: 'varies' },
+  { icon: 'graduation-cap', tone: 'sky', title: 'Online Supervision', blurb: 'Supporting the next generation of art therapists with professional supervision toward ATR credentials.', features: ['Online or within 15 mi of West Olive', 'Professional development', 'Clinical case consultation'], price: '$75', note: 'per hour' },
+  { icon: 'mic', tone: 'clay', title: 'Educational Presentations', blurb: 'Informative sessions helping organizations understand the benefits and applications of art therapy.', features: ['Customized content', 'Evidence-based information', 'Interactive components'], price: '$150–200', note: '' },
+];
+const faqs = [
+  { q: 'Do I need to be "good at art"?', a: 'Not at all. Art therapy is about the process of making, not the finished piece. No experience is needed — only a willingness to show up.', open: true },
+  { q: 'Are sessions virtual or in person?', a: "Both are available. We'll choose whatever feels most comfortable and effective for you, and can switch as needed." },
+  { q: 'What happens in a first session?', a: "We talk about what brought you in, get comfortable with the materials, and begin gently. There's no pressure to create anything in particular." },
+  { q: 'Who do you work with?', a: 'Individuals of all ages — children, teens, and adults — as well as groups and organizations across the greater Grand Rapids, Holland, and Grand Haven areas.' },
+];
+---
+<PageLayout title="Services — West Michigan Art Therapy" description="Art therapy on the West Michigan coast: individual & group sessions, workshops, supervision, and presentations. Offered virtually or in person.">
+  <section class="wrap" style="padding:clamp(44px,6vw,76px) 0 24px;max-width:760px;text-align:center">
+    <p class="wmat-eyebrow" style="color:var(--teal-600);margin-bottom:10px">Services</p>
+    <h1>Art therapy on the West Michigan coast</h1>
+    <p class="wmat-lead" style="margin-top:14px">Every option below is offered virtually or in person, and shaped around what you need. Reach out any time to talk through the right fit.</p>
+  </section>
+
+  <section class="wrap" style="padding:12px 0 clamp(40px,6vw,72px)">
+    <div class="wmat-grid wmat-grid-auto" style="gap:20px">
+      {services.map((s) => (
+        <div class:list={["wmat-service-card", { 'is-featured': s.featured }]}>
+          {s.featured && <span class="wmat-popular">Most Popular</span>}
+          <span class:list={["wmat-chip", `is-${s.tone}`]}><Icon name={s.icon} /></span>
+          <h3>{s.title}</h3>
+          <p class="wmat-blurb">{s.blurb}</p>
+          <ul class="wmat-features">
+            {s.features.map((f) => (<li><Icon name="check" stroke={2.4} />{f}</li>))}
+          </ul>
+          <div class="wmat-card-foot">
+            <div class="wmat-price"><b>{s.price}</b>{s.note && <span>{s.note}</span>}</div>
+            <a class:list={["wmat-btn", s.featured ? 'is-primary' : 'is-outline']} href="/contact">Inquire <Icon name="arrow-right" stroke={2.2} /></a>
+          </div>
+        </div>
+      ))}
+      <div class="wmat-help-card">
+        <span class="wmat-chip" style="background:var(--gold-300);color:var(--ink-900);width:48px;height:48px;font-size:24px"><Icon name="sparkles" /></span>
+        <div class="wmat-card-title" style="font-size:20px">Not sure where to start?</div>
+        <p class="wmat-card-text" style="font-size:14px;color:var(--text-body)">That's completely normal. Send a note and we'll find the right kind of session together.</p>
+        <a class="wmat-btn is-primary" href="/contact" style="align-self:flex-start">Contact Amy</a>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--surface-sunken);padding-block:clamp(40px,6vw,72px)">
+    <div class="wrap" style="max-width:1000px">
+      <div class="wmat-split is-top" style="grid-template-columns:1fr 1.2fr">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div>
+            <p class="wmat-eyebrow" style="color:var(--teal-600);margin:0 0 8px">Payment</p>
+            <h2 style="font-size:clamp(1.5rem,3vw,2rem)">Simple &amp; flexible</h2>
+          </div>
+          <div class="wmat-callout is-note">
+            <Icon name="sparkles" />
+            <div><span class="wmat-callout-title">Sliding scale available</span><span class="wmat-callout-body">Flexible pricing is offered for individual sessions — just ask.</span></div>
+          </div>
+          <div class="wmat-callout is-info">
+            <Icon name="info" />
+            <div><span class="wmat-callout-title">Payment methods</span><span class="wmat-callout-body">Cash, check, and PayPal are welcome. Insurance is not currently accepted.</span></div>
+          </div>
+          <p style="font-size:13px;line-height:1.6;color:var(--text-muted);margin:0">Location and material requirements may affect final pricing. Reach out with any questions about fees or arrangements.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div>
+            <p class="wmat-eyebrow" style="color:var(--teal-600);margin:0 0 8px">Good to know</p>
+            <h2 style="font-size:clamp(1.5rem,3vw,2rem)">Common questions</h2>
+          </div>
+          <div class="wmat-faq">
+            {faqs.map((f) => (
+              <details open={f.open}>
+                <summary>{f.q}</summary>
+                <div class="wmat-faq-body">{f.a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

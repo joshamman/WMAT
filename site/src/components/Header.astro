@@ -1,0 +1,66 @@
+---
+import Icon from './Icon.astro';
+const links = [
+  { href: '/about', label: 'About' },
+  { href: '/services', label: 'Services' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/contact', label: 'Contact' },
+];
+const path = Astro.url.pathname;
+---
+<header class="wmat-header">
+  <div class="wmat-header-inner">
+    <a class="wmat-brand" href="/">
+      <img src="/assets/images/mark-dunes.jpg" alt="" width="42" height="42" />
+      <span class="wmat-brand-text">
+        <span class="wmat-brand-eyebrow">West Michigan</span>
+        <span class="wmat-brand-name">Art Therapy</span>
+      </span>
+    </a>
+    <nav class="wmat-nav" aria-label="Primary">
+      {links.map((l) => (
+        <a href={l.href} class:list={[{ 'is-current': path === l.href || path === l.href + '/' }]}>{l.label}</a>
+      ))}
+      <span class="wmat-nav-social">
+        <a href="https://www.facebook.com/" aria-label="Facebook" target="_blank" rel="noopener"><Icon name="facebook" /></a>
+        <a href="https://www.linkedin.com/" aria-label="LinkedIn" target="_blank" rel="noopener"><Icon name="linkedin" /></a>
+      </span>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .wmat-header {
+    position: sticky; top: 0; z-index: 100;
+    background: color-mix(in srgb, var(--cream-50) 88%, transparent);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+    backdrop-filter: saturate(140%) blur(10px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .wmat-header-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 14px clamp(20px, 5vw, 56px);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .wmat-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .wmat-brand img { border-radius: var(--radius-md); box-shadow: var(--shadow-xs); display: block; }
+  .wmat-brand-text { display: flex; flex-direction: column; line-height: 1; }
+  .wmat-brand-eyebrow {
+    font-family: var(--font-body); font-size: 11px; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal-600); margin-bottom: 4px;
+  }
+  .wmat-brand-name {
+    font-family: var(--font-display); font-size: 22px; font-weight: 600;
+    letter-spacing: -0.02em; color: var(--ink-900);
+  }
+  .wmat-nav { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+  .wmat-nav > a {
+    font-family: var(--font-body); font-size: 15px; font-weight: 500;
+    color: var(--ink-700); text-decoration: none; padding: 8px 14px; border-radius: var(--radius-pill);
+  }
+  .wmat-nav > a:hover { color: var(--teal-700); }
+  .wmat-nav > a.is-current { color: var(--teal-700); background: var(--surface-sunken); font-weight: 600; }
+  .wmat-nav-social { display: inline-flex; gap: 2px; margin-left: 6px; }
+  .wmat-nav-social a { color: var(--ink-500); padding: 8px; font-size: 18px; display: inline-flex; }
+  .wmat-nav-social a:hover { color: var(--teal-600); }
+</style>

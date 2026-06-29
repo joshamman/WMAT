@@ -1,4 +1,12 @@
-# West Michigan Art Therapy — WordPress Block Theme
+> **⚡ This project is now a static site (Astro) in [`site/`](site/).**
+> WordPress was dropped in favor of a fast, zero-maintenance static site that
+> matches the design exactly, emails Amy via Netlify Forms, and lets Amy publish
+> blog posts via a simple CMS. See **[`site/README.md`](site/README.md)** to run
+> and deploy. The WordPress theme below (`wmat-theme/`) is kept for reference only.
+
+---
+
+# West Michigan Art Therapy — WordPress Block Theme (legacy)
 
 A custom WordPress **block theme** (full-site editing) and design system for
 [westmichiganarttherapy.com](https://westmichiganarttherapy.com) — the practice
