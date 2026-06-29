@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="West Michigan Art Therapy">
+  <defs>
+    <clipPath id="r"><rect x="6" y="6" width="108" height="108" rx="24"/></clipPath>
+  </defs>
+  <g clip-path="url(#r)">
+    <rect x="6" y="6" width="108" height="108" fill="#2E6FB7"/>
+    <!-- sun -->
+    <circle cx="78" cy="40" r="15" fill="#E2A23B"/>
+    <!-- distant dune / grass -->
+    <path d="M6 64 Q40 50 70 60 T114 58 L114 78 L6 78 Z" fill="#7E9A6B"/>
+    <!-- teal wave -->
+    <path d="M6 74 Q34 62 62 74 T114 72 L114 92 L6 92 Z" fill="#1F6F6B"/>
+    <!-- sand -->
+    <path d="M6 90 Q40 80 72 90 T114 88 L114 114 L6 114 Z" fill="#E2A23B"/>
+    <!-- driftwood band -->
+    <path d="M6 100 Q44 92 80 100 T114 99 L114 114 L6 114 Z" fill="#9C5A2C"/>
+  </g>
+  <rect x="6" y="6" width="108" height="108" rx="24" fill="none" stroke="#14304B" stroke-width="3"/>
+</svg>

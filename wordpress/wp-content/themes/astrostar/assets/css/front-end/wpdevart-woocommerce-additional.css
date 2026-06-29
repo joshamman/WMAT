@@ -1,0 +1,21 @@
+.wc-block-components-notice-banner>.wc-block-components-notice-banner__content .wc-forward {
+    padding: 10px 10px!important;
+    float:right;
+    opacity: 1!important;
+    text-decoration: none!important;
+    background: #ca9d75!important;
+    color: #2d2d3c!important;
+    border: 1px solid #2d2d3c;
+    -webkit-transition: ease-out 0.5s!important;
+    -moz-transition: ease-out 0.5s!important;
+    transition: ease-out 0.5s!important;
+    text-transform: uppercase;
+    font-weight: 500!important;
+    letter-spacing: 1px;
+    font-size: 15px!important;
+}
+.wc-block-components-notice-banner>.wc-block-components-notice-banner__content .wc-forward:hover {
+    color: #ca9d75!important;
+    border: 1px solid #2d2d3c!important;
+    box-shadow: inset 400px 0 0 0 #2d2d3c;
+}

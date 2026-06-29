@@ -18,8 +18,10 @@ if ( ! function_exists( 'wmat_setup' ) ) {
 	 * Theme setup.
 	 */
 	function wmat_setup() {
-		// Make the editor use our front-end stylesheet too.
+		// Make the editor use our front-end stylesheet + the immersive home CSS,
+		// so the Site Editor preview reflects the real design.
 		add_editor_style( 'style.css' );
+		add_editor_style( 'assets/css/journey.css' );
 
 		// Enable responsive embeds and HTML5 markup niceties.
 		add_theme_support( 'responsive-embeds' );
@@ -56,23 +58,25 @@ if ( ! function_exists( 'wmat_enqueue_assets' ) ) {
 			true
 		);
 
-		// Immersive "Visual Journey" homepage: parallax, reveals, watercolor
-		// paint canvas. Loaded only on the front page.
-		if ( is_front_page() ) {
-			wp_enqueue_style(
-				'wmat-journey',
-				get_template_directory_uri() . '/assets/css/journey.css',
-				array( 'wmat-style' ),
-				$version
-			);
-			wp_enqueue_script(
-				'wmat-journey',
-				get_template_directory_uri() . '/assets/js/journey.js',
-				array(),
-				$version,
-				true
-			);
-		}
+		// Immersive "Visual Journey" homepage engine: parallax, reveals, and the
+		// watercolor paint canvas. The CSS is scoped to the home's own classes
+		// (.hero, .wash, .svc, .j-header…) and the JS no-ops when those elements
+		// aren't present, so it's safe to load site-wide. Loading it everywhere
+		// avoids depending on is_front_page(), which can be unreliable depending
+		// on how the homepage is configured.
+		wp_enqueue_style(
+			'wmat-journey',
+			get_template_directory_uri() . '/assets/css/journey.css',
+			array( 'wmat-style' ),
+			$version
+		);
+		wp_enqueue_script(
+			'wmat-journey',
+			get_template_directory_uri() . '/assets/js/journey.js',
+			array(),
+			$version,
+			true
+		);
 	}
 }
 add_action( 'wp_enqueue_scripts', 'wmat_enqueue_assets' );

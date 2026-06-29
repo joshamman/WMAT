@@ -1,0 +1,31 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"title": "Evening",
+	"description": "A deeper, dusk-toned variation — navy backgrounds with sand text for high-contrast sections.",
+	"settings": {
+		"color": {
+			"palette": [
+				{ "slug": "base", "color": "#14304B", "name": "Sand (background)" },
+				{ "slug": "surface", "color": "#1B3D5C", "name": "Dune (surface)" },
+				{ "slug": "contrast", "color": "#FBF7F0", "name": "Ink" },
+				{ "slug": "primary", "color": "#3FA9A0", "name": "Lake Teal" },
+				{ "slug": "primary-dark", "color": "#2A8077", "name": "Deep Teal" },
+				{ "slug": "secondary", "color": "#5B9BD8", "name": "Lake Blue" },
+				{ "slug": "navy", "color": "#FBF7F0", "name": "Harbor Navy" },
+				{ "slug": "accent", "color": "#E2A23B", "name": "Sun Gold" },
+				{ "slug": "ochre", "color": "#C8854A", "name": "Driftwood" },
+				{ "slug": "sage", "color": "#9DB88A", "name": "Beach Grass" },
+				{ "slug": "muted", "color": "#B9C4C2", "name": "Muted Ink" },
+				{ "slug": "white", "color": "#FFFFFF", "name": "White" }
+			]
+		}
+	},
+	"styles": {
+		"elements": {
+			"heading": {
+				"color": { "text": "var(--wp--preset--color--contrast)" }
+			}
+		}
+	}
+}

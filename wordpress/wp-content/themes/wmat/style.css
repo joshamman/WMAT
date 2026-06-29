@@ -1,0 +1,551 @@
+/*
+Theme Name: West Michigan Art Therapy
+Theme URI: https://westmichiganarttherapy.com
+Author: Josh Hamman
+Author URI: https://github.com/joshamman
+Description: Custom block theme for West Michigan Art Therapy — a warm, Lake Michigan dune-coast design system for the art therapy practice of Amy Rostollan-Hamman, ATR-BC. Built for full-site editing with theme.json design tokens.
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 7.4
+Version: 0.3.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: wmat
+*/
+
+/*
+ * Most styling lives in theme.json (the design system). This file holds the
+ * required theme header plus a few global rules that theme.json can't express.
+ */
+
+/* Smooth scrolling for in-page anchor links (e.g. nav -> #contact) */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+/* ============================================================
+   Brand text accents (from the design system)
+   ============================================================ */
+
+/* Small all-caps overline used above headings */
+.wmat-eyebrow {
+	font-family: var(--wp--preset--font-family--body);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+/* Hand-marker accent (Caveat) — used sparingly for warmth */
+.wmat-hand {
+	font-family: var(--wp--preset--font-family--accent) !important;
+	font-weight: 700;
+	line-height: 1;
+}
+
+/* ============================================================
+   Watercolor washes — the signature motif.
+   Soft radial-gradient blobs distorted by SVG turbulence filters
+   (defs injected in functions.php) for a bleeding, painted edge.
+   Put .wmat-canvas on a positioned container; drop .wmat-wash
+   elements inside it as decorative, aria-hidden layers.
+   ============================================================ */
+
+.wmat-canvas {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.wmat-canvas > .wp-block-group__inner-container,
+.wmat-canvas > .wp-block-cover__inner-container,
+.wmat-canvas > :not(.wmat-wash) {
+	position: relative;
+	z-index: 1;
+}
+
+.wmat-wash {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+	filter: url(#wc-edge) blur(2px);
+	mix-blend-mode: multiply;
+}
+
+.wmat-wash.is-soft {
+	filter: url(#wc-soft) blur(10px);
+	opacity: 0.7;
+}
+
+.wmat-wash.is-tear {
+	border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+}
+
+/* Gentle, non-springy drift */
+@keyframes wmat-drift {
+	0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+	50% { transform: translate3d(2.5%, -3%, 0) scale(1.06); }
+}
+
+.wmat-wash.is-drift { animation: wmat-drift 16s ease-in-out infinite; }
+.wmat-wash.is-drift-rev { animation: wmat-drift 22s ease-in-out infinite reverse; }
+
+@media (prefers-reduced-motion: reduce) {
+	.wmat-wash { animation: none !important; }
+}
+
+/* Fallback: if SVG filters are unsupported, washes still read as soft blobs */
+@supports not (filter: url(#wc-edge)) {
+	.wmat-wash { filter: blur(24px); }
+}
+
+/* ============================================================
+   DESIGN SYSTEM TOKENS
+   The raw scale + semantic aliases from the WMAT design system,
+   so component classes below can use them verbatim (--teal-600,
+   --space-6, --radius-lg…). Kept in sync with theme.json, which
+   drives the editor + core blocks.
+   ============================================================ */
+
+:root {
+	/* Paper / cream */
+	--cream-50: #FCF8F0; --cream-100: #F6EFDF; --cream-200: #EFE5CE;
+	/* Sand / dune */
+	--sand-200: #EBD9A6; --sand-300: #E0C57E; --sand-400: #D3AE5C;
+	/* Sun / gold */
+	--gold-300: #F2C84B; --gold-400: #E8B33D; --gold-500: #CE9526; --gold-600: #A9781C;
+	/* Deep water navy */
+	--navy-700: #234E72; --navy-800: #1B3D5C; --navy-900: #142F49;
+	/* Water / teal */
+	--teal-400: #3FA0A1; --teal-500: #2F8889; --teal-600: #266F70; --teal-700: #1E5859;
+	/* Sky / shallows */
+	--sky-200: #BFE0EC; --sky-300: #8FC6DE; --sky-400: #5DA8CC; --sky-500: #3E8AB1;
+	/* Foliage */
+	--sage-300: #B6BE86; --sage-400: #97A05C; --sage-500: #7E8B4A; --sage-600: #66723A;
+	--pine-700: #3F5C3C; --pine-800: #2F4A2E;
+	/* Clay / earth */
+	--clay-400: #C08552; --clay-500: #A66E3D; --clay-600: #8B5E34; --clay-700: #6E4824;
+	/* Warm neutrals */
+	--ink-900: #20303A; --ink-700: #3A4954; --ink-500: #586771; --ink-400: #768089;
+	--stone-300: #C9C2B2; --stone-200: #DED7C6; --white: #FFFFFF;
+
+	/* Semantic */
+	--surface-page: var(--cream-50);
+	--surface-card: var(--white);
+	--surface-sunken: var(--cream-100);
+	--text-strong: var(--ink-900);
+	--text-body: var(--ink-700);
+	--text-muted: var(--ink-500);
+	--text-subtle: var(--ink-400);
+	--text-on-brand: var(--cream-50);
+	--brand-primary: var(--teal-600);
+	--brand-primary-hover: var(--teal-700);
+	--brand-deep: var(--navy-900);
+	--brand-accent: var(--gold-400);
+	--border-soft: var(--stone-200);
+	--border-default: var(--stone-300);
+	--status-success-bg: #EAF0DD;
+	--status-info-bg: #E1F0F6;
+	--status-warning-bg: #FBEFCF;
+	--status-danger-bg: #F4E2D4;
+	--chip-teal-bg: #DCEDEC;
+
+	/* Type */
+	--font-display: 'Newsreader', Georgia, serif;
+	--font-body: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-accent: 'Caveat', 'Segoe Script', cursive;
+
+	/* Spacing */
+	--space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+	--space-5: 1.5rem; --space-6: 2rem; --space-7: 2.5rem; --space-8: 3rem;
+	--space-9: 4rem; --space-10: 5rem; --space-11: 6.5rem; --space-12: 8rem;
+	--gutter-page: clamp(1.5rem, 5vw, 4rem);
+	--section-y: clamp(3rem, 7vw, 5.5rem);
+
+	/* Radius */
+	--radius-sm: 8px; --radius-md: 14px; --radius-lg: 20px; --radius-xl: 28px;
+	--radius-pill: 999px;
+
+	/* Elevation (warm navy-tinted) */
+	--shadow-xs: 0 1px 2px rgba(20,47,73,.06);
+	--shadow-sm: 0 2px 6px rgba(20,47,73,.08);
+	--shadow-md: 0 6px 18px rgba(20,47,73,.10);
+	--shadow-lg: 0 14px 36px rgba(20,47,73,.14);
+
+	/* Motion */
+	--ease-out: cubic-bezier(0.22,0.61,0.36,1);
+	--ease-in-out: cubic-bezier(0.45,0.05,0.55,0.95);
+	--ease-gentle: cubic-bezier(0.34,0.8,0.4,1);
+	--dur-fast: 140ms; --dur-base: 240ms;
+}
+
+/* ============================================================
+   LAYOUT HELPERS
+   ============================================================ */
+
+.wmat-grid { display: grid; gap: var(--space-5); }
+.wmat-grid-2 { grid-template-columns: repeat(2, 1fr); }
+.wmat-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.wmat-grid-4 { grid-template-columns: repeat(2, 1fr); }
+.wmat-grid-auto { grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); }
+
+@media (min-width: 782px) {
+	.wmat-grid-4 { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 781px) {
+	.wmat-grid-2, .wmat-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   ICONS (inline Lucide)
+   ============================================================ */
+
+.wmat-ico { display: inline-flex; align-items: center; justify-content: center; }
+.wmat-ico svg { display: block; width: 1em; height: 1em; stroke: currentColor; fill: none; }
+
+.wmat-chip {
+	display: inline-flex; align-items: center; justify-content: center;
+	width: 52px; height: 52px; border-radius: var(--radius-md);
+	background: var(--chip-teal-bg); color: var(--teal-600);
+	font-size: 26px; flex-shrink: 0;
+}
+.wmat-chip.is-sm { width: 42px; height: 42px; font-size: 20px; border-radius: var(--radius-sm); }
+.wmat-chip.is-teal { background: var(--chip-teal-bg); color: var(--teal-600); }
+.wmat-chip.is-gold { background: var(--status-warning-bg); color: var(--gold-600); }
+.wmat-chip.is-sage { background: var(--status-success-bg); color: var(--sage-600); }
+.wmat-chip.is-sky  { background: var(--status-info-bg); color: var(--sky-500); }
+.wmat-chip.is-clay { background: var(--status-danger-bg); color: var(--clay-600); }
+
+/* ============================================================
+   BADGE / EYEBROW
+   ============================================================ */
+
+.wmat-badge {
+	display: inline-flex; align-items: center; gap: 0.35rem;
+	font-family: var(--font-body); font-size: 0.75rem; font-weight: 600;
+	letter-spacing: 0.04em; line-height: 1;
+	padding: 0.4rem 0.7rem; border-radius: var(--radius-pill);
+	background: var(--chip-teal-bg); color: var(--teal-700); white-space: nowrap;
+}
+.wmat-badge .wmat-ico { font-size: 0.85rem; }
+.wmat-badge.is-gold { background: var(--status-warning-bg); color: var(--gold-600); }
+.wmat-badge.is-sage { background: var(--status-success-bg); color: var(--sage-600); }
+
+.wmat-lead {
+	font-family: var(--font-body);
+	font-size: clamp(1.0625rem, 1.6vw, 1.2rem);
+	line-height: 1.65; color: var(--text-body);
+}
+
+/* ============================================================
+   SITE HEADER (sticky, blurred)
+   ============================================================ */
+
+.wmat-header {
+	position: sticky; top: 0; z-index: 100;
+	background: color-mix(in srgb, var(--cream-50) 88%, transparent);
+	-webkit-backdrop-filter: saturate(140%) blur(10px);
+	backdrop-filter: saturate(140%) blur(10px);
+	border-bottom: 1px solid var(--border-soft);
+}
+.wmat-brand-eyebrow {
+	font-family: var(--font-body); font-size: 11px; font-weight: 600;
+	letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal-600);
+	line-height: 1; margin: 0 0 4px;
+}
+.wmat-header .wp-block-navigation { font-family: var(--font-body); font-weight: 500; }
+.wmat-header .wp-block-site-logo img { border-radius: var(--radius-md); box-shadow: var(--shadow-xs); }
+
+/* ============================================================
+   SITE FOOTER (navy)
+   ============================================================ */
+
+.wmat-footer { background: var(--navy-900); color: var(--cream-50); }
+.wmat-footer .wmat-foot-label {
+	font-family: var(--font-body); font-size: 12px; font-weight: 700;
+	letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-300);
+}
+.wmat-footer a { color: var(--cream-50); text-decoration: none; }
+.wmat-footer a:hover { color: var(--sky-300); }
+
+/* ============================================================
+   HERO (home split)
+   ============================================================ */
+
+.wmat-hero-grid {
+	display: grid; grid-template-columns: 1.05fr 0.95fr;
+	align-items: stretch; min-height: 560px;
+}
+.wmat-hero-media { position: relative; overflow: hidden; min-height: 320px; }
+.wmat-hero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wmat-hero-media::after {
+	content: ""; position: absolute; inset: 0;
+	background: linear-gradient(105deg, var(--cream-50) 0%, transparent 32%);
+}
+.wmat-tagline { min-height: 2.1em; }
+.wmat-tagline-text { display: inline-block; }
+.wmat-hero-hand {
+	position: absolute; bottom: 28px; right: 30px; z-index: 1;
+	font-family: var(--font-accent); font-weight: 700; font-size: clamp(24px, 3vw, 32px);
+	color: var(--cream-50); text-shadow: 0 2px 12px rgba(20,47,73,.55);
+	transform: rotate(-4deg);
+}
+@media (max-width: 781px) {
+	.wmat-hero-grid { grid-template-columns: 1fr; }
+	.wmat-hero-media { min-height: 300px; }
+}
+
+/* ============================================================
+   CARDS — feature / value / service
+   ============================================================ */
+
+.wmat-card {
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-md); padding: var(--space-5);
+	box-shadow: var(--shadow-xs);
+}
+.wmat-card-title {
+	font-family: var(--font-display); font-weight: 600; color: var(--ink-900);
+	letter-spacing: -0.01em; margin: 0 0 0.35rem;
+}
+.wmat-card-text { font-family: var(--font-body); line-height: 1.55; color: var(--text-muted); margin: 0; }
+
+.wmat-value-card {
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-lg); padding: var(--space-6); box-shadow: var(--shadow-sm);
+}
+
+.wmat-service-card {
+	position: relative; display: flex; flex-direction: column;
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-lg); padding: var(--space-6);
+	box-shadow: var(--shadow-sm);
+	transition: transform var(--dur-base) var(--ease-gentle), box-shadow var(--dur-base) var(--ease-gentle);
+}
+.wmat-service-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.wmat-service-card.is-featured { border: 1.5px solid var(--brand-primary); box-shadow: var(--shadow-md); }
+.wmat-service-card h3 {
+	font-family: var(--font-display); font-size: 1.375rem; font-weight: 600;
+	color: var(--text-strong); letter-spacing: -0.01em; margin: 0 0 0.4rem;
+}
+.wmat-service-card .wmat-blurb {
+	font-family: var(--font-body); font-size: 0.875rem; line-height: 1.65;
+	color: var(--text-body); margin: 0 0 var(--space-4);
+}
+.wmat-popular {
+	position: absolute; top: var(--space-5); right: var(--space-5);
+	background: var(--gold-400); color: var(--ink-900);
+	font-family: var(--font-body); font-size: 0.6875rem; font-weight: 700;
+	letter-spacing: 0.04em; text-transform: uppercase;
+	padding: 0.3rem 0.6rem; border-radius: var(--radius-pill);
+}
+.wmat-features { list-style: none; margin: 0 0 var(--space-5); padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.wmat-features li {
+	display: flex; align-items: flex-start; gap: 0.5rem;
+	font-family: var(--font-body); font-size: 0.875rem; color: var(--text-body);
+}
+.wmat-features li .wmat-ico { color: var(--sage-600); font-size: 1rem; margin-top: 1px; flex-shrink: 0; stroke-width: 2.4; }
+.wmat-card-foot { margin-top: auto; display: flex; flex-direction: column; gap: var(--space-4); }
+.wmat-price { display: flex; align-items: baseline; gap: 0.4rem; }
+.wmat-price b { font-family: var(--font-display); font-size: 2.25rem; font-weight: 600; color: var(--brand-deep); }
+.wmat-price span { font-family: var(--font-body); font-size: 0.875rem; color: var(--text-muted); }
+
+/* Buttons that match the DS (used inside custom cards/forms) */
+.wmat-btn {
+	display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+	font-family: var(--font-body); font-weight: 600; line-height: 1;
+	border-radius: var(--radius-pill); padding: 0.65rem 1.35rem; cursor: pointer;
+	text-decoration: none; border: 1.5px solid transparent;
+	transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.wmat-btn.is-primary { background: var(--brand-primary); color: var(--text-on-brand); border-color: var(--brand-primary); box-shadow: var(--shadow-sm); }
+.wmat-btn.is-primary:hover { background: var(--brand-primary-hover); border-color: var(--brand-primary-hover); }
+.wmat-btn.is-outline { background: transparent; color: var(--brand-primary); border-color: var(--border-default); }
+.wmat-btn.is-outline:hover { border-color: var(--brand-primary); }
+.wmat-btn.is-lg { padding: 0.9rem 1.9rem; font-size: 1.125rem; }
+.wmat-btn.is-full { display: flex; width: 100%; }
+
+.wmat-help-card {
+	display: flex; flex-direction: column; justify-content: center; gap: 0.9rem;
+	background: var(--surface-sunken); border-radius: var(--radius-lg); padding: var(--space-6);
+}
+
+/* ============================================================
+   TESTIMONIAL (deep navy)
+   ============================================================ */
+
+.wmat-testimonial {
+	margin: 0; display: flex; flex-direction: column; gap: var(--space-5);
+	background: var(--navy-900); color: var(--cream-50);
+	border-radius: var(--radius-lg); padding: var(--space-7); box-shadow: var(--shadow-lg);
+}
+.wmat-testimonial .wmat-quote-mark { font-family: var(--font-display); font-size: 3rem; line-height: 0.2; color: var(--gold-400); }
+.wmat-testimonial blockquote {
+	margin: 0; font-family: var(--font-display); font-style: italic;
+	font-size: 1.375rem; line-height: 1.3; letter-spacing: -0.01em; color: var(--cream-50);
+}
+.wmat-testimonial figcaption { display: flex; flex-direction: column; }
+.wmat-testimonial .wmat-cite-name { font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; }
+.wmat-testimonial .wmat-cite-detail { font-family: var(--font-body); font-size: 0.8rem; color: var(--sky-300); }
+
+/* ============================================================
+   CALLOUT
+   ============================================================ */
+
+.wmat-callout {
+	display: flex; gap: 0.85rem; border-radius: var(--radius-md);
+	padding: var(--space-4) var(--space-5); border-left: 4px solid var(--teal-600);
+	background: var(--surface-sunken);
+}
+.wmat-callout.is-info { background: var(--status-info-bg); border-left-color: var(--sky-500); }
+.wmat-callout.is-info .wmat-ico { color: var(--sky-500); }
+.wmat-callout.is-note .wmat-ico { color: var(--teal-600); }
+.wmat-callout .wmat-ico { color: var(--teal-600); font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
+.wmat-callout-title { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--text-strong); display: block; margin-bottom: 0.15rem; }
+.wmat-callout-body { font-family: var(--font-body); font-size: 0.9rem; line-height: 1.6; color: var(--text-body); }
+
+/* ============================================================
+   FAQ (native <details>, styled like the DS accordion)
+   ============================================================ */
+
+.wmat-faq {
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.wmat-faq details + details { border-top: 1px solid var(--border-soft); }
+.wmat-faq summary {
+	list-style: none; cursor: pointer; display: flex; align-items: center;
+	justify-content: space-between; gap: 1rem;
+	padding: var(--space-4) var(--space-5);
+	font-family: var(--font-display); font-size: 1.125rem; font-weight: 600; color: var(--text-strong);
+	transition: background var(--dur-fast) var(--ease-out);
+}
+.wmat-faq summary::-webkit-details-marker { display: none; }
+.wmat-faq summary::after {
+	content: ""; flex-shrink: 0; width: 18px; height: 18px;
+	background: no-repeat center / contain;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23266F70' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	transition: transform var(--dur-base) var(--ease-gentle);
+}
+.wmat-faq details[open] summary { background: var(--surface-sunken); }
+.wmat-faq details[open] summary::after { transform: rotate(180deg); }
+.wmat-faq .wmat-faq-body {
+	padding: 0 var(--space-5) var(--space-5);
+	font-family: var(--font-body); font-size: 0.9rem; line-height: 1.65; color: var(--text-body);
+}
+
+/* ============================================================
+   REGION PILLS
+   ============================================================ */
+
+.wmat-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.625rem; }
+.wmat-pill {
+	display: inline-flex; align-items: center; gap: 0.375rem;
+	font-family: var(--font-body); font-size: 0.875rem; font-weight: 500; color: var(--navy-800);
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-pill); padding: 0.5rem 1rem; box-shadow: var(--shadow-xs);
+}
+.wmat-pill .wmat-ico { color: var(--teal-600); font-size: 0.875rem; }
+
+/* ============================================================
+   ABOUT — portrait + years badge
+   ============================================================ */
+
+.wmat-portrait { position: relative; }
+.wmat-portrait-img {
+	aspect-ratio: 4 / 5; border-radius: var(--radius-xl); overflow: hidden;
+	box-shadow: var(--shadow-lg); background: var(--surface-sunken);
+}
+.wmat-portrait-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wmat-years {
+	position: absolute; bottom: -18px; left: -18px;
+	background: var(--gold-400); color: var(--ink-900);
+	border-radius: var(--radius-md); padding: 12px 16px; box-shadow: var(--shadow-md);
+}
+.wmat-years b { display: block; font-family: var(--font-display); font-size: 26px; font-weight: 600; line-height: 1; }
+.wmat-years span { display: block; font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* ============================================================
+   CONTACT FORM
+   ============================================================ */
+
+.wmat-form-card {
+	background: var(--surface-card); border: 1px solid var(--border-soft);
+	border-radius: var(--radius-xl); padding: clamp(1.5rem, 4vw, 2.25rem); box-shadow: var(--shadow-md);
+}
+.wmat-form { display: flex; flex-direction: column; gap: 1rem; }
+.wmat-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .wmat-form-row { grid-template-columns: 1fr; } }
+.wmat-field { display: flex; flex-direction: column; gap: 0.4rem; }
+.wmat-field label { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; color: var(--text-strong); }
+.wmat-field input, .wmat-field textarea, .wmat-field select {
+	font-family: var(--font-body); font-size: 0.95rem; color: var(--ink-900);
+	background: var(--surface-page); border: 1px solid var(--border-default);
+	border-radius: var(--radius-md); padding: 0.7rem 0.85rem; width: 100%;
+	transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.wmat-field input:focus, .wmat-field textarea:focus, .wmat-field select:focus {
+	outline: none; border-color: var(--teal-600); box-shadow: 0 0 0 3px rgba(232,179,61,.35);
+}
+.wmat-check { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-body); }
+.wmat-check input { width: 1.1rem; height: 1.1rem; accent-color: var(--teal-600); }
+.wmat-contact-rows { display: flex; flex-direction: column; gap: 0.9rem; }
+.wmat-contact-row { display: flex; align-items: center; gap: 0.9rem; }
+.wmat-contact-row .wmat-chip.is-sm { font-size: 1.25rem; }
+.wmat-contact-row .l { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-subtle); }
+.wmat-contact-row .v { font-family: var(--font-body); font-size: 0.95rem; color: var(--ink-900); }
+
+/* ============================================================
+   CONTACT FORM 7 compatibility
+   Styles CF7's output to match .wmat-form. Add html_class="wmat-form"
+   to the shortcode: [contact-form-7 id="…" html_class="wmat-form"]
+   ============================================================ */
+
+.wmat-form .wpcf7-form-control-wrap { display: block; }
+.wmat-form .wpcf7-not-valid-tip {
+	color: var(--clay-600); font-family: var(--font-body); font-size: 0.8rem; margin-top: 0.3rem;
+}
+.wmat-form .wpcf7-spinner { margin: 0.5rem auto 0; display: block; }
+.wmat-form input.wpcf7-submit {
+	display: flex; width: 100%; align-items: center; justify-content: center;
+	font-family: var(--font-body); font-weight: 600; font-size: 1.125rem; line-height: 1;
+	color: var(--text-on-brand); background: var(--brand-primary);
+	border: 1.5px solid var(--brand-primary); border-radius: var(--radius-pill);
+	padding: 0.9rem 1.9rem; cursor: pointer; box-shadow: var(--shadow-sm);
+	transition: background var(--dur-fast) var(--ease-out);
+}
+.wmat-form input.wpcf7-submit:hover { background: var(--brand-primary-hover); }
+.wpcf7 .wpcf7-response-output {
+	margin: 1rem 0 0 !important; padding: 0.75rem 1rem !important;
+	border-radius: var(--radius-md); font-family: var(--font-body); font-size: 0.875rem;
+}
+.wpcf7 form.sent .wpcf7-response-output {
+	border-color: var(--sage-600); background: var(--status-success-bg); color: var(--sage-600);
+}
+.wpcf7 form.invalid .wpcf7-response-output,
+.wpcf7 form.unaccepted .wpcf7-response-output,
+.wpcf7 form.spam .wpcf7-response-output {
+	border-color: var(--clay-600); background: var(--status-danger-bg); color: var(--clay-700);
+}
+
+/* ============================================================
+   GENERIC SPLIT (two-column content blocks that collapse)
+   ============================================================ */
+
+.wmat-split { display: grid; gap: clamp(1.75rem, 5vw, 3.5rem); align-items: center; }
+.wmat-split.is-5050 { grid-template-columns: 1fr 1fr; }
+.wmat-split.is-4060 { grid-template-columns: 0.85fr 1.15fr; }
+.wmat-split.is-6040 { grid-template-columns: 1.15fr 0.85fr; }
+.wmat-split.is-top { align-items: start; }
+@media (max-width: 781px) {
+	/* Stack every split on mobile, including those with inline column ratios. */
+	.wmat-split { grid-template-columns: 1fr !important; }
+}
