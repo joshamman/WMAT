@@ -503,6 +503,39 @@ html {
 .wmat-contact-row .v { font-family: var(--font-body); font-size: 0.95rem; color: var(--ink-900); }
 
 /* ============================================================
+   CONTACT FORM 7 compatibility
+   Styles CF7's output to match .wmat-form. Add html_class="wmat-form"
+   to the shortcode: [contact-form-7 id="…" html_class="wmat-form"]
+   ============================================================ */
+
+.wmat-form .wpcf7-form-control-wrap { display: block; }
+.wmat-form .wpcf7-not-valid-tip {
+	color: var(--clay-600); font-family: var(--font-body); font-size: 0.8rem; margin-top: 0.3rem;
+}
+.wmat-form .wpcf7-spinner { margin: 0.5rem auto 0; display: block; }
+.wmat-form input.wpcf7-submit {
+	display: flex; width: 100%; align-items: center; justify-content: center;
+	font-family: var(--font-body); font-weight: 600; font-size: 1.125rem; line-height: 1;
+	color: var(--text-on-brand); background: var(--brand-primary);
+	border: 1.5px solid var(--brand-primary); border-radius: var(--radius-pill);
+	padding: 0.9rem 1.9rem; cursor: pointer; box-shadow: var(--shadow-sm);
+	transition: background var(--dur-fast) var(--ease-out);
+}
+.wmat-form input.wpcf7-submit:hover { background: var(--brand-primary-hover); }
+.wpcf7 .wpcf7-response-output {
+	margin: 1rem 0 0 !important; padding: 0.75rem 1rem !important;
+	border-radius: var(--radius-md); font-family: var(--font-body); font-size: 0.875rem;
+}
+.wpcf7 form.sent .wpcf7-response-output {
+	border-color: var(--sage-600); background: var(--status-success-bg); color: var(--sage-600);
+}
+.wpcf7 form.invalid .wpcf7-response-output,
+.wpcf7 form.unaccepted .wpcf7-response-output,
+.wpcf7 form.spam .wpcf7-response-output {
+	border-color: var(--clay-600); background: var(--status-danger-bg); color: var(--clay-700);
+}
+
+/* ============================================================
    GENERIC SPLIT (two-column content blocks that collapse)
    ============================================================ */
 
