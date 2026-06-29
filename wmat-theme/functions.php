@@ -64,3 +64,26 @@ if ( ! function_exists( 'wmat_register_pattern_category' ) ) {
 	}
 }
 add_action( 'init', 'wmat_register_pattern_category' );
+
+if ( ! function_exists( 'wmat_watercolor_filters' ) ) {
+	/**
+	 * Output the hidden SVG turbulence filters that give the watercolor washes
+	 * their bleeding, painted edges. Referenced from CSS via filter: url(#wc-edge).
+	 * Printed once, right after <body> opens.
+	 */
+	function wmat_watercolor_filters() {
+		?>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+	<filter id="wc-edge" x="-25%" y="-25%" width="150%" height="150%">
+		<feTurbulence type="fractalNoise" baseFrequency="0.014 0.018" numOctaves="3" seed="7" result="n"/>
+		<feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G"/>
+	</filter>
+	<filter id="wc-soft" x="-40%" y="-40%" width="180%" height="180%">
+		<feTurbulence type="fractalNoise" baseFrequency="0.009" numOctaves="2" seed="3" result="n"/>
+		<feDisplacementMap in="SourceGraphic" in2="n" scale="56" xChannelSelector="R" yChannelSelector="G"/>
+	</filter>
+</defs></svg>
+		<?php
+	}
+}
+add_action( 'wp_body_open', 'wmat_watercolor_filters' );

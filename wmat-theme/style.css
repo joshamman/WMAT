@@ -1,0 +1,108 @@
+/*
+Theme Name: West Michigan Art Therapy
+Theme URI: https://westmichiganarttherapy.com
+Author: Josh Hamman
+Author URI: https://github.com/joshamman
+Description: Custom block theme for West Michigan Art Therapy — a warm, Lake Michigan dune-coast design system for the art therapy practice of Amy Rostollan-Hamman, ATR-BC. Built for full-site editing with theme.json design tokens.
+Requires at least: 6.5
+Tested up to: 6.7
+Requires PHP: 7.4
+Version: 0.2.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: wmat
+*/
+
+/*
+ * Most styling lives in theme.json (the design system). This file holds the
+ * required theme header plus a few global rules that theme.json can't express.
+ */
+
+/* Smooth scrolling for in-page anchor links (e.g. nav -> #contact) */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+/* ============================================================
+   Brand text accents (from the design system)
+   ============================================================ */
+
+/* Small all-caps overline used above headings */
+.wmat-eyebrow {
+	font-family: var(--wp--preset--font-family--body);
+	font-size: var(--wp--preset--font-size--small);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+/* Hand-marker accent (Caveat) — used sparingly for warmth */
+.wmat-hand {
+	font-family: var(--wp--preset--font-family--accent) !important;
+	font-weight: 700;
+	line-height: 1;
+}
+
+/* ============================================================
+   Watercolor washes — the signature motif.
+   Soft radial-gradient blobs distorted by SVG turbulence filters
+   (defs injected in functions.php) for a bleeding, painted edge.
+   Put .wmat-canvas on a positioned container; drop .wmat-wash
+   elements inside it as decorative, aria-hidden layers.
+   ============================================================ */
+
+.wmat-canvas {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.wmat-canvas > .wp-block-group__inner-container,
+.wmat-canvas > .wp-block-cover__inner-container,
+.wmat-canvas > :not(.wmat-wash) {
+	position: relative;
+	z-index: 1;
+}
+
+.wmat-wash {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+	z-index: 0;
+	filter: url(#wc-edge) blur(2px);
+	mix-blend-mode: multiply;
+}
+
+.wmat-wash.is-soft {
+	filter: url(#wc-soft) blur(10px);
+	opacity: 0.7;
+}
+
+.wmat-wash.is-tear {
+	border-radius: 46% 54% 58% 42% / 52% 44% 56% 48%;
+}
+
+/* Gentle, non-springy drift */
+@keyframes wmat-drift {
+	0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+	50% { transform: translate3d(2.5%, -3%, 0) scale(1.06); }
+}
+
+.wmat-wash.is-drift { animation: wmat-drift 16s ease-in-out infinite; }
+.wmat-wash.is-drift-rev { animation: wmat-drift 22s ease-in-out infinite reverse; }
+
+@media (prefers-reduced-motion: reduce) {
+	.wmat-wash { animation: none !important; }
+}
+
+/* Fallback: if SVG filters are unsupported, washes still read as soft blobs */
+@supports not (filter: url(#wc-edge)) {
+	.wmat-wash { filter: blur(24px); }
+}
