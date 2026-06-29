@@ -77,15 +77,24 @@ ln -s "/Volumes/Work Drive/Sites/WestMichiganArtTherapy/wmat-theme" \
 Then **wp-admin → Appearance → Themes** → activate *West Michigan Art Therapy*.
 
 ### Getting the full design live
-1. **Home** — Settings → Reading → *A static page* → choose/create a page for the
-   home (the `front-page.html` template renders the full home design automatically).
-2. **About / Services / Contact** — create Pages with the slugs `about`,
-   `services`, and `contact`. The matching `page-{slug}.html` templates apply the
-   full page designs automatically — no manual layout needed.
-3. **Menu** — Appearance → Editor → Navigation: add Home, About, Services, Contact.
 
-The page designs are also available as insertable patterns (inserter → *Full
-pages*) if you'd rather edit the content per-page in the block editor.
+The page designs are **content-driven** — they live in your WordPress Pages (and
+are fully editable in the editor / Site Editor), not hardcoded in the theme.
+Templates just provide the full-width, no-title shell. Blog posts read from
+WordPress automatically (`index` / `archive` / `single`).
+
+1. **Create four Pages** — Home, About, Services, Contact. Give them the slugs
+   `about`, `services`, `contact` (Home can be any slug).
+2. **Insert the matching pattern** into each page: in the editor, open the
+   inserter → **Patterns → Full pages** → choose *Page — Home / About / Services /
+   Contact*. Edit any text right there. Save.
+3. **Set the homepage** — Settings → Reading → *A static page* → Homepage = Home.
+4. **Menu** — Appearance → Editor → Navigation: add Home, About, Services, Contact.
+
+The `page-{slug}.html` templates auto-apply the full-width no-title layout to the
+about/services/contact pages; `front-page.html` does the same for the homepage.
+Individual sections (hero, services teaser, testimonial, etc.) are also available
+as patterns under *West Michigan Art Therapy* in the inserter.
 
 ## Status
 
