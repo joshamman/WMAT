@@ -35,29 +35,43 @@ site/
     └── assets/       fonts, images, js (journey.js, wmat.js), uploads
 ```
 
-## Deploy (Netlify — free)
+## Deploy to your own server
 
-1. Push this repo to GitHub (already at `joshamman/WMAT`).
-2. Netlify → **Add new site → Import from GitHub** → pick the repo.
-   - **Base directory:** `site`
-   - **Build command:** `npm run build`
-   - **Publish directory:** `site/dist`
-   (These are also in `netlify.toml`.)
-3. Deploy. You get a `*.netlify.app` URL immediately.
-4. **Custom domain:** Netlify → Domain settings → add `westmichiganarttherapy.com`,
-   then point DNS at Netlify. (Do this once you're happy with the preview.)
+It's a static site — build it and upload the files. No Node needed on the server
+(only PHP, for the contact form).
 
-### Contact form → Amy's inbox
-Netlify auto-detects the form on `/contact`. In Netlify → **Forms → Form
-notifications → Add email notification** → send to `amy@westmichiganarttherapy.com`.
-Submissions also show in the Netlify dashboard. (Add reCAPTCHA there if spam appears.)
+```bash
+cd site
+npm install
+npm run build      # outputs everything to site/dist/
+```
 
-### Blog CMS for Amy (Decap + Netlify Identity)
-1. Netlify → **Integrations/Identity → Enable Identity**.
-2. Identity → **Registration: Invite only**; under **Services → Git Gateway → Enable**.
-3. Identity → **Invite users** → invite `amy@…`. She gets an email, sets a password.
-4. She logs in at **`/admin/`** to write/publish posts — no code. Posts commit to the
-   repo and the site rebuilds automatically.
+Upload the **contents of `site/dist/`** to your web root (e.g. `/var/www/html`
+or `public_html`). That folder already includes `contact.php`. Done.
+
+- **Apache:** works as-is (pretty URLs are real folders with `index.html`).
+- **nginx:** add `index index.html;` and `try_files $uri $uri/ =404;` for the
+  location block; make sure PHP-FPM handles `.php`.
+
+### Contact form → Amy's inbox (PHP, self-hosted)
+The form on `/contact` POSTs to **`/contact.php`**, which emails
+`amy@westmichiganarttherapy.com` and redirects to `/thanks/`. Settings (recipient,
+From address) are at the top of `public/contact.php`.
+
+- The `From` address should be on your domain (`no-reply@westmichiganarttherapy.com`)
+  so it isn't rejected.
+- If `mail()` is unreliable on your server, switch to **SMTP** (PHPMailer with your
+  mailbox credentials) — there's a note at the bottom of `contact.php`.
+- Local `npm run dev` can't run PHP; test the form on the server, or run the built
+  site with `php -S localhost:8000 -t dist`.
+
+### Blog CMS for Amy
+The `/admin/` (Decap CMS) was set up for Netlify's free login. **On your own server
+that auth isn't available**, so the blog can be managed one of these ways — tell me
+which and I'll wire it:
+- **Josh adds posts** — drop Markdown files in `src/content/blog/`, rebuild, upload. Simplest.
+- **GitHub-based CMS** — Amy logs in to `/admin/` with a GitHub account (needs a small
+  OAuth helper). Self-service, a little setup.
 
 ## Editing content yourself
 - Pages: edit the `.astro` files in `src/pages/`.

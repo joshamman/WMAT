@@ -29,9 +29,8 @@ const rows = [
       </div>
 
       <div class="wmat-form-card">
-        <form class="wmat-form" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/thanks">
-          <input type="hidden" name="form-name" value="contact" />
-          <p hidden><label>Don't fill this out: <input name="bot-field" /></label></p>
+        <form class="wmat-form" name="contact" method="POST" action="/contact.php">
+          <p hidden aria-hidden="true"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
           <div class="wmat-form-row">
             <div class="wmat-field"><label for="name">Your name</label><input id="name" name="name" type="text" placeholder="First and last" required /></div>
             <div class="wmat-field"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="you@email.com" required /></div>
