@@ -3,15 +3,20 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 /**
- * Open every link inside Markdown content (i.e. blog posts) in a new tab.
+ * Open EXTERNAL links inside Markdown content (blog posts) in a new tab.
+ * Internal links (relative, anchors, or our own domain) stay in the same tab.
  * Markdown is only used for blog posts, so this is scoped to post bodies.
  */
-function rehypeBlogLinksNewTab() {
+function rehypeExternalLinksNewTab() {
   return (tree) => {
     const walk = (node) => {
-      if (node.type === 'element' && node.tagName === 'a' && node.properties?.href) {
-        node.properties.target = '_blank';
-        node.properties.rel = 'noopener noreferrer';
+      if (node.type === 'element' && node.tagName === 'a' && typeof node.properties?.href === 'string') {
+        const href = node.properties.href;
+        const isExternal = /^https?:\/\//i.test(href) && !href.includes('westmichiganarttherapy.com');
+        if (isExternal) {
+          node.properties.target = '_blank';
+          node.properties.rel = 'noopener noreferrer';
+        }
       }
       node.children?.forEach(walk);
     };
@@ -24,6 +29,6 @@ export default defineConfig({
   site: 'https://westmichiganarttherapy.com',
   integrations: [sitemap()],
   markdown: {
-    rehypePlugins: [rehypeBlogLinksNewTab],
+    rehypePlugins: [rehypeExternalLinksNewTab],
   },
 });

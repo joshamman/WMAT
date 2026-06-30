@@ -3,11 +3,20 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+  // Newest first (same order as the blog index).
+  const posts = (await getCollection('blog', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: {
+      post,
+      newer: posts[i - 1] ?? null, // more recent
+      older: posts[i + 1] ?? null, // earlier
+    },
+  }));
 }
 
-const { post } = Astro.props;
+const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
@@ -20,6 +29,23 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     <div class="wmat-prose" style="margin-top:40px">
       <Content />
     </div>
+
+    {(older || newer) && (
+      <nav class="post-nav" aria-label="More posts">
+        {older ? (
+          <a class="post-nav-link is-prev" href={`/blog/${older.id}/`}>
+            <span class="post-nav-dir"><span aria-hidden="true">‹</span> Previous</span>
+            <span class="post-nav-title">{older.data.title}</span>
+          </a>
+        ) : <span></span>}
+        {newer && (
+          <a class="post-nav-link is-next" href={`/blog/${newer.id}/`}>
+            <span class="post-nav-dir">Next <span aria-hidden="true">›</span></span>
+            <span class="post-nav-title">{newer.data.title}</span>
+          </a>
+        )}
+      </nav>
+    )}
   </article>
 
   <style is:global>
@@ -32,5 +58,12 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     .wmat-prose blockquote { margin: 1.5em 0; padding-left: 1.2em; border-left: 4px solid var(--teal-500); font-family: var(--font-display); font-style: italic; font-size: 1.25rem; color: var(--primary-dark, var(--teal-700)); }
     .wmat-prose img { border-radius: 14px; }
     .wmat-prose a { color: var(--teal-600); }
+
+    .post-nav { display: flex; gap: 16px; justify-content: space-between; margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--border-soft); }
+    .post-nav-link { display: flex; flex-direction: column; gap: 4px; max-width: 48%; text-decoration: none; color: var(--text-strong); }
+    .post-nav-link.is-next { margin-left: auto; text-align: right; align-items: flex-end; }
+    .post-nav-dir { font-family: var(--font-body); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--teal-600); }
+    .post-nav-title { font-family: var(--font-display); font-size: 1.0625rem; font-weight: 600; line-height: 1.25; }
+    .post-nav-link:hover .post-nav-title { color: var(--teal-700); text-decoration: underline; }
   </style>
 </PageLayout>
