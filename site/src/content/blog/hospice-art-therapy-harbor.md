@@ -2,8 +2,8 @@
 title: "Making something from the heart: art therapy in hospice care"
 date: 2026-06-30
 excerpt: "Alongside her private practice, Amy works as an art therapist in hospice care — helping patients and families say what words can't, and leave something lasting behind."
-image: /assets/images/mark-heart.jpg
-imageAlt: "A soft watercolor heart in lakeshore blues and gold"
+image: /assets/images/harbor-hospice-link.jpg
+imageAlt: "A hospice patient's hands painting a watercolor of a deer, pine trees, and a lake on a sketchpad"
 draft: false
 ---
 
