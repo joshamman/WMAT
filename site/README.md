@@ -47,7 +47,10 @@ site/
 ```
 
 ## Accessibility (WCAG 2.1 AA)
-- `npm run check` is the contrast gate; the `wcag-auditor` agent
+- `npm run check` runs **two** gates: `wcag-contrast.mjs` (intended color pairs)
+  and, after a build, `wcag-rendered.mjs` (resolves the actual CSS cascade for key
+  interactive elements — catches specificity overrides like an ancestor
+  `.j-nav a` recoloring the `.j-cta` label). The `wcag-auditor` agent
   (`.claude/agents/`) does a broader pre-publish review.
 - Built in: visible focus, skip links, real landmarks, required-field semantics,
   reduced-motion handling, decorative paint canvas, ≥24px targets.

@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check:contrast": "node scripts/wcag-contrast.mjs",
-    "check": "node scripts/wcag-contrast.mjs"
+    "check:rendered": "node scripts/wcag-rendered.mjs",
+    "check": "node scripts/wcag-contrast.mjs && astro build && node scripts/wcag-rendered.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

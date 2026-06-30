@@ -320,6 +320,9 @@ section { position: relative; }
 
 /* Fix: re-assert button text color on hover/focus so the global a:hover rule
    cannot recolor the label into its own background (the 'Begin' dark-on-green bug). */
+/* Rest state must outrank `.j-nav a { color: ink-700 }` (0,1,1) — the CTA label
+   was rendering gray on dark green. `.j-nav a.j-cta` (0,2,1) wins. */
+.j-nav a.j-cta { color: var(--cream-50, #FCF8F0); }
 .j-cta:hover, .j-cta:focus-visible { background: var(--navy-900, #142F49); color: var(--cream-50, #FCF8F0); transform: translateY(-1px); }
 .btn-paint.gold:hover, .btn-paint.gold:focus-visible { background: var(--gold-300); color: var(--ink-900); }
 .btn-paint.ghost:hover, .btn-paint.ghost:focus-visible { color: var(--cream-50); }
