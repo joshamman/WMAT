@@ -1,61 +1,45 @@
-# Contact form (Contact Form 7)
+# Contact form (self-hosted PHP)
 
-The Contact page pattern ships with a **styled static form** that falls back to
-`mailto:` — so the page works with no plugin. To capture submissions properly,
-use **Contact Form 7** (free). The theme already includes CSS that styles CF7's
-output to match the design.
+The static site (in `site/`) ships a styled contact form on **`/contact`** that
+POSTs to **`/contact.php`**. The handler emails Amy and redirects the visitor to
+**`/thanks/`**. No plugin, no WordPress, no third-party form service.
 
-## 1. Install & create the form
-1. Plugins → Add New → install & activate **Contact Form 7**.
-2. Contact → Add New. In the **Form** tab, replace the contents with:
+> This replaces the old WordPress / Contact Form 7 setup, which was dropped when
+> the site moved to a static Astro build. See `site/README.md` for the full
+> deploy guide.
 
+## How it works
+- Form: `site/src/pages/contact.astro` — `method="POST"`, `action="/contact.php"`.
+- Handler: `site/public/contact.php` — `public/` is copied verbatim into the
+  build, so the handler lands at the site root as `/contact.php`.
+- Success: the handler sends the email and issues a `303` redirect to `/thanks/`
+  (`site/src/pages/thanks.astro`).
+- Spam: a hidden honeypot field (`bot-field`) — if a bot fills it, the handler
+  pretends success and redirects to `/thanks/` **without sending**.
+
+## Requirements
+The host must run **PHP** (Apache with PHP, or nginx + PHP-FPM). The rest of the
+site is plain static HTML; PHP is only needed for this one file.
+
+`npm run dev` can't execute PHP. To test the form locally, build first and serve
+the output with PHP:
+
+```bash
+cd site
+npm run build
+php -S localhost:8000 -t dist     # then submit the form at /contact
 ```
-<div class="wmat-form-row">
-	<label class="wmat-field">Your name
-		[text* your-name placeholder "First and last"]</label>
-	<label class="wmat-field">Email
-		[email* your-email placeholder "you@email.com"]</label>
-</div>
-<label class="wmat-field">I'm interested in…
-	[select your-interest "Choose a service" "Individual Sessions" "Group Sessions" "Workshops" "Online Supervision" "Educational Presentations" "Not sure yet"]</label>
-<label class="wmat-field">Your message
-	[textarea your-message maxlength:180 placeholder "Tell me a little about what you're looking for…"]</label>
-<label class="wmat-check">[checkbox sliding-scale "I'd like to hear about sliding-scale options"]</label>
-[submit "Send Message"]
-```
 
-## 2. Mail tab
-- **To:** `amy@westmichiganarttherapy.com`
-- **From:** `[_site_admin_email]` (or a no-reply at your domain — using the
-  visitor's address as From often fails SPF/DMARC)
-- **Subject:** `New inquiry from [your-name] — westmichiganarttherapy.com`
-- **Reply-To:** `[your-email]`  ← add this so replies go to the visitor
-- **Message body:**
-  ```
-  Name: [your-name]
-  Email: [your-email]
-  Interested in: [your-interest]
-  Sliding scale: [sliding-scale]
+## Configure delivery
+Open `site/public/contact.php` and edit the settings block at the top:
 
-  [your-message]
-  ```
+- **`$TO`** — recipient (`amy@westmichiganarttherapy.com`).
+- **`$FROM`** — a no-reply address **on your domain**
+  (`no-reply@westmichiganarttherapy.com`). Using the visitor's address as `From`
+  fails SPF/DMARC; the visitor's address goes in `Reply-To` automatically.
+- **`$SMTP`** — *recommended.* Fill in the mailbox host / port / user / pass for
+  reliable delivery via the bundled PHPMailer (`public/lib/PHPMailer/`, nothing
+  to install). Leave `host` blank to fall back to PHP `mail()`, which shared
+  hosts often block or send straight to spam.
 
-Save. Copy the shortcode CF7 gives you, e.g. `[contact-form-7 id="123" title="Contact"]`.
-
-## 3. Put it on the Contact page
-Edit the Contact page (where you inserted the *Page — Contact* pattern):
-1. In the right-hand form card, delete the static **Custom HTML** form.
-2. Add a **Shortcode** block in its place and paste — **adding `html_class`**:
-   ```
-   [contact-form-7 id="123" html_class="wmat-form"]
-   ```
-   The `html_class="wmat-form"` is what makes CF7 inherit the theme's form styling.
-
-That's it — submissions now email Amy, with the design intact.
-
-## Notes
-- For spam protection, add CF7's free **reCAPTCHA** or **Akismet** integration.
-- Deliverability: if emails don't arrive, install an SMTP plugin (e.g. WP Mail
-  SMTP) — shared hosts often block PHP `mail()`.
-- Prefer a block-native form instead? Kadence Blocks or WPForms Lite both have a
-  form block; tell me and I'll adapt the pattern.
+That's it — submissions email Amy with the design intact.

@@ -230,7 +230,7 @@ html {
 .wmat-chip.is-teal { background: var(--chip-teal-bg); color: var(--teal-600); }
 .wmat-chip.is-gold { background: var(--status-warning-bg); color: var(--gold-600); }
 .wmat-chip.is-sage { background: var(--status-success-bg); color: var(--sage-600); }
-.wmat-chip.is-sky  { background: var(--status-info-bg); color: var(--sky-500); }
+.wmat-chip.is-sky  { background: var(--status-info-bg); color: #1B567A; }
 .wmat-chip.is-clay { background: var(--status-danger-bg); color: var(--clay-600); }
 
 /* ============================================================
@@ -245,8 +245,8 @@ html {
 	background: var(--chip-teal-bg); color: var(--teal-700); white-space: nowrap;
 }
 .wmat-badge .wmat-ico { font-size: 0.85rem; }
-.wmat-badge.is-gold { background: var(--status-warning-bg); color: var(--gold-600); }
-.wmat-badge.is-sage { background: var(--status-success-bg); color: var(--sage-600); }
+.wmat-badge.is-gold { background: var(--status-warning-bg); color: var(--clay-700); }
+.wmat-badge.is-sage { background: var(--status-success-bg); color: var(--pine-700); }
 
 .wmat-lead {
 	font-family: var(--font-body);
@@ -414,8 +414,8 @@ html {
 	padding: var(--space-4) var(--space-5); border-left: 4px solid var(--teal-600);
 	background: var(--surface-sunken);
 }
-.wmat-callout.is-info { background: var(--status-info-bg); border-left-color: var(--sky-500); }
-.wmat-callout.is-info .wmat-ico { color: var(--sky-500); }
+.wmat-callout.is-info { background: var(--status-info-bg); border-left-color: #1B567A; }
+.wmat-callout.is-info .wmat-ico { color: #1B567A; }
 .wmat-callout.is-note .wmat-ico { color: var(--teal-600); }
 .wmat-callout .wmat-ico { color: var(--teal-600); font-size: 1.25rem; flex-shrink: 0; margin-top: 2px; }
 .wmat-callout-title { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; color: var(--text-strong); display: block; margin-bottom: 0.15rem; }
@@ -502,14 +502,15 @@ html {
 	transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
 }
 .wmat-field input:focus, .wmat-field textarea:focus, .wmat-field select:focus {
-	outline: none; border-color: var(--teal-600); box-shadow: 0 0 0 3px rgba(232,179,61,.35);
+	outline: none; border-color: var(--teal-700);
+	box-shadow: 0 0 0 2px var(--surface-card), 0 0 0 4px var(--teal-700);
 }
 .wmat-check { display: flex; align-items: center; gap: 0.6rem; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-body); }
 .wmat-check input { width: 1.1rem; height: 1.1rem; accent-color: var(--teal-600); }
 .wmat-contact-rows { display: flex; flex-direction: column; gap: 0.9rem; }
 .wmat-contact-row { display: flex; align-items: center; gap: 0.9rem; }
 .wmat-contact-row .wmat-chip.is-sm { font-size: 1.25rem; }
-.wmat-contact-row .l { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-subtle); }
+.wmat-contact-row .l { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
 .wmat-contact-row .v { font-family: var(--font-body); font-size: 0.95rem; color: var(--ink-900); }
 
 /* ============================================================
@@ -557,4 +558,39 @@ html {
 @media (max-width: 781px) {
 	/* Stack every split on mobile, including those with inline column ratios. */
 	.wmat-split { grid-template-columns: 1fr !important; }
+}
+
+/* ============================================================
+   ACCESSIBILITY — focus, skip link, typography (widows)
+   ============================================================ */
+
+/* Visible keyboard focus everywhere (WCAG 2.4.7) */
+a:focus-visible,
+button:focus-visible,
+summary:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+.wmat-btn:focus-visible {
+	outline: 3px solid var(--teal-700);
+	outline-offset: 2px;
+	border-radius: 6px;
+}
+
+/* Skip link (inner pages) */
+.skip-link { position: absolute; left: -9999px; }
+.skip-link:focus {
+	position: fixed; left: 1rem; top: 1rem; z-index: 1000;
+	background: var(--teal-700); color: var(--cream-50);
+	padding: 0.6rem 1rem; border-radius: var(--radius-md); text-decoration: none;
+}
+
+/* Prevent typographic widows site-wide */
+p, li, blockquote, figcaption, .wmat-lead, .wmat-blurb, .wmat-card-text { text-wrap: pretty; }
+h1, h2, h3, h4, .wmat-card-title { text-wrap: balance; }
+
+/* Honor reduced motion for any transitions/animations */
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
 }

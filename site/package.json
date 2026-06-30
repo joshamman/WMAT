@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check:contrast": "node scripts/wcag-contrast.mjs",
+    "check": "node scripts/wcag-contrast.mjs"
   },
   "dependencies": {
     "astro": "^5.6.0"

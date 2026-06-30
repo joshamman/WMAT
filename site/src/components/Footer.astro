@@ -18,8 +18,8 @@ import Icon from './Icon.astro';
       <p class="wmat-foot-label">Explore</p>
       <nav class="wmat-foot-links" aria-label="Footer">
         <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/services">Services</a>
+        <a href="/#services">Services</a>
+        <a href="/#amy">About Amy</a>
         <a href="/blog">Blog</a>
         <a href="/contact">Contact</a>
       </nav>
@@ -33,6 +33,14 @@ import Icon from './Icon.astro';
         <a href="https://www.linkedin.com/" aria-label="LinkedIn" target="_blank" rel="noopener"><Icon name="linkedin" /></a>
       </p>
     </div>
+    <div>
+      <p class="wmat-foot-label">Professional affiliations</p>
+      <nav class="wmat-foot-links" aria-label="Professional affiliations">
+        <a href="https://arttherapy.org/" target="_blank" rel="noopener">American Art Therapy Association</a>
+        <a href="https://www.michiganarttherapy.org/" target="_blank" rel="noopener">Michigan Association of Art Therapy</a>
+        <a href="https://www.atcb.org/" target="_blank" rel="noopener">Art Therapy Credentials Board</a>
+      </nav>
+    </div>
   </div>
   <div class="wmat-footer-bar">
     <p>© {new Date().getFullYear()} West Michigan Art Therapy · Amy Rostollan-Hamman, ATR-BC</p>
@@ -41,8 +49,9 @@ import Icon from './Icon.astro';
 
 <style>
   .wmat-footer { background: var(--navy-900); color: var(--cream-50); padding: clamp(36px,6vw,64px) clamp(20px,5vw,56px) 32px; }
-  .wmat-footer-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 40px; }
-  @media (max-width: 700px) { .wmat-footer-grid { grid-template-columns: 1fr; gap: 28px; } }
+  .wmat-footer-grid { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.3fr; gap: 40px; }
+  @media (max-width: 820px) { .wmat-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  @media (max-width: 540px) { .wmat-footer-grid { grid-template-columns: 1fr; gap: 28px; } }
   .wmat-footer a { color: var(--cream-50); text-decoration: none; }
   .wmat-footer a:hover { color: var(--sky-300); }
   .wmat-foot-label { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-300); margin: 0 0 12px; }
@@ -52,8 +61,8 @@ import Icon from './Icon.astro';
   .wmat-foot-links { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
   .wmat-foot-line { font-size: 14px; margin: 0 0 8px; }
   .wmat-foot-muted { color: color-mix(in srgb, var(--cream-50) 75%, transparent); }
-  .wmat-foot-social { display: flex; gap: 10px; margin-top: 16px; font-size: 18px; }
-  .wmat-foot-social a { display: inline-flex; }
+  .wmat-foot-social { display: flex; gap: 6px; margin-top: 16px; font-size: 18px; }
+  .wmat-foot-social a { display: inline-flex; padding: 6px; }
   .wmat-footer-bar { max-width: 1080px; margin: 28px auto 0; padding-top: 20px; border-top: 1px solid color-mix(in srgb, var(--cream-50) 18%, transparent); }
   .wmat-footer-bar p { font-size: 12px; color: color-mix(in srgb, var(--cream-50) 60%, transparent); margin: 0; }
 </style>

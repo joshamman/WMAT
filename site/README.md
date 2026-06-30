@@ -7,7 +7,8 @@ No WordPress, no database, no maintenance. Matches the design system exactly.
   paint canvas, the journey path, dusk closing).
 - **About / Services / Contact** — the full designed pages.
 - **Blog** — Markdown posts, editable by Amy via a simple admin (Decap CMS).
-- **Contact form** — emails Amy via Netlify Forms (no plugin).
+- **Contact form** — emails Amy via a self-hosted PHP handler (`contact.php`),
+  no plugin or third-party service. See the deploy section below.
 
 ## Run it locally
 

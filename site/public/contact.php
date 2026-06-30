@@ -20,6 +20,7 @@ $SUBJECT    = 'New inquiry — westmichiganarttherapy.com';
 $THANKS_URL = '/thanks/';
 
 // SMTP — leave host '' to use PHP mail() instead.
+// Setup note (not published): site/SMTP-SETUP.md
 $SMTP = array(
     'host'   => '',                                  // e.g. mail.westmichiganarttherapy.com
     'port'   => 587,                                 // 587 (TLS) or 465 (SSL)
