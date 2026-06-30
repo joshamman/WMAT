@@ -318,6 +318,11 @@ section { position: relative; }
 /* Target size for top-nav links (>= 24px) */
 .j-nav a { padding: 8px 6px; }
 
+/* Header social icons (match the inner header) */
+.j-social { display: inline-flex; align-items: center; gap: 2px; }
+.j-social a { font-size: 18px; padding: 8px; color: var(--ink-700); display: inline-flex; }
+.j-social a:hover { color: var(--teal-700); }
+
 /* Fix: re-assert button text color on hover/focus so the global a:hover rule
    cannot recolor the label into its own background (the 'Begin' dark-on-green bug). */
 /* Rest state must outrank `.j-nav a { color: ink-700 }` (0,1,1) — the CTA label
