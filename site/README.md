@@ -21,8 +21,9 @@ cd site
 npm install
 npm run dev        # http://localhost:4321
 npm run build      # static output to dist/
+npm run rebuild    # clean caches + build (use after content/config changes)
 npm run preview    # serve the built site
-npm run check      # WCAG colour-contrast gate (scripts/wcag-contrast.mjs)
+npm run check      # WCAG gates (contrast pairs + rendered cascade)
 ```
 
 ## Project layout
