@@ -4,7 +4,20 @@
    ============================================================ */
 (function () {
   document.documentElement.classList.add('js');
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Re-evaluate live so toggling Reduce Motion after load takes effect.
+  var reduceMq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var reduce = reduceMq.matches;
+  var onReduceChange = function (e) {
+    reduce = e.matches;
+    if (reduce) {
+      // Clear any parallax transforms already applied.
+      for (var i = 0; i < parallax.length; i++) parallax[i].style.transform = '';
+    } else {
+      applyParallax();
+    }
+  };
+  if (reduceMq.addEventListener) reduceMq.addEventListener('change', onReduceChange);
+  else if (reduceMq.addListener) reduceMq.addListener(onReduceChange);
 
   /* ---------- Sticky header state ---------- */
   var header = document.querySelector('.j-header');

@@ -125,12 +125,12 @@ section { position: relative; }
 .j-nav a { font-size: 14px; font-weight: 500; color: var(--ink-700); text-decoration: none; }
 .j-nav a:hover { color: var(--teal-700); }
 .j-cta {
-  font-weight: 600; font-size: 14px; color: var(--cream-50);
-  background: var(--teal-600); border: none; cursor: pointer;
+  font-weight: 600; font-size: 14px; color: var(--cream-50, #FCF8F0);
+  background: var(--teal-700, #1E5859); border: none; cursor: pointer;
   padding: 9px 18px; border-radius: 999px; text-decoration: none;
   transition: background 0.2s, transform 0.2s;
 }
-.j-cta:hover { background: var(--teal-700); transform: translateY(-1px); }
+.j-cta:hover { background: var(--navy-900, #142F49); transform: translateY(-1px); }
 @media (max-width: 720px) { .j-nav .hide-sm { display: none; } }
 
 /* ---------- HERO ---------- */
@@ -320,7 +320,7 @@ section { position: relative; }
 
 /* Fix: re-assert button text color on hover/focus so the global a:hover rule
    cannot recolor the label into its own background (the 'Begin' dark-on-green bug). */
-.j-cta:hover, .j-cta:focus-visible { background: var(--teal-700); color: var(--cream-50); transform: translateY(-1px); }
+.j-cta:hover, .j-cta:focus-visible { background: var(--navy-900, #142F49); color: var(--cream-50, #FCF8F0); transform: translateY(-1px); }
 .btn-paint.gold:hover, .btn-paint.gold:focus-visible { background: var(--gold-300); color: var(--ink-900); }
 .btn-paint.ghost:hover, .btn-paint.ghost:focus-visible { color: var(--cream-50); }
 
@@ -348,3 +348,5 @@ section { position: relative; }
 .site-foot-label { font-family: var(--font-body); font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-300); margin: 0 0 4px; }
 .site-footer-bar { max-width: 1200px; margin: 28px auto 0; padding-top: 18px; border-top: 1px solid color-mix(in srgb, var(--cream-50) 18%, transparent); display: flex; flex-wrap: wrap; gap: 10px 24px; justify-content: space-between; font-size: 12px; color: color-mix(in srgb, var(--cream-50) 70%, transparent); }
 .site-footer-bar .loc { color: var(--sky-300); display: inline-flex; align-items: center; gap: 6px; }
+.site-footer-social { display: flex; gap: 6px; margin-top: 6px; font-size: 18px; }
+.site-footer-social a { display: inline-flex; padding: 6px; }

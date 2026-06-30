@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 import '../styles/journey.css';
 ---
 <BaseLayout title="West Michigan Art Therapy — Heal Through Creativity">
@@ -247,7 +248,7 @@ import '../styles/journey.css';
       <div class="wrap amy-grid">
         <div class="amy-portrait" data-reveal="left">
           <div class="wash tear drift2" style="inset:-7%;background:radial-gradient(circle at 50% 50%, var(--gold-300), transparent 72%);opacity:.55;z-index:0"></div>
-          <img src="/assets/images/mark-landscape-wide.jpg" alt="Amy Rostollan-Hamman" style="position:relative;z-index:2;width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:20px;display:block" />
+          <img src="/assets/images/amy-pittsburgh.jpg" alt="Amy Rostollan-Hamman, ATR-BC" style="position:relative;z-index:2;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:22% 30%;border-radius:20px;display:block" />
           <div class="badge"><b>15+</b><span>years of practice</span></div>
         </div>
         <div data-reveal>
@@ -318,6 +319,10 @@ import '../styles/journey.css';
         <p class="site-foot-label">Reach Amy</p>
         <a href="mailto:amy@westmichiganarttherapy.com">amy@westmichiganarttherapy.com</a>
         <span class="muted">West Olive, Michigan</span>
+        <span class="site-footer-social">
+          <a href="https://www.facebook.com/WestMichiganArtTherapy" aria-label="West Michigan Art Therapy on Facebook" target="_blank" rel="noopener"><Icon name="facebook" /></a>
+          <a href="https://www.linkedin.com/in/amy-rostollan-hamman-b386ba86/" aria-label="Amy Rostollan-Hamman on LinkedIn" target="_blank" rel="noopener"><Icon name="linkedin" /></a>
+        </span>
       </div>
       <div class="site-footer-col">
         <p class="site-foot-label">Professional affiliations</p>

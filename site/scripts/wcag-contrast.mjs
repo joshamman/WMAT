@@ -57,7 +57,10 @@ const PAIRS = [
   ['Primary button (hover)',    C.cream50, C.teal700, 'text'],
   ['Outline button label',      C.teal700, C.cream50, 'text'],
   ['Gold button text (ink)',    C.ink900,  C.gold400, 'text'],
-  ['"Begin" CTA (j-cta)',       C.cream50, C.teal600, 'text'],
+  ['"Begin" CTA rest (cream/teal-700)',  C.cream50, C.teal700, 'text'],
+  ['"Begin" CTA hover (cream/navy)',     C.cream50, C.navy900, 'text'],
+  ['is-sky chip/icon (#1B567A on info)', '#1B567A', '#E1F0F6', 'ui'],
+  ['is-gold badge text (clay-700)',      C.clay700, '#FBEFCF', 'text'],
 
   ['Footer text on navy',       C.cream50, C.navy900, 'text'],
   ['Footer label (sky on navy)', C.sky300, C.navy900, 'text'],

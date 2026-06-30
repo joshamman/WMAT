@@ -32,8 +32,8 @@ const rows = [
         <form class="wmat-form" name="contact" method="POST" action="/contact.php">
           <p hidden aria-hidden="true"><label>Don't fill this out: <input name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
           <div class="wmat-form-row">
-            <div class="wmat-field"><label for="name">Your name</label><input id="name" name="name" type="text" placeholder="First and last" required /></div>
-            <div class="wmat-field"><label for="email">Email</label><input id="email" name="email" type="email" placeholder="you@email.com" required /></div>
+            <div class="wmat-field"><label for="name">Your name <span class="req" aria-hidden="true">*</span></label><input id="name" name="name" type="text" placeholder="First and last" autocomplete="name" required aria-required="true" aria-describedby="message-hint" /></div>
+            <div class="wmat-field"><label for="email">Email <span class="req" aria-hidden="true">*</span></label><input id="email" name="email" type="email" placeholder="you@email.com" autocomplete="email" required aria-required="true" aria-describedby="message-hint" /></div>
           </div>
           <div class="wmat-field">
             <label for="interest">I'm interested in…</label>
@@ -49,7 +49,8 @@ const rows = [
           </div>
           <div class="wmat-field">
             <label for="message">Your message</label>
-            <textarea id="message" name="message" rows="4" maxlength="180" placeholder="Tell me a little about what you're looking for…"></textarea>
+            <textarea id="message" name="message" rows="4" maxlength="180" placeholder="Tell me a little about what you're looking for…" aria-describedby="message-hint"></textarea>
+            <span id="message-hint" class="wmat-field-hint">Up to 180 characters. Fields marked <span aria-hidden="true">*</span> are required.</span>
           </div>
           <label class="wmat-check"><input type="checkbox" name="sliding-scale" value="yes" /> I'd like to hear about sliding-scale options</label>
           <button class="wmat-btn is-primary is-lg is-full" type="submit">Send Message <Icon name="send" stroke={2.2} /></button>

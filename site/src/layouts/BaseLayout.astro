@@ -10,6 +10,36 @@ const {
   description = 'Board-certified art therapy for all ages on Michigan’s art coast — a calm, person-centered space to heal through creativity. Amy Rostollan-Hamman, ATR-BC.',
 } = Astro.props;
 const ogImage = new URL('/assets/images/wmat-theme-preview.jpg', Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': ['ProfessionalService', 'HealthAndBeautyBusiness'],
+  name: 'West Michigan Art Therapy',
+  description:
+    'Board-certified art therapy for all ages on the West Michigan lakeshore — individual and group sessions, workshops, supervision, and presentations, online or in person.',
+  url: 'https://westmichiganarttherapy.com',
+  email: 'amy@westmichiganarttherapy.com',
+  image: ogImage,
+  logo: new URL('/assets/images/mark-dunes.jpg', Astro.site).href,
+  areaServed: ['West Olive', 'Grand Rapids', 'Holland', 'Grand Haven', 'Saugatuck', 'Spring Lake', 'Michigan'],
+  address: { '@type': 'PostalAddress', addressLocality: 'West Olive', addressRegion: 'MI', addressCountry: 'US' },
+  sameAs: [
+    'https://www.facebook.com/WestMichiganArtTherapy',
+    'https://www.linkedin.com/in/amy-rostollan-hamman-b386ba86/',
+  ],
+  founder: {
+    '@type': 'Person',
+    name: 'Amy Rostollan-Hamman',
+    jobTitle: 'Board-Certified Art Therapist (ATR-BC)',
+    hasCredential: {
+      '@type': 'EducationalOccupationalCredential',
+      credentialCategory: 'Board Certification',
+      name: 'ATR-BC — Board Certified Registered Art Therapist',
+      recognizedBy: { '@type': 'Organization', name: 'Art Therapy Credentials Board', url: 'https://www.atcb.org/' },
+    },
+  },
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -18,12 +48,16 @@ const ogImage = new URL('/assets/images/wmat-theme-preview.jpg', Astro.site).hre
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
     <link rel="icon" href="/assets/images/logo.svg" type="image/svg+xml" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="West Michigan Art Therapy" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0JV4T0QSJ" is:inline></script>
