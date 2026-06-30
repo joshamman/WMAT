@@ -13,20 +13,23 @@
 // ===========================================================================
 //  SETTINGS — edit these
 // ===========================================================================
-$TO         = 'amy@westmichiganarttherapy.com';
-$FROM       = 'no-reply@westmichiganarttherapy.com'; // must be on your domain
-$FROM_NAME  = 'West Michigan Art Therapy';
+$TO         = 'amy@westmichiganarttherapy.com'; // forwards to Amy's Google inbox
+$FROM       = 'joshua@hamman.org';              // MUST equal the IONOS mailbox below
+$FROM_NAME  = 'West Michigan Art Therapy (website)';
 $SUBJECT    = 'New inquiry — westmichiganarttherapy.com';
 $THANKS_URL = '/thanks/';
 
-// SMTP — leave host '' to use PHP mail() instead.
+// SMTP (IONOS). Outgoing server requires authentication. The mailbox can only
+// send "From" its own address, so $FROM above is joshua@hamman.org. The
+// visitor's address is set as Reply-To, so replying goes to them.
+// Put the real password here ON THE SERVER ONLY — do not commit it.
 // Setup note (not published): site/SMTP-SETUP.md
 $SMTP = array(
-    'host'   => '',                                  // e.g. mail.westmichiganarttherapy.com
-    'port'   => 587,                                 // 587 (TLS) or 465 (SSL)
-    'user'   => '',                                  // e.g. amy@westmichiganarttherapy.com
-    'pass'   => '',                                  // mailbox password
-    'secure' => 'tls',                               // 'tls' for 587, 'ssl' for 465
+    'host'   => 'smtp.ionos.com',
+    'port'   => 587,                  // 587 = STARTTLS ('tls'); use 465 for 'ssl'
+    'user'   => 'joshua@hamman.org',  // full email address = IONOS username
+    'pass'   => '',                   // <-- set on the server only
+    'secure' => 'tls',
 );
 // ===========================================================================
 
