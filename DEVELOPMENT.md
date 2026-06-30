@@ -46,11 +46,8 @@ cd WMAT
 ```
 
 > **Picking up in-progress work from another machine:** uncommitted changes do
-> **not** sync across machines. Commit and push your working branch on the
-> machine you're leaving, then `git fetch && git checkout <branch>` on the other.
-> (As of this writing there's a full audit underway on branch
-> `claude/eloquent-herschel-dea04a` with **uncommitted** changes — push it before
-> switching machines, or those edits won't be on the laptop.)
+> **not** sync across machines. Commit and push on the machine you're leaving,
+> then `git pull` on the other. Active work is on `main`.
 
 `node_modules/`, `dist/`, and `.astro/` are git-ignored, so a fresh clone always
 needs `npm install` (next step).
@@ -109,17 +106,22 @@ npm run check          # WCAG colour-contrast check (scripts/wcag-contrast.mjs)
 
 ## 7. Editing content
 
-- **Pages:** `.astro` files in `site/src/pages/` (home, about, services, contact,
-  thanks, blog).
-- **Blog posts:** add Markdown files to `site/src/content/blog/` (or use the
-  Decap CMS at `/admin/` — see the deploy notes in `site/README.md`).
-- **Images:** drop into `site/public/assets/images/`.
+The marketing site is a **single page** (`site/src/pages/index.astro`) plus
+Contact, Blog, Thanks, and 404.
+
+- **Pages / copy & layout:** `.astro` files in `site/src/pages/`. Most content is
+  on the home one-pager (`index.astro`).
+- **Blog posts:** add Markdown files to `site/src/content/blog/` (frontmatter:
+  `title`, `date`, `excerpt`, `image`, `imageAlt`, `draft`), rebuild, re-upload.
+  No admin UI — posts are managed in code.
+- **Images:** drop into `site/public/assets/images/` (remember `alt` text).
 
 ---
 
 ## 8. Deploy (summary)
 
 It's a static site plus one PHP file. Build, then upload the **contents of
-`site/dist/`** (which already includes `contact.php`) to a PHP-capable web root.
-Full instructions — Apache vs nginx, the contact form, the blog CMS — are in
-[`site/README.md`](site/README.md).
+`site/dist/`** (which already includes `contact.php` + `lib/PHPMailer/`) to a
+PHP-capable web root, and set the email password on the server
+([`site/SMTP-SETUP.md`](site/SMTP-SETUP.md)). Full instructions — Apache vs
+nginx, the contact form, SEO — are in [`site/README.md`](site/README.md).

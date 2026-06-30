@@ -30,16 +30,17 @@ npm run build
 php -S localhost:8000 -t dist     # then submit the form at /contact
 ```
 
-## Configure delivery
-Open `site/public/contact.php` and edit the settings block at the top:
+## Configure delivery (IONOS — already set up)
+`site/public/contact.php` is pre-configured for **IONOS SMTP**:
 
-- **`$TO`** — recipient (`amy@westmichiganarttherapy.com`).
-- **`$FROM`** — a no-reply address **on your domain**
-  (`no-reply@westmichiganarttherapy.com`). Using the visitor's address as `From`
-  fails SPF/DMARC; the visitor's address goes in `Reply-To` automatically.
-- **`$SMTP`** — *recommended.* Fill in the mailbox host / port / user / pass for
-  reliable delivery via the bundled PHPMailer (`public/lib/PHPMailer/`, nothing
-  to install). Leave `host` blank to fall back to PHP `mail()`, which shared
-  hosts often block or send straight to spam.
+- **`$TO`** — `amy@westmichiganarttherapy.com` (forwards to Amy's Google inbox).
+- **`$FROM`** — `joshua@hamman.org`. IONOS only lets the mailbox send as itself,
+  so the From address must equal the authenticated account; the visitor's address
+  is set as `Reply-To` automatically.
+- **`$SMTP`** — `smtp.ionos.com:587` (STARTTLS), user `joshua@hamman.org`, via the
+  bundled PHPMailer (`public/lib/PHPMailer/`, nothing to install).
+
+The **only** value to add is the mailbox **password**, set in `contact.php`
+**on the server** (never committed). Full notes: **[`site/SMTP-SETUP.md`](site/SMTP-SETUP.md)**.
 
 That's it — submissions email Amy with the design intact.

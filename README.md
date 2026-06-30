@@ -1,8 +1,11 @@
 > **⚡ This project is now a static site (Astro) in [`site/`](site/).**
 > WordPress was dropped in favor of a fast, zero-maintenance static site that
-> matches the design exactly, emails Amy via Netlify Forms, and lets Amy publish
-> blog posts via a simple CMS. See **[`site/README.md`](site/README.md)** to run
-> and deploy. The WordPress theme below (`wmat-theme/`) is kept for reference only.
+> matches the design exactly. It's a single immersive home page (+ Contact and
+> Blog), WCAG 2.1 AA, SEO-ready, with a self-hosted PHP contact form that emails
+> Amy via IONOS SMTP. **Start here: [`DEVELOPMENT.md`](DEVELOPMENT.md)** (setup) and
+> **[`site/README.md`](site/README.md)** (architecture + deploy). The
+> `wmat-theme/` and `wordpress/` folders below are the retired WordPress build,
+> kept for reference only.
 
 ---
 

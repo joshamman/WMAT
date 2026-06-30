@@ -1,83 +1,93 @@
 # West Michigan Art Therapy — static site
 
-A fast, static site (Astro) for [westmichiganarttherapy.com](https://westmichiganarttherapy.com).
-No WordPress, no database, no maintenance. Matches the design system exactly.
+A fast, static site (Astro) for [westmichiganarttherapy.com](https://westmichiganarttherapy.com) —
+the practice of **Amy Rostollan-Hamman, ATR-BC**. No WordPress, no database, no
+maintenance. WCAG 2.1 AA, SEO-ready, and it matches the design exactly.
 
-- **Home** — the immersive "Visual Journey" (parallax washes, the watercolor
-  paint canvas, the journey path, dusk closing).
-- **About / Services / Contact** — the full designed pages.
-- **Blog** — Markdown posts, editable by Amy via a simple admin (Decap CMS).
-- **Contact form** — emails Amy via a self-hosted PHP handler (`contact.php`),
-  no plugin or third-party service. See the deploy section below.
+## Pages
+- **Home** (`/`) — a single immersive "Visual Journey" one-pager: hero, an
+  interactive watercolor paint canvas, *what art therapy is*, the journey
+  (arrive → explore → express → grow), *who Amy helps* (incl. hospice &
+  juvenile-justice work, all ages), the approach, services & pricing, payment +
+  FAQ, *meet Amy*, regions served, and a dusk closing. Nav is in-page anchors.
+- **Contact** (`/contact`) — details + a form that emails Amy (→ `/thanks/`).
+- **Blog** (`/blog`) — Markdown posts.
+- Plus a branded **404** and a **thanks** page.
 
 ## Run it locally
 
 ```bash
 cd site
 npm install
-npm run dev      # http://localhost:4321
+npm run dev        # http://localhost:4321
+npm run build      # static output to dist/
+npm run preview    # serve the built site
+npm run check      # WCAG colour-contrast gate (scripts/wcag-contrast.mjs)
 ```
-
-`npm run build` outputs the static site to `dist/`. `npm run preview` serves the built site.
 
 ## Project layout
 
 ```
 site/
+├── astro.config.mjs   site URL + sitemap integration
 ├── src/
-│   ├── pages/        index (immersive home), about, services, contact, thanks,
-│   │                 blog/index, blog/[...slug]
-│   ├── layouts/      BaseLayout, PageLayout
-│   ├── components/   Header, Footer, Icon
-│   ├── content/blog/ Markdown blog posts
-│   └── styles/       global.css, journey.css (immersive home only)
-└── public/
-    ├── admin/        Decap CMS (config.yml + index.html)
-    └── assets/       fonts, images, js (journey.js, wmat.js), uploads
+│   ├── pages/         index (immersive home), contact, thanks, 404,
+│   │                  blog/index, blog/[...slug]
+│   ├── layouts/       BaseLayout (head, GA, JSON-LD, SEO), PageLayout (chrome)
+│   ├── components/    Header, Footer, Icon
+│   ├── content/blog/  Markdown blog posts  (+ content.config.ts schema)
+│   └── styles/        global.css, journey.css (immersive home only)
+├── public/
+│   ├── contact.php    PHP form handler (published at /contact.php)
+│   ├── lib/PHPMailer/ bundled mailer for SMTP
+│   ├── robots.txt
+│   └── assets/        fonts, images, js (journey.js, wmat.js)
+└── scripts/
+    └── wcag-contrast.mjs   AA contrast gate (npm run check)
 ```
+
+## Accessibility (WCAG 2.1 AA)
+- `npm run check` is the contrast gate; the `wcag-auditor` agent
+  (`.claude/agents/`) does a broader pre-publish review.
+- Built in: visible focus, skip links, real landmarks, required-field semantics,
+  reduced-motion handling, decorative paint canvas, ≥24px targets.
 
 ## Deploy to your own server
 
-It's a static site — build it and upload the files. No Node needed on the server
-(only PHP, for the contact form).
+Static files + one PHP file. No Node needed on the server (only PHP).
 
 ```bash
-cd site
-npm install
-npm run build      # outputs everything to site/dist/
+cd site && npm run build
 ```
 
-Upload the **contents of `site/dist/`** to your web root (e.g. `/var/www/html`
-or `public_html`). That folder already includes `contact.php`. Done.
+Upload the **contents of `site/dist/`** to your web root (e.g. `public_html`).
+It already includes `contact.php`, `lib/PHPMailer/`, `robots.txt`, and
+`sitemap-index.xml`.
 
-- **Apache:** works as-is (pretty URLs are real folders with `index.html`).
-- **nginx:** add `index index.html;` and `try_files $uri $uri/ =404;` for the
-  location block; make sure PHP-FPM handles `.php`.
+- **Apache:** works as-is (pretty URLs are folders with `index.html`).
+- **nginx:** ensure PHP-FPM handles `.php`, and add `index index.html;` +
+  `try_files $uri $uri/ =404;`.
 
-### Contact form → Amy's inbox (PHP, self-hosted)
-The form on `/contact` POSTs to **`/contact.php`**, which emails
-`amy@westmichiganarttherapy.com` and redirects to `/thanks/`. Settings (recipient,
-From address) are at the top of `public/contact.php`.
+### Contact form → Amy's inbox (IONOS SMTP)
+The form POSTs to **`/contact.php`**, which sends via **IONOS** (`smtp.ionos.com`,
+authenticated as `joshua@hamman.org`) to `amy@westmichiganarttherapy.com` (which
+forwards to her Google inbox), with the visitor's address as **Reply-To**.
+Everything is pre-filled **except the password**, which you set on the server
+only — see **[`SMTP-SETUP.md`](SMTP-SETUP.md)**. (Never commit the password.)
 
-- **Recommended: SMTP.** Fill the `$SMTP` block at the top of `contact.php` with the
-  mailbox's host / port / username / password for reliable delivery (PHPMailer is
-  bundled in `public/lib/PHPMailer/`, nothing to install). Leave `host` blank to use
-  PHP `mail()` instead.
-- The `From` address should be on your domain (`no-reply@westmichiganarttherapy.com`)
-  so it isn't rejected; the visitor's address goes in `Reply-To`.
-- Local `npm run dev` can't run PHP; test the form on the server, or run the built
-  site with `php -S localhost:8000 -t dist`.
+### Blog
+Add a Markdown file to `src/content/blog/` (frontmatter: `title`, `date`,
+`excerpt`, `image`, `imageAlt`, `draft`), rebuild, and re-upload. There is no
+admin UI — posts are managed in code.
 
-### Blog CMS for Amy
-The `/admin/` (Decap CMS) was set up for Netlify's free login. **On your own server
-that auth isn't available**, so the blog can be managed one of these ways — tell me
-which and I'll wire it:
-- **Josh adds posts** — drop Markdown files in `src/content/blog/`, rebuild, upload. Simplest.
-- **GitHub-based CMS** — Amy logs in to `/admin/` with a GitHub account (needs a small
-  OAuth helper). Self-service, a little setup.
+## SEO
+`sitemap-index.xml` + `robots.txt`, canonical + Open Graph tags, `LocalBusiness`/
+`Person` JSON-LD (ATR-BC via the Art Therapy Credentials Board), and Google
+Analytics (G-R0JV4T0QSJ) — all wired in `BaseLayout.astro` / `astro.config.mjs`.
 
-## Editing content yourself
-- Pages: edit the `.astro` files in `src/pages/`.
-- Blog posts: add Markdown files to `src/content/blog/` (or use `/admin/`).
-- Real photos: drop them in `public/assets/images/` and swap the `mark-*` /
-  `portrait-placeholder` stand-ins for real photos of Amy, the studio, and artwork.
+## Editing content / brand
+- **Copy & layout:** the `.astro` files in `src/pages/` (home is `index.astro`).
+- **Photos:** drop into `public/assets/images/`. Amy's photo is
+  `amy-pittsburgh.jpg`; the journey/hero art and the logo are still brand
+  stand-ins (`mark-*.jpg`, `logo.svg`) — swap in the real logo and photography
+  when ready (update each image's `alt` text too).
