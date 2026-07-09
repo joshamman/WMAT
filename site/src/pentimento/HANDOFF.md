@@ -4,7 +4,7 @@
 
 **Status:** Working single-file MVP (`pentimento.html`, ~50 KB, no build, no server). Built and tested by the product owner (Josh) and his wife Amy, a board-certified art therapist. Ready to graduate from a one-file prototype into a real repo.
 
-> **Update — 2026-07-09:** §1 below is **done**. The monolith is split into `index.html` + `src/*.js` (plain classic scripts, still `file://`-runnable — *not* ES modules), a zero-dependency `node build.mjs` regenerates the single-file `pentimento.html`, d3 is self-hosted under `vendor/`, and `test/smoke.html` passes. Behavior was verified identical to the original (line-level code diff + smoke test on both the modular and built versions). See `README.md` and `CLAUDE.md`.
+> **Update — 2026-07-09:** §1 below is **done**. The monolith is split into plainly-formatted files — `index.html` (markup) + `styles.css` + `src/*.js` (classic scripts, still `file://`-runnable — *not* ES modules) + self-hosted `vendor/d3.min.js` — deployed as a folder with no build step and no single-file bundle. `test/smoke.html` passes and behavior was verified identical to the original. See `README.md` and `CLAUDE.md`. (An earlier iteration added a `build.mjs`/single-file bundle; removed at the owner's request — the separate files are the deliverable.)
 
 **Owner profile:** Josh is the product owner and does not write code day-to-day. Give him concrete, numbered, important-first summaries. He decides product direction; you implement. Amy is the clinical authority — any question about clinical meaning, scoring, or workflow is her call, not yours.
 

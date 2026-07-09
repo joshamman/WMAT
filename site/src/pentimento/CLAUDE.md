@@ -72,15 +72,14 @@ Amy is the clinical decision-maker. These are guardrails, not features to optimi
   fallback if it's missing. Do not add dependencies in this pass — migration triggers
   are HANDOFF §7 (stay vanilla until you need multi-device sync, real auth, or shared
   cross-view state that's painful by hand).
-- **`index.html` is the source of truth** and runs directly over `file://` (double-click,
-  or Safari → Add to Home Screen). It loads `src/*.js` as plain classic scripts — **not**
-  ES modules — because ES modules and `fetch()` are blocked on `file://`. They share one
-  global scope; **load order matters** (util first, `app.js`/`boot()` last).
-- **The single-file builds are artifacts.** Run `node build.mjs` to regenerate them — it
-  inlines `src/*.js` **and** `vendor/d3.min.js` into one self-contained HTML file, written
-  to both `pentimento.html` (root) and `deploy/index.html` (the deploy copy). Edit `src/*`,
-  never the built files by hand. **Deploy `deploy/index.html`**, not the dev `index.html`
-  (which needs `src/` + `vendor/` beside it and is blank if uploaded alone).
+- **No build step — the files are the app.** `index.html` (markup) + `styles.css` +
+  `src/*.js` + `vendor/d3.min.js` are edited and shipped as-is. There is deliberately no
+  bundler and no single-file build; deploy by uploading the **whole folder**. (`index.html`
+  alone is blank — it needs its siblings.)
+- **`index.html` runs directly over `file://`** (double-click, or Safari → Add to Home
+  Screen). It loads `styles.css` and `src/*.js` as plain, classic tags — **not** ES modules
+  — because ES modules and `fetch()` are blocked on `file://`. The scripts share one global
+  scope; **load order matters** (util first, `app.js`/`boot()` last).
 - **`src/canvas.js` is the ONE shared render primitive** (`drawStrokeOn` & friends), used
   by live drawing, replay, and thumbnails so what the therapist replays is pixel-identical
   to what the client drew. **Never fork it** (HANDOFF §5.1).

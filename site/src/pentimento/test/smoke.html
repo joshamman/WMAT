@@ -23,9 +23,9 @@
 <iframe id="app" title="app under test"></iframe>
 
 <script>
-/* Drives the REAL app (index.html by default, ?target=pentimento.html to test the
-   built file) through the actual user path and asserts on its live DOM. Serve the
-   repo over http and open /test/smoke.html — file:// blocks fetch + module loads. */
+/* Drives the REAL app (../index.html) through the actual user path and asserts on its
+   live DOM. Serve the repo over http and open /test/smoke.html — file:// blocks the
+   fetch() of the sample below. (?target=<file> can point at another html entry.) */
 'use strict';
 const results = [];
 const check = (name, cond, detail = '') => results.push({ name, pass: !!cond, detail });
