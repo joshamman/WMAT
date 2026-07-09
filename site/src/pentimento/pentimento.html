@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Pentimento — process recorder</title>
+<script src="./vendor/d3.min.js"></script>
+<style>
+:root{
+  --paper:#FAFAF7;      /* the drawing sheet */
+  --field:#EDEEEA;      /* app background, cool gallery grey */
+  --ink:#21241F;        /* india ink */
+  --graphite:#6E7268;   /* secondary text */
+  --ochre:#C29B45;      /* pauses, idle, attention */
+  --ochre-soft:rgba(194,155,69,.16);
+  --viridian:#2F6B5A;   /* interactive */
+  --viridian-soft:rgba(47,107,90,.12);
+  --line:#D8DAD3;
+  --shadow:0 2px 10px rgba(33,36,31,.07), 0 12px 32px rgba(33,36,31,.06);
+  --serif:ui-serif,"New York",Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* text the therapist may want to copy stays selectable */
+input,textarea,.note-item .t,.note-item div{-webkit-user-select:text;user-select:text}
+html,body{height:100%}
+body{font-family:var(--sans);background:var(--field);color:var(--ink);
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+button{font-family:var(--sans);border:none;background:none;color:inherit;cursor:pointer}
+.screen{display:none;min-height:100dvh}
+.screen.on{display:block}
+.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite)}
+
+/* ---------- HOME ---------- */
+#scr-home{padding:max(20px,env(safe-area-inset-top)) 24px 48px}
+.home-head{max-width:880px;margin:28px auto 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.wordmark{font-family:var(--serif);font-size:clamp(30px,4.5vw,42px);letter-spacing:-.01em}
+.wordmark small{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);margin-top:6px}
+.home-actions{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;
+  font-size:15px;font-weight:600;transition:transform .08s ease}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--ink);color:var(--paper)}
+.btn-ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.sessions{max-width:880px;margin:26px auto 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;text-align:left;
+  display:flex;flex-direction:column;transition:transform .1s ease}
+.card:active{transform:scale(.985)}
+.card .thumb{aspect-ratio:16/10;background:#fff;border-bottom:1px solid var(--line);
+  background-size:contain;background-repeat:no-repeat;background-position:center}
+.card .meta{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px}
+.card .code{font-weight:700;font-size:16px}
+.card .sub{font-family:var(--mono);font-size:11.5px;color:var(--graphite)}
+.empty{max-width:880px;margin:80px auto;text-align:center;color:var(--graphite)}
+.empty .big{font-family:var(--serif);font-size:24px;color:var(--ink);margin-bottom:8px}
+
+/* ---------- DRAW ---------- */
+#scr-draw{position:fixed;inset:0;background:var(--field);touch-action:none;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#sheet{background:var(--paper);box-shadow:var(--shadow);touch-action:none;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none}
+#sheet-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.draw-chip{position:absolute;top:max(12px,env(safe-area-inset-top));left:16px;display:flex;align-items:center;gap:8px;
+  background:var(--paper);border-radius:999px;padding:8px 14px;box-shadow:var(--shadow);
+  font-family:var(--mono);font-size:12px;color:var(--graphite);z-index:5}
+.rec-dot{width:8px;height:8px;border-radius:50%;background:var(--ochre);animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.35}50%{opacity:1}}
+@media (prefers-reduced-motion: reduce){.rec-dot{animation:none;opacity:.8}}
+#btn-done{position:absolute;top:max(12px,env(safe-area-inset-top));right:16px;z-index:5;
+  background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 20px;font-weight:700;font-size:15px;box-shadow:var(--shadow)}
+.tray{position:absolute;left:50%;transform:translateX(-50%);bottom:max(14px,env(safe-area-inset-bottom));z-index:5;
+  background:var(--paper);border-radius:999px;box-shadow:var(--shadow);
+  display:flex;align-items:center;gap:6px;padding:10px 14px;max-width:calc(100vw - 24px);overflow-x:auto}
+.swatch{width:34px;height:34px;border-radius:50%;flex:0 0 auto;border:2.5px solid transparent;position:relative}
+.swatch.sel{border-color:var(--ink);box-shadow:0 0 0 2px var(--paper) inset}
+.tray .sep{width:1px;height:26px;background:var(--line);flex:0 0 auto;margin:0 4px}
+.sizedot{width:34px;height:34px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
+.sizedot i{display:block;border-radius:50%;background:var(--ink)}
+.sizedot.sel{background:var(--viridian-soft)}
+.tool{width:38px;height:34px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:17px}
+.tool.sel{background:var(--viridian-soft)}
+.tool svg{display:block}
+
+/* ---------- REVIEW ---------- */
+#scr-review{padding:0 0 64px}
+.rev-head{position:sticky;top:0;z-index:10;background:var(--field);border-bottom:1px solid var(--line);
+  padding:max(10px,env(safe-area-inset-top)) 20px 10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.rev-head .code{font-family:var(--serif);font-size:22px}
+.rev-head .sub{font-family:var(--mono);font-size:11.5px;color:var(--graphite)}
+.rev-head .spacer{flex:1}
+.iconbtn{padding:9px 14px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--line);font-size:13.5px;font-weight:600}
+.stage-wrap{max-width:980px;margin:22px auto 0;padding:0 20px}
+#stage-box{display:flex;justify-content:center}
+#stage{background:var(--paper);box-shadow:var(--shadow)}
+.transport{max-width:980px;margin:16px auto 0;padding:0 20px;display:flex;align-items:center;gap:12px}
+#btn-play{width:52px;height:52px;border-radius:50%;background:var(--viridian);color:#fff;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto;box-shadow:var(--shadow)}
+#btn-play svg{display:block}
+#btn-speed{font-family:var(--mono);font-size:13px;font-weight:700;padding:10px 14px;border-radius:999px;
+  box-shadow:inset 0 0 0 1.5px var(--line);flex:0 0 auto;min-width:58px}
+#clock{font-family:var(--mono);font-size:14px;color:var(--graphite);flex:0 0 auto;min-width:118px;text-align:right}
+#scrub-wrap{max-width:980px;margin:10px auto 0;padding:0 20px;position:relative}
+#note-tip{position:absolute;z-index:30;display:none;pointer-events:none;background:var(--ink);color:var(--paper);
+  border-radius:10px;padding:9px 12px 10px;max-width:280px;font-size:13.5px;line-height:1.45;
+  box-shadow:0 6px 20px rgba(33,36,31,.28)}
+#note-tip .tt-time{font-family:var(--mono);font-size:11px;letter-spacing:.06em;opacity:.6;margin-bottom:3px}
+#note-tip .tt-caret{position:absolute;top:-5px;width:10px;height:10px;background:var(--ink);transform:rotate(45deg);border-radius:2px}
+#scrub{width:100%;display:block;touch-action:none;border-radius:10px;background:var(--paper);box-shadow:var(--shadow)}
+.legend{max-width:980px;margin:8px auto 0;padding:0 22px;display:flex;gap:18px;flex-wrap:wrap}
+.legend span{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--graphite);display:flex;align-items:center;gap:6px}
+.k{width:14px;height:8px;border-radius:2px;display:inline-block}
+.stats{max-width:980px;margin:26px auto 0;padding:0 20px;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.stat{background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:14px 14px 12px}
+.stat .v{font-family:var(--mono);font-size:22px;font-weight:700;letter-spacing:-.02em}
+.stat .v em{font-style:normal;font-size:13px;color:var(--graphite);font-weight:600}
+.stat .l{font-size:12px;color:var(--graphite);margin-top:3px}
+.stat.hot .v{color:var(--ochre)}
+.charts{max-width:980px;margin:8px auto 0;padding:0 20px}
+.chart{background:var(--paper);border-radius:14px;box-shadow:var(--shadow);padding:16px 16px 10px;margin-top:16px}
+.chart h3{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--graphite);font-weight:600}
+.chart .note{font-size:12px;color:var(--graphite);margin-top:2px}
+.chart svg{width:100%;display:block;margin-top:6px}
+.notes{max-width:980px;margin:16px auto 0;padding:0 20px}
+.note-add{display:flex;gap:10px;margin-top:10px}
+.note-add input{flex:1;font-family:var(--sans);font-size:15px;padding:12px 14px;border-radius:12px;
+  border:1.5px solid var(--line);background:var(--paper);color:var(--ink);outline:none}
+.note-add input:focus{border-color:var(--viridian)}
+.note-item{background:var(--paper);border-radius:12px;box-shadow:var(--shadow);padding:12px 14px;margin-top:10px;
+  display:flex;gap:12px;align-items:baseline}
+.note-item .t{font-family:var(--mono);font-size:12px;color:var(--viridian);font-weight:700;flex:0 0 auto;text-decoration:underline;text-underline-offset:3px}
+.note-item .x{margin-left:auto;color:var(--graphite);font-size:13px;flex:0 0 auto}
+
+/* ---------- MODAL / TOAST ---------- */
+#modal{position:fixed;inset:0;background:rgba(33,36,31,.35);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+#modal.on{display:flex}
+.modal-card{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);padding:24px;width:min(420px,100%)}
+.modal-card h2{font-family:var(--serif);font-size:24px;margin-bottom:6px}
+.modal-card p{color:var(--graphite);font-size:14px;margin-bottom:16px}
+.modal-card input{width:100%;font-size:17px;padding:13px 14px;border-radius:12px;border:1.5px solid var(--line);
+  background:#fff;color:var(--ink);outline:none;font-family:var(--mono)}
+.modal-card input:focus{border-color:var(--viridian)}
+.modal-actions{display:flex;gap:10px;margin-top:16px;justify-content:flex-end}
+#toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:999px;font-size:14px;
+  transition:transform .25s ease;z-index:60;max-width:90vw}
+#toast.on{transform:translateX(-50%) translateY(0)}
+input[type=file]{display:none}
+:focus-visible{outline:2.5px solid var(--viridian);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<section id="scr-home" class="screen on">
+  <div class="home-head">
+    <h1 class="wordmark">Pentimento<small>Art-therapy process recorder · MVP</small></h1>
+    <div class="home-actions">
+      <button class="btn btn-ghost" id="btn-import">Import session</button>
+      <button class="btn btn-primary" id="btn-new">＋ New session</button>
+    </div>
+  </div>
+  <div id="session-list" class="sessions"></div>
+  <div id="empty" class="empty" style="display:none">
+    <div class="big">Nothing recorded yet.</div>
+    <div>Start a new session, hand over the iPad, and every stroke — and every silence — is kept.</div>
+  </div>
+  <input type="file" id="file-import" accept=".json,application/json">
+</section>
+
+<!-- DRAW -->
+<section id="scr-draw" class="screen">
+  <div id="sheet-wrap"><canvas id="sheet"></canvas></div>
+  <div class="draw-chip"><span class="rec-dot"></span><span id="chip-code">S-0000</span></div>
+  <button id="btn-done">Done</button>
+  <div class="tray" id="tray"></div>
+</section>
+
+<!-- REVIEW -->
+<section id="scr-review" class="screen">
+  <div class="rev-head">
+    <button class="iconbtn" id="btn-back">← Sessions</button>
+    <div>
+      <div class="code" id="rev-code"></div>
+      <div class="sub" id="rev-sub"></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="btn-export">Export JSON</button>
+    <button class="iconbtn" id="btn-delete">Delete</button>
+  </div>
+
+  <div class="stage-wrap"><div id="stage-box"><canvas id="stage"></canvas></div></div>
+
+  <div class="transport">
+    <button id="btn-play" aria-label="Play"></button>
+    <button id="btn-speed">1×</button>
+    <div style="flex:1"></div>
+    <div id="clock">0:00 / 0:00</div>
+  </div>
+
+  <div id="scrub-wrap"><svg id="scrub"></svg><div id="note-tip"><div class="tt-time"></div><div class="tt-text"></div><div class="tt-caret"></div></div></div>
+  <div class="legend">
+    <span><i class="k" style="background:var(--ink)"></i> drawing</span>
+    <span><i class="k" style="background:var(--ochre)"></i> pause ≥ 2s</span>
+    <span><i class="k" style="background:var(--viridian)"></i> note</span>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="charts" id="charts"></div>
+
+  <div class="notes">
+    <div class="chart" style="padding-bottom:16px">
+      <h3>Therapist notes · pinned to the timeline</h3>
+      <div class="note-add">
+        <input id="note-text" placeholder="Observation at current playhead…" autocomplete="off">
+        <button class="btn btn-primary" id="btn-note">Pin at <span id="note-at" class="mono">0:00</span></button>
+      </div>
+      <div id="note-list"></div>
+    </div>
+  </div>
+</section>
+
+<div id="modal">
+  <div class="modal-card">
+    <h2>New session</h2>
+    <p>Give it a client code — never a name. Leave blank to auto-assign.</p>
+    <input id="inp-code" placeholder="e.g. S-0709-A" autocomplete="off" autocapitalize="characters">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="btn-cancel">Cancel</button>
+      <button class="btn btn-primary" id="btn-start">Start drawing</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* pentimento · util — DOM + formatting helpers, uid, toast
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ---------- utils ---------- */
+const $ = (s, el=document) => el.querySelector(s);
+const $$ = (s, el=document) => [...el.querySelectorAll(s)];
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const fmtT = ms => {
+  ms = Math.max(0, ms|0);
+  const s = Math.floor(ms/1000), m = Math.floor(s/60);
+  return m + ':' + String(s%60).padStart(2,'0');
+};
+const fmtSec = ms => (ms/1000).toFixed(ms < 10000 ? 1 : 0) + 's';
+const fmtDate = iso => {
+  const d = new Date(iso);
+  return d.toLocaleDateString(undefined,{month:'short',day:'numeric'}) + ' · ' +
+         d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'});
+};
+let toastTimer = null;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove('on'), 2600);
+}
+
+/* pentimento · storage — adapter (window.storage | localStorage) + keys
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ---------- storage adapter (artifact window.storage OR localStorage) ---------- */
+const hasWS = typeof window.storage === 'object' && window.storage && typeof window.storage.get === 'function';
+const store = {
+  async get(k){
+    if (hasWS){
+      try { const r = await window.storage.get(k); return r && r.value != null ? JSON.parse(r.value) : null; }
+      catch(e){ return null; }
+    }
+    try { const v = localStorage.getItem(k); return v == null ? null : JSON.parse(v); }
+    catch(e){ return null; }
+  },
+  async set(k, v){
+    const s = JSON.stringify(v);
+    if (s.length > 4.6e6) toast('Warning: session is very large — export it to be safe.');
+    if (hasWS){
+      try { const r = await window.storage.set(k, s); if (!r) toast('Save may have failed.'); return; }
+      catch(e){ toast('Save failed (storage limit?) — use Export.'); return; }
+    }
+    try { localStorage.setItem(k, s); }
+    catch(e){ toast('Save failed — device storage is full. Export your sessions.'); }
+  },
+  async del(k){
+    if (hasWS){ try { await window.storage.delete(k); } catch(e){} return; }
+    try { localStorage.removeItem(k); } catch(e){}
+  }
+};
+const K_IDX = 'pentimento-index';
+const K_S = id => 'pentimento-session-' + id;
+
+/* pentimento · canvas — the ONE shared render primitive (§5.1, §9.2). Never fork.
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* segment drawing — the ONE function used by live + replay + thumbs,
+   so what the therapist replays is exactly what the client saw. */
+function segWidth(st, p){
+  return st.pt==='pen' ? st.size*(0.35 + p*1.3) : st.size;
+}
+function drawSegOn(ctx, st, x0,y0, x1,y1, p){
+  ctx.globalCompositeOperation = st.tool==='eraser' ? 'destination-out' : 'source-over';
+  ctx.strokeStyle = st.color;
+  ctx.lineWidth = st.tool==='eraser' ? st.size*3 : segWidth(st, p);
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+}
+function drawDotOn(ctx, st, x,y,p){
+  ctx.globalCompositeOperation = st.tool==='eraser' ? 'destination-out' : 'source-over';
+  ctx.fillStyle = st.color;
+  const r = (st.tool==='eraser' ? st.size*3 : segWidth(st,p))/2;
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+}
+function drawStrokeOn(ctx, st, uptoT){
+  const pts = st.pts; if (!pts.length) return;
+  const lim = uptoT==null ? Infinity : uptoT;
+  if (pts.length===1 || pts[1][2] > lim){ if (pts[0][2]<=lim) drawDotOn(ctx,st,pts[0][0],pts[0][1],pts[0][3]); return; }
+  for (let i=1;i<pts.length;i++){
+    if (pts[i][2] > lim) break;
+    drawSegOn(ctx, st, pts[i-1][0],pts[i-1][1], pts[i][0],pts[i][1], pts[i][3]);
+  }
+}
+
+/* pentimento · analyze — pure process metrics, pauses first (§5.3)
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ============================================================
+   ANALYTICS + CHARTS — pauses first (they ranked #1).
+   ============================================================ */
+function analyze(s){
+  const strokes = s.strokes || [];
+  let dur = s.durationMs || 0;
+  for (const st of strokes) dur = Math.max(dur, st.t1||0, st.un||0);
+  dur = Math.max(dur, 1);
+
+  // idle intervals >= 2s across the whole session (incl. before first mark, after last)
+  const pauses = [];
+  let cursor = 0;
+  for (const st of strokes){
+    if (st.t0 - cursor >= 2000) pauses.push({t0:cursor, t1:st.t0, d:st.t0-cursor});
+    cursor = Math.max(cursor, st.t1);
+  }
+  if (dur - cursor >= 2000) pauses.push({t0:cursor, t1:dur, d:dur-cursor});
+
+  const activeMs = strokes.reduce((a,st)=> a + Math.max(1, st.t1-st.t0), 0);
+  const firstMark = strokes.length ? strokes[0].t0 : dur;
+  const longest = pauses.reduce((a,p)=> Math.max(a,p.d), 0);
+
+  // bins
+  const binMs = Math.max(1000, Math.ceil(dur/80/500)*500);
+  const nb = Math.ceil(dur/binMs);
+  const rate = new Array(nb).fill(0);
+  const pr = Array.from({length:nb}, ()=>null); // pressure {sum,n,min,max}
+  for (const st of strokes){
+    const isPen = st.pt === 'pen';
+    for (const p of st.pts){
+      const b = Math.min(nb-1, Math.floor(p[2]/binMs));
+      rate[b]++;
+      if (isPen){
+        if (!pr[b]) pr[b] = {sum:0,n:0,min:1,max:0};
+        pr[b].sum += p[3]; pr[b].n++;
+        pr[b].min = Math.min(pr[b].min, p[3]); pr[b].max = Math.max(pr[b].max, p[3]);
+      }
+    }
+  }
+  const bins = rate.map((c,i)=> ({t: i*binMs + binMs/2, v: c/(binMs/1000)}));
+  const pbins = pr.map((o,i)=> o && o.n ? {t:i*binMs+binMs/2, mean:o.sum/o.n, min:o.min, max:o.max} : null)
+                  .filter(Boolean);
+
+  // canvas coverage over time (approx.; ignores erasing)
+  const GW = 96, GH = Math.max(8, Math.min(160, Math.round(GW*s.h/Math.max(1,s.w))));
+  const grid = new Uint8Array(GW*GH);
+  let covered = 0; const total = GW*GH;
+  const cov = [{t:0, pct:0}];
+  let edge = binMs;
+  for (const st of strokes){
+    if (st.tool === 'eraser') continue;
+    for (const p of st.pts){
+      while (p[2] > edge){ cov.push({t:edge, pct:covered/total*100}); edge += binMs; }
+      const gx = Math.max(0, Math.min(GW-1, Math.floor(p[0]/s.w*GW)));
+      const gy = Math.max(0, Math.min(GH-1, Math.floor(p[1]/s.h*GH)));
+      const gi = gy*GW+gx;
+      if (!grid[gi]){ grid[gi]=1; covered++; }
+    }
+  }
+  cov.push({t:dur, pct:covered/total*100});
+
+  const colors = new Set(strokes.filter(st=>st.tool!=='eraser').map(st=>st.color));
+  const undos = strokes.filter(st=>st.un!=null).length;
+
+  return { dur, pauses, activeMs, firstMark, longest, bins, binMs, pbins,
+           cov, colors:[...colors], undos,
+           hasPressure: pbins.length > 0 };
+}
+
+/* pentimento · charts — stat cards + the five d3 charts (§5.4)
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ---------- stat cards ---------- */
+function renderStats(){
+  const A = R.A, s = R.s;
+  R.s.durationMs = A.dur;
+  const cards = [
+    {v: fmtT(A.dur), l:'Total time'},
+    {v: Math.round(A.activeMs/A.dur*100) + '%', l:'Active drawing', em: fmtT(A.activeMs)},
+    {v: fmtSec(A.firstMark), l:'Time to first mark', hot:true},
+    {v: A.longest ? fmtSec(A.longest) : '—', l:'Longest pause', hot:true},
+    {v: A.pauses.length, l:'Pauses ≥ 2s', hot:true},
+    {v: s.strokes.length, l:'Strokes'},
+    {v: A.colors.length, l:'Colors used'},
+    {v: A.undos, l:'Undos'}
+  ];
+  $('#stats').innerHTML = cards.map(c =>
+    `<div class="stat${c.hot?' hot':''}"><div class="v">${c.v}${c.em?` <em>${c.em}</em>`:''}</div><div class="l">${c.l}</div></div>`
+  ).join('');
+}
+
+/* ---------- charts ---------- */
+const CM = {l:40, r:14, t:10, b:24};
+function chartShell(parent, title, note, h){
+  const div = document.createElement('div');
+  div.className = 'chart';
+  div.innerHTML = `<h3>${title}</h3>` + (note?`<div class="note">${note}</div>`:'');
+  parent.appendChild(div);
+  const w = Math.max(300, div.clientWidth - 32);
+  const svg = d3.select(div).append('svg').attr('viewBox',`0 0 ${w} ${h}`);
+  return {svg, w, h, div};
+}
+function styleAxis(g){
+  g.selectAll('text').attr('font-family','var(--mono)').attr('font-size',10).attr('fill','var(--graphite)');
+  g.selectAll('line').attr('stroke','var(--line)');
+  g.select('.domain').attr('stroke','var(--line)');
+}
+function xTime(w, dur){ return d3.scaleLinear().domain([0,dur]).range([CM.l, w-CM.r]); }
+function axisX(svg, x, h){
+  const g = svg.append('g').attr('transform',`translate(0,${h-CM.b})`)
+    .call(d3.axisBottom(x).ticks(6).tickFormat(fmtT).tickSize(4));
+  styleAxis(g);
+}
+function pauseBands(svg, x, h){
+  for (const p of R.A.pauses){
+    svg.append('rect').attr('x',x(p.t0)).attr('y',CM.t)
+      .attr('width',Math.max(1,x(p.t1)-x(p.t0))).attr('height',h-CM.t-CM.b)
+      .attr('fill','var(--ochre)').attr('opacity',.14);
+  }
+}
+
+function chartTempo(parent){
+  const A = R.A;
+  const {svg,w,h} = chartShell(parent,'Drawing tempo','Hand motion (recorded points per second). Ochre bands are silence ≥ 2s.',150);
+  const x = xTime(w, A.dur);
+  const y = d3.scaleLinear().domain([0, Math.max(1, d3.max(A.bins,d=>d.v)*1.1)]).range([h-CM.b, CM.t]);
+  pauseBands(svg,x,h);
+  const area = d3.area().x(d=>x(d.t)).y0(y(0)).y1(d=>y(d.v)).curve(d3.curveMonotoneX);
+  svg.append('path').datum(A.bins).attr('d',area).attr('fill','var(--ink)').attr('opacity',.85);
+  axisX(svg,x,h);
+  const gy = svg.append('g').attr('transform',`translate(${CM.l},0)`)
+    .call(d3.axisLeft(y).ticks(3).tickSize(3));
+  styleAxis(gy);
+}
+
+function chartPauses(parent){
+  const A = R.A;
+  const {svg,w,h,div} = chartShell(parent,'Pause map','Every silence of 2s or longer — when it happened and how long it lasted.',140);
+  if (!A.pauses.length){
+    d3.select(div).append('div').attr('class','note').style('padding','14px 0').text('No pauses of 2 seconds or longer — continuous drawing throughout.');
+    svg.remove(); return;
+  }
+  const x = xTime(w, A.dur);
+  const y = d3.scaleLinear().domain([0, Math.max(4, d3.max(A.pauses,d=>d.d/1000)*1.15)]).range([h-CM.b, CM.t]);
+  for (const p of A.pauses){
+    const cx = x((p.t0+p.t1)/2);
+    svg.append('line').attr('x1',cx).attr('x2',cx).attr('y1',y(0)).attr('y2',y(p.d/1000))
+      .attr('stroke','var(--ochre)').attr('stroke-width',2);
+    svg.append('circle').attr('cx',cx).attr('cy',y(p.d/1000)).attr('r',5)
+      .attr('fill','var(--ochre)');
+    svg.append('text').attr('x',cx).attr('y',y(p.d/1000)-9).attr('text-anchor','middle')
+      .attr('font-family','var(--mono)').attr('font-size',10).attr('fill','var(--graphite)')
+      .text(fmtSec(p.d));
+  }
+  axisX(svg,x,h);
+  const gy = svg.append('g').attr('transform',`translate(${CM.l},0)`).call(d3.axisLeft(y).ticks(3).tickSize(3).tickFormat(d=>d+'s'));
+  styleAxis(gy);
+}
+
+function chartPressure(parent){
+  const A = R.A;
+  if (!A.hasPressure) return;
+  const {svg,w,h} = chartShell(parent,'Pencil pressure','How hard they pressed (0–1). Band is the range within each moment; line is the average.',150);
+  const x = xTime(w, A.dur);
+  const y = d3.scaleLinear().domain([0,1]).range([h-CM.b, CM.t]);
+  pauseBands(svg,x,h);
+  const band = d3.area().x(d=>x(d.t)).y0(d=>y(d.min)).y1(d=>y(d.max)).curve(d3.curveMonotoneX);
+  svg.append('path').datum(A.pbins).attr('d',band).attr('fill','var(--viridian)').attr('opacity',.18);
+  const line = d3.line().x(d=>x(d.t)).y(d=>y(d.mean)).curve(d3.curveMonotoneX);
+  svg.append('path').datum(A.pbins).attr('d',line).attr('fill','none').attr('stroke','var(--viridian)').attr('stroke-width',2);
+  axisX(svg,x,h);
+  const gy = svg.append('g').attr('transform',`translate(${CM.l},0)`).call(d3.axisLeft(y).ticks(3).tickSize(3));
+  styleAxis(gy);
+}
+
+function chartCoverage(parent){
+  const A = R.A;
+  const {svg,w,h} = chartShell(parent,'Canvas coverage','How much of the sheet had been touched, over time (approximate; erasing not subtracted).',140);
+  const x = xTime(w, A.dur);
+  const maxPct = Math.max(5, d3.max(A.cov,d=>d.pct)*1.2);
+  const y = d3.scaleLinear().domain([0, Math.min(100,maxPct)]).range([h-CM.b, CM.t]);
+  pauseBands(svg,x,h);
+  const line = d3.line().x(d=>x(d.t)).y(d=>y(d.pct)).curve(d3.curveMonotoneX);
+  svg.append('path').datum(A.cov).attr('d',line).attr('fill','none').attr('stroke','var(--ink)').attr('stroke-width',2);
+  axisX(svg,x,h);
+  const gy = svg.append('g').attr('transform',`translate(${CM.l},0)`).call(d3.axisLeft(y).ticks(3).tickSize(3).tickFormat(d=>d+'%'));
+  styleAxis(gy);
+}
+
+function chartSequence(parent){
+  const A = R.A, s = R.s;
+  const {svg,w,h} = chartShell(parent,'Stroke sequence & color','Each bar is one stroke, in its color, when it happened. Faded = later undone (ochre tick marks the undo).',72);
+  const x = xTime(w, A.dur);
+  const y0 = CM.t, bh = h-CM.b-CM.t;
+  for (const st of s.strokes){
+    svg.append('rect').attr('x',x(st.t0)).attr('y',y0)
+      .attr('width',Math.max(1.5, x(st.t1)-x(st.t0))).attr('height',bh).attr('rx',1.5)
+      .attr('fill', st.tool==='eraser' ? '#B9BEB4' : st.color)
+      .attr('opacity', st.un!=null ? .25 : .92);
+    if (st.un!=null){
+      svg.append('line').attr('x1',x(st.un)).attr('x2',x(st.un)).attr('y1',y0).attr('y2',y0+bh)
+        .attr('stroke','var(--ochre)').attr('stroke-width',2);
+    }
+  }
+  axisX(svg,x,h);
+}
+
+function renderCharts(){
+  const parent = $('#charts'); parent.innerHTML = '';
+  if (typeof d3 === 'undefined'){
+    parent.innerHTML = '<div class="chart"><h3>Charts unavailable</h3><div class="note">d3 could not load (offline?). Replay still works; reconnect to see the dashboard.</div></div>';
+    return;
+  }
+  chartTempo(parent);
+  chartPauses(parent);
+  chartPressure(parent);
+  chartCoverage(parent);
+  chartSequence(parent);
+}
+
+/* pentimento · draw — live recording: pointer handling, tray, undo, thumbnail (§2, §5)
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ============================================================
+   DRAW — the client screen. A sheet of paper; recording is
+   automatic. Every point carries x, y, time, pressure.
+   ============================================================ */
+const COLORS = ['#1A1A1A','#C7362B','#DE7B26','#D9B23A','#3E7C4F','#2D5FA8','#6B4FA0','#7A4A2A'];
+const SIZES = [4, 9, 16];
+
+const D = {   // live drawing state
+  session:null, ctx:null, t0:0,
+  color:COLORS[0], size:SIZES[1], tool:'brush',
+  activeId:null, penUsed:false, stroke:null, lastPt:null
+};
+
+function nowT(){ return Math.round(performance.now() - D.t0); }
+
+function buildTray(){
+  const tray = $('#tray'); tray.innerHTML = '';
+  COLORS.forEach(c=>{
+    const b = document.createElement('button');
+    b.className = 'swatch'; b.style.background = c;
+    b.setAttribute('aria-label','color');
+    b.addEventListener('click', ()=>{ D.color=c; D.tool='brush'; refreshTray(); });
+    b.dataset.c = c; tray.appendChild(b);
+  });
+  tray.insertAdjacentHTML('beforeend','<span class="sep"></span>');
+  SIZES.forEach(sz=>{
+    const b = document.createElement('button');
+    b.className = 'sizedot'; b.dataset.s = sz;
+    b.innerHTML = `<i style="width:${sz+4}px;height:${sz+4}px"></i>`;
+    b.addEventListener('click', ()=>{ D.size=sz; refreshTray(); });
+    tray.appendChild(b);
+  });
+  tray.insertAdjacentHTML('beforeend','<span class="sep"></span>');
+  const er = document.createElement('button');
+  er.className='tool'; er.id='t-eraser'; er.title='Eraser';
+  er.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M11.5 3.5 16.5 8.5 9 16H5.5L3.5 14 11.5 3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M4 17.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  er.addEventListener('click', ()=>{ D.tool = D.tool==='eraser' ? 'brush' : 'eraser'; refreshTray(); });
+  tray.appendChild(er);
+  const un = document.createElement('button');
+  un.className='tool'; un.title='Undo';
+  un.innerHTML = '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7.5 4 3.5 8l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.5 8h8a5 5 0 0 1 0 10H8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+  un.addEventListener('click', doUndo);
+  tray.appendChild(un);
+  refreshTray();
+}
+function refreshTray(){
+  $$('.swatch').forEach(b => b.classList.toggle('sel', b.dataset.c===D.color && D.tool==='brush'));
+  $$('.sizedot').forEach(b => b.classList.toggle('sel', +b.dataset.s===D.size));
+  $('#t-eraser').classList.toggle('sel', D.tool==='eraser');
+}
+
+function startSession(code){
+  const w = document.documentElement.clientWidth;
+  const h = document.documentElement.clientHeight;
+  D.session = { v:1, id:uid(), code, startedAt:new Date().toISOString(),
+                w, h, strokes:[], notes:[], hasPen:false, durationMs:0, thumb:'' };
+  D.t0 = performance.now();
+  D.penUsed = false; D.activeId = null; D.stroke = null;
+  D.tool='brush'; D.color=COLORS[0]; D.size=SIZES[1];
+
+  const c = $('#sheet'), dpr = Math.min(window.devicePixelRatio||1, 3);
+  c.width = w*dpr; c.height = h*dpr;
+  c.style.width = w+'px'; c.style.height = h+'px';
+  D.ctx = c.getContext('2d');
+  D.ctx.setTransform(dpr,0,0,dpr,0,0);
+  D.ctx.lineCap='round'; D.ctx.lineJoin='round';
+  D.ctx.clearRect(0,0,w,h);
+
+  $('#chip-code').textContent = code;
+  buildTray();
+  show('scr-draw');
+  App.dirty = false;
+  clearInterval(App.autosave);
+  App.autosave = setInterval(()=>{ if (App.dirty && D.session){ persistCurrent(false); App.dirty=false; } }, 10000);
+}
+
+async function persistCurrent(final){
+  const s = D.session; if (!s) return;
+  s.durationMs = nowT();
+  if (final){
+    s.thumb = makeThumb(s);
+    const i = App.idx.findIndex(x=>x.id===s.id);
+    if (i>=0) App.idx[i] = indexEntry(s); else App.idx.push(indexEntry(s));
+    await saveIndex();
+  } else if (!App.idx.some(x=>x.id===s.id)){
+    App.idx.push(indexEntry(s)); await saveIndex();
+  }
+  await store.set(K_S(s.id), s);
+}
+
+function redrawLive(){
+  const s = D.session, ctx = D.ctx;
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height); ctx.restore();
+  for (const st of s.strokes) if (st.un==null) drawStrokeOn(ctx, st, null);
+}
+
+function doUndo(){
+  const s = D.session;
+  for (let i=s.strokes.length-1;i>=0;i--){
+    if (s.strokes[i].un==null){ s.strokes[i].un = nowT(); redrawLive(); App.dirty=true; return; }
+  }
+}
+
+/* pointer handling with palm rejection:
+   once a Pencil has drawn in this session, touches are ignored. */
+function acceptPointer(e){
+  if (D.activeId != null && e.pointerId !== D.activeId) return false;
+  if (e.pointerType === 'touch' && D.penUsed) return false;
+  return true;
+}
+function ptFrom(e, rect){
+  const x = Math.round((e.clientX-rect.left)*10)/10;
+  const y = Math.round((e.clientY-rect.top)*10)/10;
+  const p = Math.round((e.pressure||0)*100)/100;
+  return [x,y,nowT(),p];
+}
+function bindDraw(){
+  const c = $('#sheet');
+  c.addEventListener('pointerdown', e=>{
+    if (D.session==null) return;
+    if (e.pointerType==='pen'){ D.penUsed = true; D.session.hasPen = true; }
+    if (!acceptPointer(e) || D.activeId!=null) return;
+    e.preventDefault();
+    D.activeId = e.pointerId;
+    try{ c.setPointerCapture(e.pointerId); }catch(_){}
+    const rect = c.getBoundingClientRect();
+    const pt = ptFrom(e, rect);
+    D.stroke = { i:uid(), t0:pt[2], t1:pt[2], tool:D.tool, color:D.color, size:D.size,
+                 pt:e.pointerType, un:null, pts:[pt] };
+    D.lastPt = pt;
+    drawDotOn(D.ctx, D.stroke, pt[0], pt[1], pt[3]);
+  });
+  c.addEventListener('pointermove', e=>{
+    if (D.stroke==null || e.pointerId!==D.activeId) return;
+    e.preventDefault();
+    const rect = c.getBoundingClientRect();
+    const evs = (e.getCoalescedEvents && e.getCoalescedEvents().length) ? e.getCoalescedEvents() : [e];
+    for (const ev of evs){
+      const pt = ptFrom(ev, rect);
+      const lp = D.lastPt;
+      const dx = pt[0]-lp[0], dy = pt[1]-lp[1];
+      if ((pt[2]-lp[2]) < 8 && (dx*dx+dy*dy) < 0.25) continue;  // thinning
+      drawSegOn(D.ctx, D.stroke, lp[0],lp[1], pt[0],pt[1], pt[3]);
+      D.stroke.pts.push(pt); D.lastPt = pt;
+    }
+  });
+  const end = e=>{
+    if (D.stroke==null || e.pointerId!==D.activeId) return;
+    const rect = c.getBoundingClientRect();
+    const pt = ptFrom(e, rect);
+    if (pt[2] > D.lastPt[2]){
+      drawSegOn(D.ctx, D.stroke, D.lastPt[0],D.lastPt[1], pt[0],pt[1], pt[3]);
+      D.stroke.pts.push(pt);
+    }
+    D.stroke.t1 = D.stroke.pts[D.stroke.pts.length-1][2];
+    D.session.strokes.push(D.stroke);
+    D.stroke = null; D.activeId = null; D.lastPt = null;
+    App.dirty = true;
+  };
+  c.addEventListener('pointerup', end);
+  c.addEventListener('pointercancel', end);
+  c.addEventListener('contextmenu', e=>e.preventDefault());
+  c.addEventListener('selectstart', e=>e.preventDefault());
+  document.addEventListener('selectstart', e=>{
+    if ($('#scr-draw').classList.contains('on')) e.preventDefault();
+  });
+  document.addEventListener('gesturestart', e=>{ if ($('#scr-draw').classList.contains('on')) e.preventDefault(); });
+}
+
+function makeThumb(s){
+  try{
+    const W = 320, k = W/s.w, H = Math.max(1, Math.round(s.h*k));
+    const c = document.createElement('canvas'); c.width=W; c.height=H;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0,0,W,H);
+    ctx.scale(k,k); ctx.lineCap='round'; ctx.lineJoin='round';
+    for (const st of s.strokes) if (st.un==null) drawStrokeOn(ctx, st, null);
+    return c.toDataURL('image/jpeg', 0.72);
+  }catch(e){ return ''; }
+}
+
+$('#btn-done').addEventListener('click', async ()=>{
+  if (!D.session) return;
+  const s = D.session;
+  clearInterval(App.autosave);
+  await persistCurrent(true);
+  const id = s.id;
+  D.session = null;
+  renderHome();
+  if (s.strokes.length) openReview(id);
+  else { toast('Empty session saved.'); show('scr-home'); }
+});
+
+/* pentimento · replay — review engine: replay, scrubber, notes, tooltips (§5.2)
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ============================================================
+   REVIEW — the light table. Replay, scrubber, notes.
+   ============================================================ */
+const R = { s:null, A:null, T:0, playing:false, speed:1, lastT:-1,
+            ctx:null, k:1, raf:0, wall:0, tAtWall:0 };
+const SPEEDS = [1,4,16];
+const ICON_PLAY  = '<svg width="20" height="20" viewBox="0 0 20 20"><path d="M6 4.2v11.6L16 10 6 4.2Z" fill="currentColor"/></svg>';
+const ICON_PAUSE = '<svg width="20" height="20" viewBox="0 0 20 20"><path d="M5.5 4h3v12h-3zM11.5 4h3v12h-3z" fill="currentColor"/></svg>';
+
+async function openReview(id){
+  const s = await store.get(K_S(id));
+  if (!s){ toast('Session not found on this device.'); return; }
+  R.s = s; R.A = analyze(s);
+  R.T = 0; R.playing = false; R.speed = 1; R.lastT = -1;
+
+  $('#rev-code').textContent = s.code;
+  const pen = s.hasPen ? 'Pencil' : 'finger';
+  $('#rev-sub').textContent = fmtDate(s.startedAt) + ' · ' + fmtT(s.durationMs) +
+    ' · ' + s.strokes.length + ' strokes · ' + pen + ' input';
+
+  show('scr-review');
+  fitStage();
+  buildScrub();
+  renderStats();
+  renderCharts();
+  renderNotes();
+  updateTransport();
+  seek(0);
+}
+
+function fitStage(){
+  const s = R.s;
+  const wrap = $('.stage-wrap');
+  const maxW = Math.min(940, (wrap.clientWidth||window.innerWidth) - 40);
+  const maxH = Math.max(240, window.innerHeight*0.55);
+  R.k = Math.min(maxW/s.w, maxH/s.h);
+  const c = $('#stage'), dpr = Math.min(window.devicePixelRatio||1, 3);
+  const cw = Math.round(s.w*R.k), ch = Math.round(s.h*R.k);
+  c.width = cw*dpr; c.height = ch*dpr;
+  c.style.width = cw+'px'; c.style.height = ch+'px';
+  R.ctx = c.getContext('2d');
+  R.ctx.setTransform(dpr*R.k,0,0,dpr*R.k,0,0);
+  R.ctx.lineCap='round'; R.ctx.lineJoin='round';
+}
+
+/* ---------- replay engine ---------- */
+function clearStage(){
+  const ctx = R.ctx;
+  ctx.save(); ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height); ctx.restore();
+}
+function fullRender(T){
+  clearStage();
+  for (const st of R.s.strokes){
+    if (st.t0 > T) continue;
+    if (st.un != null && st.un <= T) continue;
+    drawStrokeOn(R.ctx, st, T);
+  }
+}
+function drawStrokeRange(st, fromT, toT){
+  const pts = st.pts;
+  let start = 0;
+  while (start < pts.length && pts[start][2] <= fromT) start++;
+  if (start === 0){
+    if (pts.length && pts[0][2] <= toT){
+      drawDotOn(R.ctx, st, pts[0][0], pts[0][1], pts[0][3]);
+      start = 1;
+    } else return;
+  }
+  for (let i=start; i<pts.length; i++){
+    if (pts[i][2] > toT) break;
+    drawSegOn(R.ctx, st, pts[i-1][0],pts[i-1][1], pts[i][0],pts[i][1], pts[i][3]);
+  }
+}
+function renderAt(T){
+  if (T < R.lastT || R.s.strokes.some(st => st.un != null && st.un > R.lastT && st.un <= T)){
+    fullRender(T);
+  } else {
+    for (const st of R.s.strokes){
+      if (st.t1 <= R.lastT && st.pts[st.pts.length-1][2] <= R.lastT) continue;
+      if (st.t0 > T) break;
+      if (st.un != null && st.un <= T) continue;
+      drawStrokeRange(st, R.lastT, T);
+    }
+  }
+  R.lastT = T;
+  moveHead(T);
+  $('#clock').textContent = fmtT(T) + ' / ' + fmtT(R.s.durationMs);
+  $('#note-at').textContent = fmtT(T);
+}
+function seek(T){
+  R.T = Math.max(0, Math.min(T, R.s.durationMs));
+  R.tAtWall = R.T; R.wall = performance.now();
+  renderAt(R.T);
+}
+function tick(){
+  if (!R.playing) return;
+  const T = R.tAtWall + (performance.now()-R.wall)*R.speed;
+  if (T >= R.s.durationMs){
+    R.T = R.s.durationMs; renderAt(R.T);
+    R.playing = false; updateTransport(); return;
+  }
+  R.T = T; renderAt(T);
+  R.raf = requestAnimationFrame(tick);
+}
+function updateTransport(){
+  $('#btn-play').innerHTML = R.playing ? ICON_PAUSE : ICON_PLAY;
+  $('#btn-play').setAttribute('aria-label', R.playing ? 'Pause' : 'Play');
+  $('#btn-speed').textContent = R.speed + '×';
+}
+$('#btn-play').addEventListener('click', ()=>{
+  if (R.playing){ R.playing = false; cancelAnimationFrame(R.raf); }
+  else {
+    if (R.T >= R.s.durationMs) seek(0);
+    R.tAtWall = R.T; R.wall = performance.now();
+    R.playing = true; R.raf = requestAnimationFrame(tick);
+  }
+  updateTransport();
+});
+$('#btn-speed').addEventListener('click', ()=>{
+  R.speed = SPEEDS[(SPEEDS.indexOf(R.speed)+1) % SPEEDS.length];
+  R.tAtWall = R.T; R.wall = performance.now();
+  updateTransport();
+});
+
+/* ---------- the scrubber: the session laid on a light table ---------- */
+const SCRUB_H = 64;
+function bindScrubOnce(){
+  if (R._scrubBound) return;
+  R._scrubBound = true;
+  const el = $('#scrub');
+  let scrubbing = false;
+  const toT = ev => {
+    const r = el.getBoundingClientRect();
+    const px = Math.max(0, Math.min(ev.clientX - r.left, r.width));
+    return px / Math.max(1, r.width) * Math.max(1, R.s ? R.s.durationMs : 1);
+  };
+  el.addEventListener('pointerdown', ev=>{
+    if (!R.s) return;
+    scrubbing = true; try{ el.setPointerCapture(ev.pointerId); }catch(_){}
+    R.playing = false; cancelAnimationFrame(R.raf); updateTransport();
+    seek(toT(ev));
+  });
+  el.addEventListener('pointermove', ev=>{ if (scrubbing) seek(toT(ev)); });
+  const stop = ()=> scrubbing = false;
+  el.addEventListener('pointerup', stop);
+  el.addEventListener('pointercancel', stop);
+}
+function buildScrub(){
+  bindScrubOnce();
+  if (typeof d3 === 'undefined'){ R._scrubW = ($('#scrub-wrap').clientWidth||600) - 40; return; }
+  const svg = d3.select('#scrub');
+  svg.selectAll('*').remove();
+  const W = Math.max(280, ($('#scrub-wrap').clientWidth||600) - 40);
+  svg.attr('viewBox', `0 0 ${W} ${SCRUB_H}`).attr('height', SCRUB_H).attr('width','100%');
+  const s = R.s, dur = Math.max(1, s.durationMs);
+  const x = t => t/dur*W;
+
+  // pause bands (>=2s of silence) — ochre
+  for (const g of R.A.pauses){
+    svg.append('rect').attr('x', x(g.t0)).attr('y', 0)
+      .attr('width', Math.max(1.5, x(g.t1)-x(g.t0))).attr('height', SCRUB_H)
+      .attr('fill', 'var(--ochre)').attr('opacity', 0.22);
+  }
+  // ink bands — each stroke's lifetime, stacked opacity
+  for (const st of s.strokes){
+    svg.append('rect').attr('x', x(st.t0)).attr('y', 14)
+      .attr('width', Math.max(1.2, x(st.t1)-x(st.t0))).attr('height', SCRUB_H-28)
+      .attr('rx', 1.5)
+      .attr('fill', st.tool==='eraser' ? 'var(--graphite)' : 'var(--ink)')
+      .attr('opacity', st.un!=null ? 0.16 : 0.5);
+    if (st.un != null){
+      svg.append('line').attr('x1', x(st.un)).attr('x2', x(st.un))
+        .attr('y1', SCRUB_H-11).attr('y2', SCRUB_H-3)
+        .attr('stroke','var(--ochre)').attr('stroke-width',2);
+    }
+  }
+  // note pins
+  svg.append('g').attr('id','pins');
+  drawPins(svg, x);
+  // playhead
+  const head = svg.append('g').attr('id','head');
+  head.append('line').attr('y1',0).attr('y2',SCRUB_H)
+    .attr('stroke','var(--viridian)').attr('stroke-width',2);
+  head.append('circle').attr('cy',SCRUB_H/2).attr('r',7)
+    .attr('fill','var(--viridian)').attr('stroke','var(--paper)').attr('stroke-width',2);
+  R._scrubW = W;
+}
+function drawPins(svg, x){
+  const g = svg.select('#pins'); g.selectAll('*').remove();
+  hideNoteTip();
+  for (const n of R.s.notes||[]){
+    const pin = g.append('g').style('cursor','pointer');
+    pin.append('circle').attr('cx', x(n.t)).attr('cy', 7).attr('r', 14)
+      .attr('fill','transparent');                       // generous touch target
+    pin.append('circle').attr('cx', x(n.t)).attr('cy', 7).attr('r', 4.5)
+      .attr('fill','var(--viridian)').attr('stroke','var(--paper)').attr('stroke-width',1.5);
+    const el = pin.node();
+    el.addEventListener('pointerenter', ()=>{ if (!R._tipPinned) showNoteTip(n, el); });
+    el.addEventListener('pointerleave', ()=>{ if (!R._tipPinned) hideNoteTip(); });
+    el.addEventListener('pointerdown', e=>{
+      e.stopPropagation(); e.preventDefault();
+      R.playing = false; cancelAnimationFrame(R.raf); updateTransport();
+      seek(n.t);
+      showNoteTip(n, el);
+      R._tipPinned = true;
+    });
+  }
+}
+function showNoteTip(n, pinEl){
+  const tip = $('#note-tip'), wrap = $('#scrub-wrap');
+  tip.querySelector('.tt-time').textContent = fmtT(n.t);
+  tip.querySelector('.tt-text').textContent = n.text;
+  tip.style.display = 'block';
+  tip.style.visibility = 'hidden';
+  const wr = wrap.getBoundingClientRect();
+  const pr = pinEl.getBoundingClientRect();
+  const sc = $('#scrub').getBoundingClientRect();
+  const px = pr.left + pr.width/2 - wr.left;           // pin center, wrap coords
+  const tw = tip.offsetWidth;
+  const left = Math.max(6, Math.min(px - tw/2, wr.width - tw - 6));
+  tip.style.left = left + 'px';
+  tip.style.top = (sc.bottom - wr.top + 9) + 'px';     // below the scrubber
+  tip.querySelector('.tt-caret').style.left =
+    Math.max(8, Math.min(px - left - 5, tw - 18)) + 'px';
+  tip.style.visibility = 'visible';
+}
+function hideNoteTip(){
+  R._tipPinned = false;
+  const tip = $('#note-tip'); if (tip) tip.style.display = 'none';
+}
+document.addEventListener('pointerdown', e=>{
+  if (e.target.closest && e.target.closest('#pins')) return;
+  hideNoteTip();
+});
+function moveHead(T){
+  if (typeof d3 === 'undefined') return;
+  const W = R._scrubW || 600;
+  const px = T/Math.max(1,R.s.durationMs)*W;
+  d3.select('#scrub #head').attr('transform', `translate(${px},0)`);
+}
+
+/* ---------- notes ---------- */
+function renderNotes(){
+  const list = $('#note-list'); list.innerHTML = '';
+  const notes = [...(R.s.notes||[])].sort((a,b)=>a.t-b.t);
+  for (const n of notes){
+    const div = document.createElement('div');
+    div.className = 'note-item';
+    const jump = document.createElement('button'); jump.className='t'; jump.textContent = fmtT(n.t);
+    jump.addEventListener('click', ()=>{ seek(n.t); window.scrollTo({top:0,behavior:'smooth'}); });
+    const body = document.createElement('div'); body.textContent = n.text; body.style.fontSize='14.5px';
+    const del = document.createElement('button'); del.className='x'; del.textContent='remove';
+    del.addEventListener('click', async ()=>{
+      R.s.notes = R.s.notes.filter(m=>m!==n);
+      await store.set(K_S(R.s.id), R.s);
+      renderNotes(); buildScrub(); moveHead(R.T);
+    });
+    div.append(jump, body, del); list.appendChild(div);
+  }
+}
+async function addNote(){
+  const inp = $('#note-text');
+  const text = inp.value.trim(); if (!text) return;
+  R.s.notes = R.s.notes || [];
+  R.s.notes.push({ t: Math.round(R.T), text, at: new Date().toISOString() });
+  inp.value = '';
+  await store.set(K_S(R.s.id), R.s);
+  renderNotes(); buildScrub(); moveHead(R.T);
+  toast('Note pinned at ' + fmtT(R.T));
+}
+$('#btn-note').addEventListener('click', addNote);
+$('#note-text').addEventListener('keydown', e=>{ if (e.key==='Enter') addNote(); });
+
+/* ---------- header actions ---------- */
+$('#btn-back').addEventListener('click', ()=>{
+  R.playing = false; cancelAnimationFrame(R.raf);
+  hideNoteTip();
+  renderHome(); show('scr-home');
+});
+$('#btn-export').addEventListener('click', ()=>{
+  const blob = new Blob([JSON.stringify(R.s)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (R.s.code||'session') + '.pentimento.json';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+});
+$('#btn-delete').addEventListener('click', async ()=>{
+  if (!confirm('Delete session ' + R.s.code + ' from this device? Export first if you want to keep it.')) return;
+  await store.del(K_S(R.s.id));
+  App.idx = App.idx.filter(x=>x.id!==R.s.id);
+  await saveIndex();
+  renderHome(); show('scr-home');
+  toast('Deleted.');
+});
+
+/* pentimento · home — session library + import/export
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const list = $('#session-list'), empty = $('#empty');
+  list.innerHTML = '';
+  const items = [...App.idx].sort((a,b)=> (b.startedAt||'').localeCompare(a.startedAt||''));
+  empty.style.display = items.length ? 'none' : 'block';
+  for (const it of items){
+    const b = document.createElement('button');
+    b.className = 'card';
+    const th = (it.thumb||'').startsWith('data:image') ? it.thumb : '';
+    b.innerHTML = `<div class="thumb" style="background-image:url('${th}')"></div>
+      <div class="meta"><div class="code"></div>
+      <div class="sub">${fmtDate(it.startedAt)} · ${fmtT(it.durationMs||0)} · ${it.nStrokes||0} strokes</div></div>`;
+    b.querySelector('.code').textContent = it.code;
+    b.addEventListener('click', ()=> openReview(it.id));
+    list.appendChild(b);
+  }
+}
+
+function defaultCode(){
+  const d = new Date();
+  const mmdd = String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  const todays = App.idx.filter(s => (s.code||'').includes('-'+mmdd+'-')).length;
+  return 'S-' + mmdd + '-' + String.fromCharCode(65 + (todays % 26));
+}
+
+$('#btn-new').addEventListener('click', ()=>{
+  $('#inp-code').value = '';
+  $('#inp-code').placeholder = defaultCode();
+  $('#modal').classList.add('on');
+});
+$('#btn-cancel').addEventListener('click', ()=> $('#modal').classList.remove('on'));
+$('#btn-start').addEventListener('click', ()=>{
+  const code = $('#inp-code').value.trim() || defaultCode();
+  $('#modal').classList.remove('on');
+  startSession(code);
+});
+
+/* import / export */
+$('#btn-import').addEventListener('click', ()=> $('#file-import').click());
+$('#file-import').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  try {
+    const s = JSON.parse(await f.text());
+    if (!s || !Array.isArray(s.strokes)) throw 0;
+    if (!s.id || App.idx.some(x=>x.id===s.id)) s.id = uid();
+    await store.set(K_S(s.id), s);
+    App.idx.push(indexEntry(s));
+    await saveIndex(); renderHome();
+    toast('Imported ' + s.code);
+  } catch(err){ toast('That file isn’t a Pentimento session.'); }
+});
+
+function indexEntry(s){
+  return { id:s.id, code:s.code, startedAt:s.startedAt, durationMs:s.durationMs||0,
+           nStrokes:(s.strokes||[]).length, thumb:s.thumb||'' };
+}
+
+/* pentimento · app — state, router, resize, boot (loads last: boot() runs here)
+   Extracted verbatim from the single-file MVP (see HANDOFF.md §5/§9). Behavior unchanged. */
+'use strict';
+
+/* ---------- app state ---------- */
+const App = { idx: [], cur: null, dirty: false, autosave: null };
+
+async function loadIndex(){ App.idx = (await store.get(K_IDX)) || []; }
+async function saveIndex(){ await store.set(K_IDX, App.idx); }
+
+/* ---------- router ---------- */
+function show(id){
+  $$('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  window.scrollTo(0,0);
+}
+
+/* ---------- resize / boot ---------- */
+let rsz = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(rsz);
+  rsz = setTimeout(()=>{
+    if ($('#scr-review').classList.contains('on') && R.s){
+      fitStage(); buildScrub(); renderCharts();
+      R.lastT = -1; renderAt(R.T);
+    }
+  }, 220);
+});
+
+(async function boot(){
+  bindDraw();
+  await loadIndex();
+  renderHome();
+})();
+</script>
+</body>
+</html>
