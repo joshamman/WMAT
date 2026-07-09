@@ -8,6 +8,14 @@
 <title>Pentimento — process recorder</title>
 <script src="./vendor/d3.min.js"></script>
 <link rel="stylesheet" href="./styles.css">
+<!-- Cross-device sync (optional · Phase A). Leave null for local-only storage on this
+     device. To sync your + Amy's OWN test sessions, point url at your backend/api.php and
+     set a matching token. ⚠ The token is visible in this page source — it is a soft gate,
+     NOT security. Do NOT store real client data behind it (see backend/README.md). -->
+<script>
+  window.PENTIMENTO_BACKEND = null;
+  /* e.g. window.PENTIMENTO_BACKEND = { url: "https://YOUR-HOST/pentimento-api/api.php", token: "a-long-random-string" }; */
+</script>
 </head>
 <body>
 

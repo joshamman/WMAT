@@ -30,6 +30,18 @@ the folder — `index.html` plus `styles.css`, `src/`, and `vendor/`.
 ⚠️ Uploading `index.html` **by itself** gives a blank page — it needs its sibling files
 (`styles.css`, `src/*.js`, `vendor/d3.min.js`). Always upload the folder.
 
+## Sync across devices (optional · Phase A)
+
+By default the app stores sessions in the browser's `localStorage` — one device, no
+sync. To sync **your and Amy's own test sessions** across devices, there's an opt-in
+backend: a tiny PHP + MySQL key/value API you host on the existing site (reuses the
+legacy WordPress DB — no new cost). Setup is in **[`backend/README.md`](backend/README.md)**;
+turn it on by setting `window.PENTIMENTO_BACKEND = { url, token }` in `index.html`.
+
+> ⚠️ **Phase A only — no real client data.** The token lives in the page source (soft
+> gate, not real security). Storing an actual client's session would be PHI and needs
+> Phase B first (accounts, consent, audit, encryption, signed BAA — see `CLAUDE.md` §8).
+
 ## Develop
 
 The files are the source of truth — edit them directly, reload the browser, done.
@@ -64,11 +76,11 @@ stroke, three colors, and two notes so every assertion has something to render).
 ## Layout
 
 ```
-index.html          # markup (loads styles.css + src/*.js + vendor/d3)
+index.html          # markup (loads styles.css + src/*.js + vendor/d3); PENTIMENTO_BACKEND config block
 styles.css          # all styles
 src/
   util.js           # DOM + formatting helpers, uid, toast   (load first)
-  storage.js        # storage adapter (window.storage | localStorage), K_IDX, K_S
+  storage.js        # storage adapter (backend API | window.storage | localStorage), K_IDX, K_S
   canvas.js         # the ONE shared render primitive — drawStrokeOn & friends. Never fork.
   analyze.js        # analyze(session) -> pure process metrics
   charts.js         # stat cards + the five d3 charts
@@ -77,10 +89,14 @@ src/
   home.js           # session library + import/export
   app.js            # state, router, resize, boot()           (load last)
 vendor/d3.min.js    # self-hosted d3 v7.8.5 (charts degrade gracefully if missing)
+backend/            # OPT-IN Phase A sync (see backend/README.md)
+  api.php           #   tiny PHP key/value endpoint over the existing MySQL DB
+  schema.sql        #   the one table to create
+  config.sample.php #   copy to config.php (git-ignored) with DB creds + token
 samples/sample.json # recorded session fixture for tests/demo
 test/
   smoke.html        # browser smoke test (the regression net)
-  server.mjs        # zero-dep static server for running the test
+  server.mjs        # zero-dep static server + in-memory /kv mock (mirrors api.php)
   make-sample.mjs   # regenerates samples/sample.json
 CLAUDE.md           # intentional decisions (§6) + clinical guardrails (§8)
 HANDOFF.md          # full project brief

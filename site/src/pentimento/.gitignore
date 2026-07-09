@@ -1,1 +1,4 @@
 .DS_Store
+
+# backend secrets — DB credentials + shared token (never commit)
+backend/config.php

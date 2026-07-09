@@ -85,6 +85,13 @@ Amy is the clinical decision-maker. These are guardrails, not features to optimi
   to what the client drew. **Never fork it** (HANDOFF §5.1).
 - **`src/analyze.js` is a pure function** of the session (no DOM). Add new metrics there,
   not inside chart functions.
+- **Storage goes through one adapter** (`src/storage.js` → `store.get/set/del`, all async).
+  Default is `localStorage` (or `window.storage` in a Claude artifact). An **opt-in Phase A
+  backend** (set `window.PENTIMENTO_BACKEND = { url, token }` in `index.html`) syncs via the
+  tiny KV API in `backend/`. ⚠ **Phase A is Josh + Amy's OWN test data only** — the token is
+  visible in the page (soft gate, not security). **Do not store real client PHI** behind it;
+  that needs the Phase B work first (accounts, consent, audit, encryption, BAA — §8 above).
+  Swap/extend the backend inside this adapter; don't scatter storage calls elsewhere.
 - **Regression net:** `test/smoke.html` (run via `node test/server.mjs`). Run it before
   and after any refactor — it asserts replay reaches 100%, stats populate, all five
   charts render, and the note tooltip opens.
