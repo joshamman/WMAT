@@ -76,9 +76,11 @@ Amy is the clinical decision-maker. These are guardrails, not features to optimi
   or Safari → Add to Home Screen). It loads `src/*.js` as plain classic scripts — **not**
   ES modules — because ES modules and `fetch()` are blocked on `file://`. They share one
   global scope; **load order matters** (util first, `app.js`/`boot()` last).
-- **`pentimento.html` is a build artifact.** Run `node build.mjs` to regenerate it — it
-  inlines `src/*.js` into a single `<script>` (the old `@@APP_JS@@` concat). Edit
-  `src/*`, never `pentimento.html` by hand.
+- **The single-file builds are artifacts.** Run `node build.mjs` to regenerate them — it
+  inlines `src/*.js` **and** `vendor/d3.min.js` into one self-contained HTML file, written
+  to both `pentimento.html` (root) and `deploy/index.html` (the deploy copy). Edit `src/*`,
+  never the built files by hand. **Deploy `deploy/index.html`**, not the dev `index.html`
+  (which needs `src/` + `vendor/` beside it and is blank if uploaded alone).
 - **`src/canvas.js` is the ONE shared render primitive** (`drawStrokeOn` & friends), used
   by live drawing, replay, and thumbnails so what the therapist replays is pixel-identical
   to what the client drew. **Never fork it** (HANDOFF §5.1).

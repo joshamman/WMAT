@@ -11,13 +11,30 @@ intentional-decision + clinical guardrails.
 
 ## Run it
 
-- **Desktop:** open **`index.html`** in any modern browser — no server needed.
-- **iPad / iPhone:** open in Safari → Share → **Add to Home Screen** → launches
-  full-screen like a native app.
-- `pentimento.html` is a single-file build of the same thing (handy to email around).
+There are two ways to open the app, and it matters which file you use:
+
+- **The whole folder together** — open **`index.html`**. It loads `src/*.js` and
+  `vendor/d3.min.js` from alongside it, so those folders must be present. Works by
+  double-clicking (over `file://`) or when the folder is served. Best for development.
+- **One self-contained file** — open **`pentimento.html`** (or `deploy/index.html`).
+  Everything, including d3, is inlined into that single file — no other files needed.
+  Best for AirDrop to the iPad, email, or **deploying** (see below).
+
+On **iPad / iPhone**: open in Safari → Share → **Add to Home Screen** → launches
+full-screen like a native app.
 
 Storage auto-detects its environment: `window.storage` inside a Claude artifact,
 `localStorage` as a standalone file. Export / Import JSON is the bridge between copies.
+
+## Deploy
+
+**Upload `deploy/index.html`** — that one file *is* the whole app (code + d3 inlined),
+so it works on its own. Rebuild it with `node build.mjs` after any change to `src/*`.
+
+⚠️ **Do not upload the top-level `index.html` by itself.** That one is the *dev* entry:
+it references `src/*.js` and `vendor/d3.min.js`, so on its own (with those folders
+missing) it loads nothing and the page is blank. Either deploy `deploy/index.html`, or
+upload the entire folder so the `src/` and `vendor/` files travel with it.
 
 ## Develop
 
@@ -27,10 +44,10 @@ run over `file://` — **do not** convert them to ES modules (ES modules and `fe
 are blocked on `file://`). **Load order matters:** util first, `app.js` (which runs
 `boot()`) last.
 
-Regenerate the single-file build after editing `src/*`:
+Regenerate the self-contained build after editing `src/*`:
 
 ```
-node build.mjs        # index.html + src/*.js  ->  pentimento.html
+node build.mjs        # index.html + src/*.js + vendor/d3  ->  pentimento.html AND deploy/index.html
 ```
 
 ## Test
@@ -56,9 +73,10 @@ stroke, three colors, and two notes so every assertion has something to render).
 ## Layout
 
 ```
-index.html          # markup + CSS; loads src/*.js (runnable dev entry & build template)
-pentimento.html     # single-file build output (node build.mjs) — do not hand-edit
-build.mjs           # inlines src/*.js into pentimento.html (the @@APP_JS@@ concat)
+index.html          # DEV entry — markup + CSS; loads src/*.js + vendor/d3 (needs the folder)
+deploy/index.html   # DEPLOY this — self-contained single file (app + d3 inlined). Generated.
+pentimento.html     # same self-contained build, at the root (local use / email). Generated.
+build.mjs           # inlines src/*.js AND vendor/d3 -> pentimento.html + deploy/index.html
 src/
   util.js           # DOM + formatting helpers, uid, toast   (load first)
   storage.js        # storage adapter (window.storage | localStorage), K_IDX, K_S
