@@ -128,21 +128,16 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
         <circle class="am-ripple am-ripple-2" cx={STUDIO.x} cy={STUDIO.y} r="18"></circle>
       </g>
 
-      <!-- painted routes (one per city; shown when selected) -->
+      <!-- painted routes (one per city; shown when selected). The brush stroke
+           sits UNDER the pins; its drive-time label is drawn last, on top. -->
       <g aria-hidden="true">
         {
-          serviceAreas.map((a) => {
-            const mid = routeMidpoint(a);
-            return (
-              <g class:list={['am-route-g', { 'is-on': focusArea?.slug === a.slug }]} data-route={a.slug}>
-                <path class="am-stroke am-stroke-under" d={routePath(a)} style={`stroke:${a.map.accent}`} />
-                <path class="am-stroke am-stroke-main" d={routePath(a)} style={`stroke:${a.map.accent}`} />
-                <text class="am-drive-label" x={mid.x} y={mid.y - 14}>
-                  ~{a.driveMinutes} min
-                </text>
-              </g>
-            );
-          })
+          serviceAreas.map((a) => (
+            <g class:list={['am-route-g', { 'is-on': focusArea?.slug === a.slug }]} data-route={a.slug}>
+              <path class="am-stroke am-stroke-under" d={routePath(a)} style={`stroke:${a.map.accent}`} />
+              <path class="am-stroke am-stroke-main" d={routePath(a)} style={`stroke:${a.map.accent}`} />
+            </g>
+          ))
         }
       </g>
 
@@ -180,6 +175,26 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
           );
         })
       }
+
+      <!-- drive-time labels last so they always sit above pins and place names -->
+      <g aria-hidden="true">
+        {
+          serviceAreas.map((a) => {
+            const mid = routeMidpoint(a);
+            return (
+              <g class:list={['am-route-g', { 'is-on': focusArea?.slug === a.slug }]} data-route={a.slug}>
+                <text
+                  class="am-drive-label"
+                  x={mid.x + (a.map.driveOffset?.dx ?? 0)}
+                  y={mid.y + (a.map.driveOffset?.dy ?? -16)}
+                >
+                  ~{a.driveMinutes} min
+                </text>
+              </g>
+            );
+          })
+        }
+      </g>
     </svg>
     <figcaption class="am-caption">A loose map of the shore — not to scale, drawn with love.</figcaption>
   </figure>
@@ -319,8 +334,11 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
   .am-drive-label {
     font-family: var(--font-accent, cursive);
     font-size: 30px;
+    font-weight: 700;
     fill: var(--teal-700, #1e5859);
     text-anchor: middle;
+    /* wider halo — this one lands on top of the busiest part of the map */
+    stroke-width: 10px;
   }
 
   /* routes */

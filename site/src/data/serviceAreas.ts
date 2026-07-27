@@ -26,8 +26,12 @@ export interface ServiceArea {
   faqs: { q: string; a: string }[];
   /** Optional deeper-dive link (e.g. a related blog post). */
   related?: { label: string; href: string };
-  /** Stylized position on the lakeshore map (viewBox 0 0 1000 800) + brand accent. */
-  map: { x: number; y: number; accent: string };
+  /**
+   * Stylized position on the lakeshore map (viewBox 0 0 1000 800) + brand accent.
+   * `driveOffset` nudges the drive-time label off the route so it clears the
+   * hand-lettered place names (tuned per city by eye).
+   */
+  map: { x: number; y: number; accent: string; driveOffset?: { dx: number; dy: number } };
 }
 
 /** Amy's studio on the map (stylized coords, not geography). */
@@ -50,11 +54,11 @@ export const serviceAreas: ServiceArea[] = [
     intro: [
       'Grand Rapids has no shortage of creative energy — what West Michigan Art Therapy adds is the clinical side: a board-certified art therapist (ATR-BC) who uses the creative process, within a confidential therapeutic relationship, to support real mental-health goals.',
       'For the metro’s nonprofits, schools, healthcare teams, and workplaces, Amy travels to you. Workshops are built around your group’s needs — team-building, burnout and stress, grief in caregiving professions — and presentations pair evidence-based content with hands-on making, so your people leave having experienced the work, not just heard about it.',
-      'Individuals in Grand Rapids most often meet Amy online — sessions work beautifully over video with materials you already have at home. And when a drive to the lakeshore sounds like part of the therapy, the West Olive studio is about forty minutes west, straight toward the water.',
+      'Individuals in Grand Rapids most often meet Amy online — sessions work beautifully over video with materials you already have at home. And when a drive to the lakeshore sounds like part of the therapy, the West Olive studio is about fifty minutes west, straight toward the water.',
     ],
     driveNote:
-      'The West Olive studio is about a 40-minute drive west of downtown Grand Rapids — most Grand Rapids clients choose online sessions, and workshops come to you.',
-    driveMinutes: 40,
+      'The West Olive studio is about a 50-minute drive west of downtown Grand Rapids — most Grand Rapids clients choose online sessions, and workshops come to you.',
+    driveMinutes: 50,
     nearby: [],
     faqs: [
       {
@@ -63,14 +67,14 @@ export const serviceAreas: ServiceArea[] = [
       },
       {
         q: 'Can I do individual art therapy from Grand Rapids?',
-        a: 'Absolutely — individual sessions ($100, sliding scale available) are offered online across Michigan, or in person at the West Olive studio, about 40 minutes west of the city.',
+        a: 'Absolutely — individual sessions ($100, sliding scale available) are offered online across Michigan, or in person at the West Olive studio, about 50 minutes west of the city.',
       },
       {
         q: 'Do I need art experience for a workplace workshop?',
         a: 'None at all. Every activity is designed for complete beginners — the point is the process and the conversation it opens, never the product.',
       },
     ],
-    map: { x: 790, y: 400, accent: 'var(--sage-500)' },
+    map: { x: 790, y: 400, accent: 'var(--sage-500)', driveOffset: { dx: 0, dy: 22 } },
   },
   {
     slug: 'holland',
@@ -104,7 +108,7 @@ export const serviceAreas: ServiceArea[] = [
         a: 'Individual sessions ($100) offer a sliding scale — just ask. Cash, check, and PayPal are welcome; insurance is not currently accepted.',
       },
     ],
-    map: { x: 420, y: 560, accent: 'var(--gold-400)' },
+    map: { x: 420, y: 560, accent: 'var(--gold-400)', driveOffset: { dx: -55, dy: -16 } },
   },
   {
     slug: 'muskegon',
@@ -176,7 +180,7 @@ export const serviceAreas: ServiceArea[] = [
         a: 'Ninety minutes of collective creativity in a small, supportive circle ($150) — structured, themed activities with room for whatever comes up along the way.',
       },
     ],
-    map: { x: 390, y: 320, accent: 'var(--teal-500, #2E8B8C)' },
+    map: { x: 390, y: 320, accent: 'var(--teal-500, #2E8B8C)', driveOffset: { dx: -85, dy: -16 } },
   },
   {
     slug: 'saugatuck',
@@ -210,7 +214,7 @@ export const serviceAreas: ServiceArea[] = [
         a: 'Yes — customized workshops ($200–350) and presentations ($150–200) for galleries, organizations, and community groups around Saugatuck, Douglas, and greater Allegan County.',
       },
     ],
-    map: { x: 430, y: 690, accent: 'var(--clay-500, #A66E3D)' },
+    map: { x: 430, y: 690, accent: 'var(--clay-500, #A66E3D)', driveOffset: { dx: -95, dy: -16 } },
   },
 ];
 
