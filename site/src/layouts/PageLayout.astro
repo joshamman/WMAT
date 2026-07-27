@@ -1,12 +1,13 @@
 ---
+import type { ComponentProps } from 'astro/types';
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 
-interface Props { title?: string; description?: string; }
-const { title, description } = Astro.props;
+// Forwards the full BaseLayout head API (title/description/og*/robots/schema/…).
+type Props = ComponentProps<typeof BaseLayout>;
 ---
-<BaseLayout title={title} description={description}>
+<BaseLayout {...Astro.props}>
   <a class="skip-link" href="#main">Skip to content</a>
   <Header />
   <main id="main">

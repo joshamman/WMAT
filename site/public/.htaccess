@@ -1,0 +1,39 @@
+# West Michigan Art Therapy — served from site/dist (this file ships with the build).
+# NOTE: if the server webroot already has a hand-managed .htaccess, MERGE these
+# rules into it rather than overwriting (see site/SEO-CHECKLIST.md).
+
+# --- Canonical host: https + non-www, single 301 ---
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteRule ^ https://westmichiganarttherapy.com%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
+
+ErrorDocument 404 /404.html
+
+# --- Conservative security headers ---
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+AddType font/woff2 .woff2
+
+# --- Caching ---
+# /_astro/ assets are content-hashed (safe to cache long); /assets/ files are
+# not hashed, so they get a shorter lifetime.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 week"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType image/x-icon "access plus 1 month"
+  ExpiresByType application/manifest+json "access plus 1 week"
+</IfModule>

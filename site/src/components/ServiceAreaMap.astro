@@ -1,0 +1,621 @@
+---
+/**
+ * ServiceAreaMap — a stylized, hand-drawn-feeling watercolor map of the
+ * West Michigan lakeshore. Cities are paint daubs (real links); selecting one
+ * glides the SVG viewBox down the coast and paints a brush-stroke route from
+ * Amy's West Olive studio, with the drive time riding along it.
+ *
+ * Modes:
+ *  - interactive (hub): clicks preview a city card beside the map; the card
+ *    holds the real "More about…" link. A reset control zooms back out.
+ *  - focus (city pages): renders pre-zoomed on that city with the route
+ *    painted; other daubs navigate straight to their pages.
+ *
+ * Accessibility: every daub is a real <a> with an accessible name, gold
+ * focus ring, and a generous hit circle. The map is enhancement — all facts
+ * exist as HTML text elsewhere on the page. Reduced motion: no gliding, no
+ * draw-in, no ripple. No JS: a static, fully labeled map with working links.
+ */
+import {
+  serviceAreas,
+  STUDIO,
+  MAP_W,
+  MAP_H,
+  focusBox,
+  routePath,
+  routeMidpoint,
+} from '../data/serviceAreas';
+
+interface Props {
+  /** Slug of the city to pre-zoom on (city-page mode). */
+  focus?: string;
+  /** Hub mode: preview cards + zoom out control. */
+  interactive?: boolean;
+}
+const { focus, interactive = false } = Astro.props;
+
+const focusArea = focus ? serviceAreas.find((a) => a.slug === focus) : undefined;
+const fullBoxNums = [-40, -30, MAP_W + 80, MAP_H + 60];
+const fullBox = fullBoxNums.join(' ');
+const initialBoxNums = focusArea ? focusBox(focusArea) : fullBoxNums;
+const initialBox = initialBoxNums.join(' ');
+const mode = interactive ? 'hub' : 'focus';
+
+// A daub whose hit circle lies entirely outside the rendered viewBox would be
+// Tab-reachable with an invisible focus ring — take it out of the tab order.
+// (Its page stays reachable via footer + card links.) The client script keeps
+// this in sync when the hub glides.
+const HIT_R = 52;
+const inView = (x: number, y: number, b: number[]) => {
+  const nx = Math.max(b[0], Math.min(x, b[0] + b[2]));
+  const ny = Math.max(b[1], Math.min(y, b[1] + b[3]));
+  return (x - nx) ** 2 + (y - ny) ** 2 <= HIT_R * HIT_R;
+};
+
+// Label side: coastal cities label to the right (east, onto land);
+// Grand Rapids sits far inland, so its label goes left to stay in frame.
+const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right');
+---
+
+<div class:list={['am-wrap', { 'am-hub': interactive }]} data-map id="lakeshore-map">
+  <figure class="am-frame">
+    <svg
+      class="am-svg"
+      viewBox={initialBox}
+      data-mode={mode}
+      data-full={fullBox}
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="Stylized map of the West Michigan lakeshore showing the cities Amy serves"
+    >
+      <defs>
+        <filter id="am-wc" x="-30%" y="-30%" width="160%" height="160%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="12" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <filter id="am-blur" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="22" />
+        </filter>
+        <linearGradient id="am-lake-fill" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="var(--teal-500, #2E8B8C)" stop-opacity="0.42" />
+          <stop offset="1" stop-color="var(--teal-400, #3FA0A1)" stop-opacity="0.30" />
+        </linearGradient>
+      </defs>
+
+      <!-- paper -->
+      <rect class="am-paper" x="-600" y="-600" width={MAP_W + 1200} height={MAP_H + 1200}></rect>
+
+      <!-- land washes (counties, loosely) -->
+      <g aria-hidden="true" opacity="0.9">
+        <ellipse cx="660" cy="170" rx="240" ry="130" fill="var(--sky-300, #8FC6DE)" opacity="0.14" filter="url(#am-blur)"></ellipse>
+        <ellipse cx="760" cy="420" rx="260" ry="150" fill="var(--gold-300, #F0C96C)" opacity="0.13" filter="url(#am-blur)"></ellipse>
+        <ellipse cx="560" cy="540" rx="220" ry="140" fill="var(--sage-400, #97A05C)" opacity="0.10" filter="url(#am-blur)"></ellipse>
+        <ellipse cx="640" cy="720" rx="240" ry="120" fill="var(--clay-400, #C08552)" opacity="0.10" filter="url(#am-blur)"></ellipse>
+      </g>
+
+      <!-- dune band: sand stroke under the lake fill; the lake covers its west half -->
+      <g aria-hidden="true">
+        <path
+          class="am-dune"
+          d="M 360 -200 C 340 60, 385 200, 362 330 C 348 420, 395 520, 392 620 C 390 700, 412 760, 408 1000"
+          fill="none"
+          stroke="var(--sand-300, #E0C57E)"
+          stroke-width="34"
+          filter="url(#am-wc)"
+        ></path>
+        <path
+          class="am-lake"
+          d="M 360 -200 C 340 60, 385 200, 362 330 C 348 420, 395 520, 392 620 C 390 700, 412 760, 408 1000 L -600 1000 L -600 -200 Z"
+          fill="url(#am-lake-fill)"
+          filter="url(#am-wc)"
+        ></path>
+        <!-- gentle waves -->
+        <path class="am-wave" d="M 90 260 q 30 -14 60 0 t 60 0" />
+        <path class="am-wave" d="M 140 470 q 30 -14 60 0 t 60 0" />
+        <path class="am-wave" d="M 70 640 q 30 -14 60 0 t 60 0" />
+        <text class="am-lake-label" transform="rotate(-76 175 400)" x="175" y="400">Lake Michigan</text>
+      </g>
+
+      <!-- compass -->
+      <g class="am-compass" aria-hidden="true" transform="translate(936 78)">
+        <line x1="0" y1="26" x2="0" y2="-16" />
+        <path d="M 0 -26 L 8 -8 L 0 -13 L -8 -8 Z" />
+        <text x="0" y="48">N</text>
+      </g>
+
+      <!-- telehealth ripple from the studio -->
+      <g aria-hidden="true">
+        <circle class="am-ripple" cx={STUDIO.x} cy={STUDIO.y} r="18"></circle>
+        <circle class="am-ripple am-ripple-2" cx={STUDIO.x} cy={STUDIO.y} r="18"></circle>
+      </g>
+
+      <!-- painted routes (one per city; shown when selected) -->
+      <g aria-hidden="true">
+        {
+          serviceAreas.map((a) => {
+            const mid = routeMidpoint(a);
+            return (
+              <g class:list={['am-route-g', { 'is-on': focusArea?.slug === a.slug }]} data-route={a.slug}>
+                <path class="am-stroke am-stroke-under" d={routePath(a)} style={`stroke:${a.map.accent}`} />
+                <path class="am-stroke am-stroke-main" d={routePath(a)} style={`stroke:${a.map.accent}`} />
+                <text class="am-drive-label" x={mid.x} y={mid.y - 14}>
+                  ~{a.driveMinutes} min
+                </text>
+              </g>
+            );
+          })
+        }
+      </g>
+
+      <!-- Amy's studio: the gold sun -->
+      <g class="am-studio" aria-hidden="true">
+        <circle cx={STUDIO.x} cy={STUDIO.y} r="30" fill="var(--gold-300, #F2C84B)" opacity="0.5" filter="url(#am-wc)"></circle>
+        <circle class="am-sun" cx={STUDIO.x} cy={STUDIO.y} r="15" fill="var(--gold-400, #E8B33D)" filter="url(#am-wc)"></circle>
+        <circle cx={STUDIO.x} cy={STUDIO.y} r="23" fill="none" stroke="var(--gold-600, #A9781C)" stroke-opacity="0.75" stroke-width="2.5"></circle>
+        <text class="am-label am-studio-label" x={STUDIO.x + 34} y={STUDIO.y + 2}>West Olive</text>
+        <text class="am-sublabel" x={STUDIO.x + 34} y={STUDIO.y + 26}>Amy’s studio</text>
+      </g>
+
+      <!-- city daubs (real links) -->
+      {
+        serviceAreas.map((a) => {
+          const side = labelSide(a.slug);
+          const lx = side === 'right' ? a.map.x + 30 : a.map.x - 30;
+          return (
+            <a
+              class="am-city"
+              href={`/art-therapy-${a.slug}/`}
+              data-slug={a.slug}
+              data-box={focusBox(a).join(' ')}
+              aria-label={`Art therapy in ${a.name}`}
+              aria-current={focusArea?.slug === a.slug ? 'page' : undefined}
+              tabindex={inView(a.map.x, a.map.y, initialBoxNums) ? undefined : '-1'}
+            >
+              <circle class="am-hit" cx={a.map.x} cy={a.map.y} r="52" />
+              <circle class="am-halo" cx={a.map.x} cy={a.map.y} r="26" style={`fill:${a.map.accent}`} />
+              <circle class="am-daub" cx={a.map.x} cy={a.map.y} r="13" style={`fill:${a.map.accent}`} filter="url(#am-wc)" />
+              <text class="am-label" x={lx} y={a.map.y + 10} text-anchor={side === 'right' ? 'start' : 'end'}>
+                {a.name}
+              </text>
+            </a>
+          );
+        })
+      }
+    </svg>
+    <figcaption class="am-caption">A loose map of the shore — not to scale, drawn with love.</figcaption>
+  </figure>
+
+  {
+    interactive && (
+      <div class="am-side">
+        <div class="am-cards" aria-live="polite">
+          <div class="am-card am-card-intro" data-card="">
+            <p class="wmat-eyebrow am-eyebrow">Where we serve</p>
+            <h3 class="am-card-name">Pick a spot on the shore</h3>
+            <p class="am-card-text">
+              Choose a city to glide down the coast — the brush paints the way from Amy’s studio. Every stop is also
+              one click from its own page below.
+            </p>
+          </div>
+          {serviceAreas.map((a) => (
+            <div class="am-card" data-card={a.slug} hidden>
+              <p class="wmat-eyebrow am-eyebrow">{a.county}</p>
+              <h3 class="am-card-name">{[a.name, ...a.nearby].join(' · ')}</h3>
+              <p class="am-card-text">{a.hook}</p>
+              <p class="am-card-drive">{a.driveNote}</p>
+              <a class="wmat-btn is-primary am-card-btn" href={`/art-therapy-${a.slug}/`}>
+                Art therapy in {a.name} →
+              </a>
+            </div>
+          ))}
+        </div>
+        <button class="am-reset wmat-btn is-outline" type="button" hidden>
+          ← See the whole shore
+        </button>
+        <p class="am-tele">…and online, anywhere in Michigan.</p>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .am-wrap {
+    display: grid;
+    gap: clamp(18px, 3vw, 32px);
+    align-items: start;
+  }
+  .am-hub {
+    grid-template-columns: 1.55fr 1fr;
+  }
+  @media (max-width: 860px) {
+    .am-hub {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .am-frame {
+    margin: 0;
+    background: var(--surface-card, #fff);
+    border: 1px solid var(--border-soft, #ded7c6);
+    border-radius: var(--radius-lg, 20px);
+    box-shadow: var(--shadow-md, 0 6px 18px rgba(20, 47, 73, 0.1));
+    padding: clamp(8px, 1.4vw, 14px);
+  }
+  .am-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 4;
+    border-radius: calc(var(--radius-lg, 20px) - 6px);
+    overflow: hidden;
+    background: var(--cream-50, #fcf8f0);
+  }
+  .am-caption {
+    font-family: var(--font-accent, cursive);
+    font-size: 1.05rem;
+    color: var(--ink-500, #586771);
+    text-align: center;
+    padding: 8px 6px 2px;
+  }
+
+  .am-paper {
+    fill: var(--cream-50, #fcf8f0);
+  }
+  .am-wave {
+    fill: none;
+    stroke: var(--cream-50, #fcf8f0);
+    stroke-opacity: 0.75;
+    stroke-width: 4;
+    stroke-linecap: round;
+  }
+  .am-lake-label {
+    font-family: var(--font-accent, cursive);
+    font-size: 40px;
+    letter-spacing: 0.08em;
+    fill: var(--navy-800, #1b3d5c);
+    opacity: 0.75;
+    text-anchor: middle;
+  }
+  .am-compass line {
+    stroke: var(--ink-500, #586771);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+  .am-compass path {
+    fill: var(--ink-500, #586771);
+  }
+  .am-compass text {
+    font-family: var(--font-body, sans-serif);
+    font-size: 22px;
+    font-weight: 600;
+    fill: var(--ink-500, #586771);
+    text-anchor: middle;
+  }
+
+  /* labels: cream halo so they read over any wash */
+  .am-label,
+  .am-sublabel,
+  .am-drive-label {
+    paint-order: stroke;
+    stroke: var(--cream-50, #fcf8f0);
+    stroke-width: 7px;
+    stroke-linejoin: round;
+  }
+  .am-label {
+    font-family: var(--font-accent, cursive);
+    font-size: 36px;
+    fill: var(--ink-900, #20303a);
+  }
+  .am-studio-label {
+    font-size: 38px;
+  }
+  .am-sublabel {
+    font-family: var(--font-body, sans-serif);
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    fill: var(--teal-700, #1e5859);
+  }
+  .am-drive-label {
+    font-family: var(--font-accent, cursive);
+    font-size: 30px;
+    fill: var(--teal-700, #1e5859);
+    text-anchor: middle;
+  }
+
+  /* routes */
+  .am-route-g {
+    display: none;
+  }
+  .am-route-g.is-on {
+    display: inline;
+  }
+  .am-stroke {
+    fill: none;
+    stroke-linecap: round;
+  }
+  .am-stroke-under {
+    stroke-width: 15;
+    stroke-opacity: 0.22;
+  }
+  .am-stroke-main {
+    stroke-width: 5.5;
+    stroke-opacity: 0.9;
+  }
+
+  /* city daubs */
+  .am-city {
+    cursor: pointer;
+    text-decoration: none;
+  }
+  /* We draw our own compliant ring on the hit circle; suppress the default
+     outline only when that ring is showing. */
+  .am-city:focus-visible {
+    outline: none;
+  }
+  .am-hit {
+    fill: transparent;
+    stroke: none;
+  }
+  .am-halo {
+    opacity: 0.16;
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.35s var(--ease-gentle, ease), opacity 0.35s ease;
+  }
+  .am-daub {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform 0.35s var(--ease-gentle, ease);
+    /* ink outline keeps the marker ≥3:1 against any wash, whatever its fill */
+    stroke: var(--ink-700, #3a4954);
+    stroke-width: 2;
+  }
+  .am-city:hover .am-daub,
+  .am-city:focus-visible .am-daub,
+  .am-city[aria-current] .am-daub {
+    transform: scale(1.45);
+  }
+  .am-city:hover .am-halo,
+  .am-city:focus-visible .am-halo,
+  .am-city[aria-current] .am-halo {
+    transform: scale(1.7);
+    opacity: 0.3;
+  }
+  .am-city:hover .am-label {
+    fill: var(--teal-700, #1e5859);
+  }
+  /* teal-700 on cream = 7.6:1 — the same focus color the rest of the site uses */
+  .am-city:focus-visible .am-hit {
+    stroke: var(--teal-700, #1e5859);
+    stroke-width: 6;
+  }
+
+  /* telehealth ripple */
+  .am-ripple {
+    fill: none;
+    stroke: var(--teal-500, #2e8b8c);
+    stroke-width: 2.5;
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .am-ripple {
+      animation: am-ripple 8s ease-out infinite;
+    }
+    .am-ripple-2 {
+      animation-delay: 4s;
+    }
+  }
+  @keyframes am-ripple {
+    0% {
+      r: 20;
+      opacity: 0;
+    }
+    8% {
+      opacity: 0.34;
+    }
+    55% {
+      r: 200;
+      opacity: 0;
+    }
+    100% {
+      r: 200;
+      opacity: 0;
+    }
+  }
+
+  /* side cards (hub) */
+  .am-cards {
+    position: relative;
+  }
+  .am-card {
+    background: var(--surface-card, #fff);
+    border: 1px solid var(--border-soft, #ded7c6);
+    border-radius: var(--radius-lg, 20px);
+    box-shadow: var(--shadow-sm, 0 2px 6px rgba(20, 47, 73, 0.08));
+    padding: clamp(18px, 2.4vw, 26px);
+  }
+  .am-eyebrow {
+    color: var(--teal-600, #266f70);
+    margin: 0 0 6px;
+  }
+  .am-card-name {
+    font-family: var(--font-display, serif);
+    font-size: clamp(1.35rem, 2.4vw, 1.7rem);
+    margin: 0 0 10px;
+    color: var(--text-strong, #20303a);
+  }
+  .am-card-text {
+    margin: 0 0 10px;
+    line-height: 1.6;
+    color: var(--text-body, #3a4954);
+  }
+  .am-card-drive {
+    margin: 0 0 16px;
+    font-size: 0.925rem;
+    line-height: 1.55;
+    color: var(--text-muted, #586771);
+  }
+  .am-card-btn {
+    text-decoration: none;
+  }
+  .am-reset {
+    margin-top: 14px;
+  }
+  /* .wmat-btn sets display:inline-flex, which beats the UA [hidden] rule */
+  .am-reset[hidden] {
+    display: none;
+  }
+  .am-tele {
+    font-family: var(--font-accent, cursive);
+    font-size: 1.15rem;
+    color: var(--teal-700, #1e5859);
+    margin: 14px 2px 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .am-daub,
+    .am-halo {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function setViewBox(svg: SVGSVGElement, box: number[]) {
+    svg.setAttribute('viewBox', box.join(' '));
+  }
+  function getViewBox(svg: SVGSVGElement): number[] {
+    return (svg.getAttribute('viewBox') || '').split(/\s+/).map(Number);
+  }
+
+  function initMap(root: HTMLElement) {
+    const svg = root.querySelector<SVGSVGElement>('.am-svg');
+    if (!svg) return;
+    const mode = svg.dataset.mode;
+    const fullBox = (svg.dataset.full || '').split(/\s+/).map(Number);
+    let raf = 0;
+
+    function glide(target: number[]) {
+      cancelAnimationFrame(raf);
+      // Reduced motion → no glide. Hidden documents get no rAF ticks, so
+      // jump straight to the target rather than stalling mid-animation.
+      if (REDUCE.matches || document.hidden) {
+        setViewBox(svg!, target);
+        return;
+      }
+      const from = getViewBox(svg!);
+      const start = performance.now();
+      const D = 950;
+      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const step = (now: number) => {
+        const t = Math.min(1, (now - start) / D);
+        const e = ease(t);
+        setViewBox(
+          svg!,
+          from.map((v, i) => v + (target[i] - v) * e),
+        );
+        if (t < 1) raf = requestAnimationFrame(step);
+      };
+      raf = requestAnimationFrame(step);
+    }
+
+    /** Daubs clipped out of the current viewBox leave the tab order (their
+     *  focus ring would be invisible); they come back when zoomed out. */
+    function updateFocusability(box: number[]) {
+      root.querySelectorAll<HTMLAnchorElement>('.am-city').forEach((a) => {
+        const hit = a.querySelector<SVGCircleElement>('.am-hit');
+        if (!hit) return;
+        const x = Number(hit.getAttribute('cx'));
+        const y = Number(hit.getAttribute('cy'));
+        const r = Number(hit.getAttribute('r'));
+        const nx = Math.max(box[0], Math.min(x, box[0] + box[2]));
+        const ny = Math.max(box[1], Math.min(y, box[1] + box[3]));
+        const visible = (x - nx) ** 2 + (y - ny) ** 2 <= r * r;
+        if (visible) a.removeAttribute('tabindex');
+        else a.setAttribute('tabindex', '-1');
+      });
+    }
+
+    /** Show a city's route; optionally animate the brush drawing itself. */
+    function paintRoute(slug: string | null, animate: boolean) {
+      root.querySelectorAll<SVGGElement>('.am-route-g').forEach((g) => {
+        g.classList.toggle('is-on', g.dataset.route === slug);
+      });
+      if (!slug) return;
+      const g = root.querySelector<SVGGElement>(`.am-route-g[data-route="${slug}"]`);
+      if (!g) return;
+      g.querySelectorAll<SVGPathElement>('.am-stroke').forEach((p) => {
+        if (animate && !REDUCE.matches) {
+          const len = p.getTotalLength();
+          p.style.transition = 'none';
+          p.style.strokeDasharray = `${len}`;
+          p.style.strokeDashoffset = `${len}`;
+          p.getBoundingClientRect(); // flush so the transition starts from hidden
+          p.style.transition = 'stroke-dashoffset 900ms cubic-bezier(0.45,0.05,0.55,0.95) 220ms';
+          p.style.strokeDashoffset = '0';
+        } else {
+          p.style.transition = 'none';
+          p.style.strokeDasharray = '';
+          p.style.strokeDashoffset = '';
+        }
+      });
+    }
+
+    if (mode === 'focus') {
+      // Little flourish on arrival: repaint the pre-drawn route.
+      const on = root.querySelector<SVGGElement>('.am-route-g.is-on');
+      if (on) paintRoute(on.dataset.route || null, true);
+      return;
+    }
+
+    // --- hub mode ---
+    const cards = root.querySelectorAll<HTMLElement>('.am-card');
+    const reset = root.querySelector<HTMLButtonElement>('.am-reset');
+
+    function showCard(slug: string | null) {
+      cards.forEach((c) => {
+        c.hidden = (c.dataset.card || '') !== (slug || '');
+      });
+    }
+
+    function select(slug: string, box: number[]) {
+      glide(box);
+      updateFocusability(box);
+      paintRoute(slug, true);
+      showCard(slug);
+      root.querySelectorAll<HTMLAnchorElement>('.am-city').forEach((a) => {
+        if (a.dataset.slug === slug) a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+      if (reset) reset.hidden = false;
+    }
+
+    function clear() {
+      glide(fullBox);
+      updateFocusability(fullBox);
+      paintRoute(null, false);
+      showCard(null);
+      root.querySelectorAll('.am-city[aria-current]').forEach((a) => a.removeAttribute('aria-current'));
+      if (reset) reset.hidden = true;
+    }
+
+    root.querySelectorAll<HTMLAnchorElement>('.am-city').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        // Plain activation previews; modified clicks (new tab etc.) pass through.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        e.preventDefault();
+        const slug = a.dataset.slug || '';
+        select(slug, (a.dataset.box || '').split(/\s+/).map(Number));
+      });
+    });
+    reset?.addEventListener('click', clear);
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && reset && !reset.hidden) clear();
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-map]').forEach(initMap);
+</script>

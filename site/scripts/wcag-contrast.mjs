@@ -70,6 +70,18 @@ const PAIRS = [
   ['Service price (navy)',      C.navy900, C.white,   'text'],
   ['Card text (muted on white)', C.ink500, C.white,   'text'],
   ['FAQ summary',               C.ink900,  C.white,   'text'],
+
+  // Service-area map & city pages (SEO/city-pages work)
+  ['Map city label (ink on cream halo)',   C.ink900,  C.cream50, 'text'],
+  ['Map drive/sublabel (teal-700)',        C.teal700, C.cream50, 'text'],
+  ['Map focus ring (teal-700 on cream)',   C.teal700, C.cream50, 'ui'],
+  ['Map daub outline (ink-700 on cream)',  C.ink700,  C.cream50, 'ui'],
+  ['Map caption (muted on cream)',         C.ink500,  C.cream50, 'text'],
+  ['Drive callout (ink on warning bg)',    C.ink900,  '#FBEFCF', 'text'],
+  ['Pill link text (navy on white card)',  C.navy800, C.white,   'text'],
+  ['Pill link hover (teal-700 on white)',  C.teal700, C.white,   'text'],
+  ['Breadcrumb link (teal on cream)',      C.teal600, C.cream50, 'text'],
+  ['Breadcrumb separator (muted)',         C.ink500,  C.cream50, 'text'],
 ];
 
 const need = (t) => (t === 'text' ? 4.5 : 3.0);

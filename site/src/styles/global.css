@@ -52,6 +52,17 @@ html {
 	text-transform: uppercase;
 }
 
+/* Visually hidden, available to assistive tech */
+.wmat-sr-only {
+	position: absolute !important;
+	width: 1px; height: 1px;
+	padding: 0; margin: -1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+	border: 0;
+}
+
 /* Hand-marker accent (Caveat) — used sparingly for warmth */
 .wmat-hand {
 	font-family: var(--font-accent) !important;
@@ -463,6 +474,10 @@ html {
 	border-radius: var(--radius-pill); padding: 0.5rem 1rem; box-shadow: var(--shadow-xs);
 }
 .wmat-pill .wmat-ico { color: var(--teal-600); font-size: 0.875rem; }
+
+/* Pills as links (service-area navigation) */
+a.wmat-pill { text-decoration: none; transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out); }
+a.wmat-pill:hover, a.wmat-pill:focus-visible { border-color: var(--teal-600); color: var(--teal-700); box-shadow: var(--shadow-sm); }
 
 /* ============================================================
    ABOUT — portrait + years badge

@@ -1,45 +1,42 @@
 ---
 import '../styles/global.css';
+import { business, person } from '../lib/schema';
 
 interface Props {
   title?: string;
   description?: string;
+  ogType?: 'website' | 'article';
+  /** Site-relative path or absolute URL; defaults to the branded social card. */
+  ogImage?: string;
+  ogImageAlt?: string;
+  ogImageWidth?: number;
+  ogImageHeight?: number;
+  /** e.g. 'noindex, follow' — the meta tag is omitted when unset. */
+  robots?: string;
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  /** Extra JSON-LD nodes (FAQPage, BlogPosting, Service, BreadcrumbList…), one <script> each. */
+  schema?: Record<string, unknown>[];
 }
 const {
-  title = 'West Michigan Art Therapy',
-  description = 'Board-certified art therapy for all ages on Michigan’s art coast — a calm, person-centered space to heal through creativity. Amy Rostollan-Hamman, ATR-BC.',
+  title = 'Art Therapy in West Olive, MI — Heal Through Creativity',
+  description = 'Board-certified art therapy for all ages — in person in West Olive, Grand Rapids, Holland, Muskegon & Grand Haven, and online across Michigan.',
+  ogType = 'website',
+  ogImage = '/assets/images/og-default.png',
+  ogImageAlt = 'West Michigan Art Therapy — watercolor lakeshore card reading “Heal through creativity”',
+  robots,
+  publishedTime,
+  modifiedTime,
+  schema = [],
 } = Astro.props;
-const ogImage = new URL('/assets/images/wmat-theme-preview.jpg', Astro.site).href;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': ['ProfessionalService', 'HealthAndBeautyBusiness'],
-  name: 'West Michigan Art Therapy',
-  description:
-    'Board-certified art therapy for all ages on the West Michigan lakeshore — individual and group sessions, workshops, supervision, and presentations, online or in person.',
-  url: 'https://westmichiganarttherapy.com',
-  email: 'amy@westmichiganarttherapy.com',
-  image: ogImage,
-  logo: new URL('/assets/images/mark-dunes.jpg', Astro.site).href,
-  areaServed: ['West Olive', 'Grand Rapids', 'Holland', 'Grand Haven', 'Saugatuck', 'Spring Lake', 'Michigan'],
-  address: { '@type': 'PostalAddress', addressLocality: 'West Olive', addressRegion: 'MI', addressCountry: 'US' },
-  sameAs: [
-    'https://www.facebook.com/WestMichiganArtTherapy',
-    'https://www.linkedin.com/in/amy-rostollan-hamman-b386ba86/',
-  ],
-  founder: {
-    '@type': 'Person',
-    name: 'Amy Rostollan-Hamman',
-    jobTitle: 'Board-Certified Art Therapist (ATR-BC)',
-    hasCredential: {
-      '@type': 'EducationalOccupationalCredential',
-      credentialCategory: 'Board Certification',
-      name: 'ATR-BC — Board Certified Registered Art Therapist',
-      recognizedBy: { '@type': 'Organization', name: 'Art Therapy Credentials Board', url: 'https://www.atcb.org/' },
-    },
-  },
-};
+// Dimensions are only known for the default card; custom images omit the tags.
+const isDefaultOg = !Astro.props.ogImage;
+const ogImageWidth = Astro.props.ogImageWidth ?? (isDefaultOg ? 1200 : undefined);
+const ogImageHeight = Astro.props.ogImageHeight ?? (isDefaultOg ? 630 : undefined);
+const ogImageAbs = new URL(ogImage, Astro.site).href;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const jsonLdBlocks = [business(), person(), ...schema];
 ---
 <!doctype html>
 <html lang="en">
@@ -48,16 +45,43 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/assets/images/logo.svg" type="image/svg+xml" />
-    <meta property="og:type" content="website" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#FCF8F0" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={ogImage} />
+    <meta property="og:image" content={ogImageAbs} />
+    <meta property="og:image:alt" content={ogImageAlt} />
+    {ogImageWidth && <meta property="og:image:width" content={String(ogImageWidth)} />}
+    {ogImageHeight && <meta property="og:image:height" content={String(ogImageHeight)} />}
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content="West Michigan Art Therapy" />
+    <meta property="og:locale" content="en_US" />
+    {ogType === 'article' && publishedTime && (
+      <meta property="article:published_time" content={publishedTime.toISOString()} />
+    )}
+    {ogType === 'article' && modifiedTime && (
+      <meta property="article:modified_time" content={modifiedTime.toISOString()} />
+    )}
     <meta name="twitter:card" content="summary_large_image" />
-    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageAbs} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="West Michigan Art Therapy — From the studio"
+      href={new URL('/rss.xml', Astro.site).href}
+    />
+    {jsonLdBlocks.map((node) => (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(node)} />
+    ))}
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R0JV4T0QSJ" is:inline></script>

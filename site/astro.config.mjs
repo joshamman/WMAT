@@ -27,7 +27,15 @@ function rehypeExternalLinksNewTab() {
 // https://astro.build
 export default defineConfig({
   site: 'https://westmichiganarttherapy.com',
-  integrations: [sitemap()],
+  integrations: [
+    sitemap({
+      // /thanks/ is a post-submit utility page (also carries a noindex meta).
+      filter: (page) => !page.includes('/thanks/'),
+      // Deploys are manual and only happen when content changed, so the
+      // build date is an honest lastmod for every page.
+      lastmod: new Date(),
+    }),
+  ],
   markdown: {
     rehypePlugins: [rehypeExternalLinksNewTab],
   },

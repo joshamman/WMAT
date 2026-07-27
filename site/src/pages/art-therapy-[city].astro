@@ -1,0 +1,219 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import ServiceAreaMap from '../components/ServiceAreaMap.astro';
+import { serviceAreas } from '../data/serviceAreas';
+import { SITE, cityService, breadcrumbs, faqPage } from '../lib/schema';
+
+export function getStaticPaths() {
+  return serviceAreas.map((area) => ({ params: { city: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const placeList = [area.name, ...area.nearby].join(', ');
+---
+
+<PageLayout
+  title={area.title}
+  description={area.metaDescription}
+  schema={[
+    cityService({ name: area.name, nearby: area.nearby, url: canonical, description: area.metaDescription }),
+    breadcrumbs([
+      { name: 'Home', url: `${SITE}/` },
+      { name: 'Service areas', url: `${SITE}/service-areas/` },
+      { name: area.name, url: canonical },
+    ]),
+    faqPage(area.faqs),
+  ]}
+>
+  <article class="wrap area-page">
+    <nav class="area-crumbs" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/service-areas/">Service areas</a></li>
+        <li aria-current="page">{area.name}</li>
+      </ol>
+    </nav>
+
+    <header class="area-hero">
+      <p class="area-postmark wmat-hand" aria-hidden="true">postcards from the lakeshore</p>
+      <h1>{area.headline}</h1>
+      <p class="wmat-lead area-lead">
+        Person-centered art therapy for {placeList} and the surrounding {area.county} area — with Amy
+        Rostollan-Hamman, ATR-BC, in person on the lakeshore or online.
+      </p>
+    </header>
+
+    <ServiceAreaMap focus={area.slug} />
+
+    <section class="area-intro">
+      {area.intro.map((p) => <p>{p}</p>)}
+      {
+        area.related && (
+          <p class="area-related">
+            <a href={area.related.href}>{area.related.label}</a>
+          </p>
+        )
+      }
+    </section>
+
+    <section class="area-services">
+      <h2>Ways to work together in {area.name}</h2>
+      <ul class="area-svc-list">
+        <li><b>Individual sessions</b> — one-on-one art therapy, 45–60 minutes. $100, sliding scale available.</li>
+        <li><b>Group sessions</b> — ninety minutes of collective creativity in a small circle. $150.</li>
+        <li><b>Workshops</b> — team-building and custom programming, on-site or online. $200–350.</li>
+        <li><b>Online supervision</b> — clinical consultation for art therapists. $75/hour.</li>
+        <li><b>Presentations</b> — evidence-based and interactive, for your audience. $150–200.</li>
+      </ul>
+      <p class="area-svc-more">
+        Full details and pricing live on the <a href="/#services">services section of the home page</a>. Every option
+        is offered online across Michigan; in-person sessions happen at the West Olive studio.
+      </p>
+      <p class="area-drive">{area.driveNote}</p>
+    </section>
+
+    <section class="area-faq">
+      <h2>Common questions from {placeList}</h2>
+      <div class="wmat-faq">
+        {
+          area.faqs.map((f, i) => (
+            <details open={i === 0}>
+              <summary>{f.q}</summary>
+              <div class="wmat-faq-body">{f.a}</div>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="area-cta">
+      <h2>Begin where you are</h2>
+      <p>
+        Not sure which way in fits? Send a note — Amy will help you find the right kind of session, at a pace that
+        feels right.
+      </p>
+      <p class="area-cta-btns">
+        <a class="wmat-btn is-primary is-lg" href="/contact">Get in touch</a>
+        <a class="wmat-btn is-outline is-lg" href="/service-areas/">All service areas</a>
+      </p>
+    </section>
+  </article>
+</PageLayout>
+
+<style>
+  .area-page {
+    max-width: 880px;
+    padding-block: clamp(28px, 5vw, 56px) clamp(56px, 8vw, 96px);
+  }
+
+  .area-crumbs ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 clamp(20px, 3vw, 32px);
+    padding: 0;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+  .area-crumbs li + li::before {
+    content: '›';
+    margin-right: 6px;
+    color: var(--text-muted);
+  }
+  .area-crumbs a {
+    color: var(--teal-600);
+  }
+
+  .area-hero {
+    text-align: center;
+    margin-bottom: clamp(24px, 4vw, 40px);
+  }
+  .area-postmark {
+    font-size: clamp(1.2rem, 2.4vw, 1.5rem);
+    color: var(--teal-600);
+    margin: 0 0 6px;
+  }
+  .area-hero h1 {
+    margin: 0;
+  }
+  .area-lead {
+    max-width: 56ch;
+    margin: 14px auto 0;
+  }
+
+  .area-intro {
+    margin-top: clamp(28px, 4.5vw, 48px);
+  }
+  .area-intro p {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--text-body);
+    margin: 0 0 1.1em;
+  }
+  .area-related a {
+    color: var(--teal-600);
+    font-weight: 600;
+  }
+
+  .area-services,
+  .area-faq,
+  .area-cta {
+    margin-top: clamp(36px, 5vw, 56px);
+  }
+  .area-services h2,
+  .area-faq h2,
+  .area-cta h2 {
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    margin: 0 0 0.6em;
+  }
+  .area-svc-list {
+    margin: 0 0 1em;
+    padding-left: 1.3em;
+    line-height: 1.7;
+    color: var(--text-body);
+  }
+  .area-svc-list li {
+    margin-bottom: 0.45em;
+  }
+  .area-svc-list b {
+    color: var(--text-strong);
+  }
+  .area-svc-more,
+  .area-drive {
+    line-height: 1.7;
+    color: var(--text-body);
+    margin: 0 0 0.9em;
+  }
+  .area-svc-more a {
+    color: var(--teal-600);
+  }
+  .area-drive {
+    border-left: 3px solid var(--gold-400);
+    background: var(--status-warning-bg);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    color: var(--text-strong);
+  }
+
+  .area-cta {
+    text-align: center;
+  }
+  .area-cta p {
+    max-width: 48ch;
+    margin: 0 auto;
+    line-height: 1.7;
+    color: var(--text-body);
+  }
+  .area-cta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px !important;
+  }
+  .area-cta-btns a {
+    text-decoration: none;
+  }
+</style>

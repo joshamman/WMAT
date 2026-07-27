@@ -1,6 +1,7 @@
 ---
 import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection, render } from 'astro:content';
+import { SITE, blogPosting, breadcrumbs } from '../../lib/schema';
 
 export async function getStaticPaths() {
   // Newest first (same order as the blog index).
@@ -19,8 +20,36 @@ export async function getStaticPaths() {
 const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const description =
+  post.data.excerpt ??
+  `${post.data.title} — reflections on art therapy and healing from Amy Rostollan-Hamman, ATR-BC.`;
 ---
-<PageLayout title={`${post.data.title} — West Michigan Art Therapy`} description={post.data.excerpt}>
+<PageLayout
+  title={`${post.data.title} — West Michigan Art Therapy`}
+  description={description}
+  ogType="article"
+  ogImage={post.data.image}
+  ogImageAlt={post.data.image ? (post.data.imageAlt ?? post.data.title) : undefined}
+  publishedTime={post.data.date}
+  modifiedTime={post.data.updated}
+  schema={[
+    blogPosting({
+      title: post.data.title,
+      description,
+      url: canonical,
+      datePublished: post.data.date,
+      dateModified: post.data.updated,
+      image: post.data.image,
+    }),
+    breadcrumbs([
+      { name: 'Home', url: `${SITE}/` },
+      { name: 'Blog', url: `${SITE}/blog/` },
+      { name: post.data.title, url: canonical },
+    ]),
+  ]}
+>
   <article class="wrap" style="max-width:720px;padding-block:clamp(40px,6vw,72px)">
     <p style="text-align:center"><a href="/blog" style="font-size:.85rem;color:var(--teal-600)">← Back to the studio</a></p>
     <time class="wmat-eyebrow" style="display:block;text-align:center;color:var(--teal-600);margin:18px 0 10px">{fmt(post.data.date)}</time>

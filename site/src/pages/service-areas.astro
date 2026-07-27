@@ -1,0 +1,199 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import ServiceAreaMap from '../components/ServiceAreaMap.astro';
+import { serviceAreas, counties } from '../data/serviceAreas';
+import { SITE, breadcrumbs } from '../lib/schema';
+---
+
+<PageLayout
+  title="Art Therapy Service Areas | West Michigan Art Therapy"
+  description="In-person art therapy across the West Michigan lakeshore — Grand Rapids, Holland, Muskegon, Grand Haven and Saugatuck — plus online sessions across Michigan."
+  schema={[
+    breadcrumbs([
+      { name: 'Home', url: `${SITE}/` },
+      { name: 'Service areas', url: `${SITE}/service-areas/` },
+    ]),
+  ]}
+>
+  <div class="wrap areas-page">
+    <header class="areas-hero">
+      <p class="wmat-eyebrow areas-eyebrow">Where we serve</p>
+      <h1>Rooted in West Olive, serving the whole shore</h1>
+      <p class="wmat-lead areas-lead">
+        Amy’s studio sits in West Olive, halfway between Grand Haven and Holland on the Lake Michigan coast. From
+        there the practice reaches up, down, and inland — in person across the lakeshore, and online anywhere in
+        Michigan.
+      </p>
+    </header>
+
+    <h2 class="wmat-sr-only">Find your city on the lakeshore map</h2>
+    <ServiceAreaMap interactive />
+
+    <section class="areas-base">
+      <h2>The home base: West Olive</h2>
+      <p>
+        West Olive is a quiet stretch of dune and pine on “Michigan’s art coast” — and it’s where in-person sessions
+        happen, at Amy’s studio. There’s no big sign or office park; that’s rather the point. Sessions are
+        unhurried, confidential, and surrounded by the landscape that inspired the practice. Directions come with
+        your first appointment.
+      </p>
+    </section>
+
+    <section class="areas-grid-sec">
+      <h2>Five shores, five stories</h2>
+      <p class="areas-grid-intro">
+        Every city Amy serves gets its own page — not a copy-paste list, but what working together actually looks
+        like from there.
+      </p>
+      <div class="wmat-grid wmat-grid-auto areas-grid">
+        {
+          serviceAreas.map((a) => (
+            <a class="areas-card" href={`/art-therapy-${a.slug}/`}>
+              <span class="areas-card-dot" style={`background:${a.map.accent}`} aria-hidden="true" />
+              <span class="wmat-eyebrow areas-card-county">{a.county}</span>
+              <span class="areas-card-name">{[a.name, ...a.nearby].join(' · ')}</span>
+              <span class="areas-card-hook">{a.hook}</span>
+              <span class="areas-card-go">Art therapy in {a.name} →</span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="areas-wide">
+      <h2>Counties &amp; everywhere between</h2>
+      <p>
+        In-person work spans <b>{counties.join(', ')}</b> — the small towns between the pins count too. And because
+        every session type is offered over secure video, <b>online art therapy is available anywhere in Michigan</b>,
+        from the U.P. to the state line.
+      </p>
+    </section>
+
+    <section class="areas-cta">
+      <h2>Not sure where you fit?</h2>
+      <p>Wherever you are on the map, the first step is the same — send a note and say hello.</p>
+      <p class="areas-cta-btns">
+        <a class="wmat-btn is-primary is-lg" href="/contact">Get in touch</a>
+        <a class="wmat-btn is-outline is-lg" href="/#services">See the services</a>
+      </p>
+    </section>
+  </div>
+</PageLayout>
+
+<style>
+  .areas-page {
+    padding-block: clamp(32px, 5vw, 64px) clamp(56px, 8vw, 96px);
+  }
+  .areas-hero {
+    text-align: center;
+    margin-bottom: clamp(28px, 4.5vw, 48px);
+  }
+  .areas-eyebrow {
+    color: var(--teal-600);
+    margin: 0 0 8px;
+  }
+  .areas-hero h1 {
+    margin: 0;
+  }
+  .areas-lead {
+    max-width: 62ch;
+    margin: 14px auto 0;
+  }
+
+  .areas-base,
+  .areas-grid-sec,
+  .areas-wide,
+  .areas-cta {
+    margin-top: clamp(40px, 6vw, 64px);
+  }
+  .areas-base h2,
+  .areas-grid-sec h2,
+  .areas-wide h2,
+  .areas-cta h2 {
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    margin: 0 0 0.6em;
+  }
+  .areas-base p,
+  .areas-wide p,
+  .areas-grid-intro {
+    line-height: 1.75;
+    color: var(--text-body);
+    max-width: 68ch;
+    margin: 0 0 1em;
+  }
+
+  .areas-grid {
+    margin-top: clamp(18px, 3vw, 28px);
+  }
+  .areas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--surface-card);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(18px, 2.4vw, 24px);
+    text-decoration: none;
+    transition: transform 0.25s var(--ease-gentle), box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .areas-card:hover,
+  .areas-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--teal-600);
+  }
+  .areas-card-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    opacity: 0.85;
+  }
+  .areas-card-county {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .areas-card-name {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text-strong);
+    line-height: 1.2;
+  }
+  .areas-card-hook {
+    color: var(--text-body);
+    line-height: 1.55;
+  }
+  .areas-card-go {
+    margin-top: auto;
+    padding-top: 10px;
+    font-weight: 600;
+    color: var(--teal-600);
+  }
+
+  .areas-cta {
+    text-align: center;
+  }
+  .areas-cta p {
+    max-width: 48ch;
+    margin: 0 auto;
+    line-height: 1.7;
+    color: var(--text-body);
+  }
+  .areas-cta-btns {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 20px !important;
+  }
+  .areas-cta-btns a {
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .areas-card {
+      transition: none;
+    }
+  }
+</style>

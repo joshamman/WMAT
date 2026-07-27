@@ -2,9 +2,39 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Icon from '../components/Icon.astro';
+import { serviceAreas } from '../data/serviceAreas';
+import { faqPage } from '../lib/schema';
 import '../styles/journey.css';
+
+// Keep in sync with the visible #practical FAQ below (same questions & answers).
+const homeFaqs = [
+  {
+    q: 'Are sessions virtual or in person?',
+    a: 'Both. Sessions are offered online or in person, here on the West Olive coast, and shaped around your needs.',
+  },
+  {
+    q: 'Who do you work with?',
+    a: 'Children, adolescents, adults, and older adults, across many settings and a wide range of needs. You are welcome here.',
+  },
+  {
+    q: 'Do you offer online sessions across Michigan?',
+    a: 'Yes — every session type is available over secure video anywhere in Michigan. Many clients mix in-person visits with online ones.',
+  },
+  {
+    q: 'Where do in-person sessions happen?',
+    a: 'At Amy’s studio in West Olive, on the lakeshore between Grand Haven and Holland. Workshops and presentations also travel to organizations — see all service areas for details.',
+  },
+  {
+    q: 'Do I need to be good at art?',
+    a: 'Not at all. There is no wrong mark to make — art therapy is about the process, never the product, and every activity works for complete beginners.',
+  },
+];
 ---
-<BaseLayout title="West Michigan Art Therapy — Heal Through Creativity">
+<BaseLayout
+  title="Art Therapy in West Olive, MI — Heal Through Creativity"
+  description="Board-certified art therapy for all ages — in person in West Olive, Grand Rapids, Holland, Muskegon & Grand Haven, and online across Michigan."
+  schema={[faqPage(homeFaqs)]}
+>
   <a class="skip-link" href="#top">Skip to content</a>
   <Header />
 
@@ -101,7 +131,7 @@ import '../styles/journey.css';
         <div class="chapter flip">
           <div class="c-art" data-reveal>
             <div class="wash tear drift2" style="inset:-6% -4% -6% -4%;background:radial-gradient(circle at 50% 50%, var(--clay-400), transparent 72%);opacity:.5"></div>
-            <div class="frame"><img src="/assets/images/portrait-placeholder.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
+            <div class="frame"><img src="/assets/images/mark-landscape-wide.jpg" alt="" style="width:100%;height:100%;object-fit:cover" /></div>
           </div>
           <div class="c-txt" data-reveal>
             <span class="chapter-num">Chapter 06</span>
@@ -137,17 +167,17 @@ import '../styles/journey.css';
         <div class="cards-3" style="margin-top:clamp(28px,4vw,48px)">
           <div class="svc" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--teal-400), transparent 70%)"></span>
-            <h4>Person-centered</h4>
+            <h3>Person-centered</h3>
             <p>You set the direction. Every session follows your goals, your comfort, and your own&nbsp;pace.</p>
           </div>
           <div class="svc" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--sage-400), transparent 70%)"></span>
-            <h4>Safe &amp; confidential</h4>
+            <h3>Safe &amp; confidential</h3>
             <p>A grounded, non-judgmental space where it is okay to not have the words just&nbsp;yet.</p>
           </div>
           <div class="svc" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--gold-400), transparent 70%)"></span>
-            <h4>Strengths-based</h4>
+            <h3>Strengths-based</h3>
             <p>We build on what is already within you, using creativity as a steady path toward&nbsp;growth.</p>
           </div>
         </div>
@@ -166,32 +196,32 @@ import '../styles/journey.css';
         <div class="svc-grid">
           <div class="svc a" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--teal-400), transparent 70%)"></span>
-            <h4>Individual Sessions</h4>
+            <h3>Individual Sessions</h3>
             <p>One-on-one art therapy, 45&ndash;60 minutes, with a personalized approach, your own materials, and flexible&nbsp;scheduling.</p>
             <div class="price">$100<small>/ session</small></div>
           </div>
           <div class="svc b" data-reveal>
             <span class="tag">Most loved</span>
             <span class="smear" style="background:radial-gradient(circle, var(--gold-400), transparent 70%)"></span>
-            <h4>Group Sessions</h4>
+            <h3>Group Sessions</h3>
             <p>Ninety minutes of collective creativity and shared healing in a small, supportive circle, with structured, themed creative&nbsp;activities.</p>
             <div class="price">$150<small>/ session</small></div>
           </div>
           <div class="svc c" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--sage-400), transparent 70%)"></span>
-            <h4>Workshops</h4>
+            <h3>Workshops</h3>
             <p>Team-building and comprehensive programming, fully customized to your group&rsquo;s&nbsp;needs.</p>
             <div class="price">$200&ndash;350</div>
           </div>
           <div class="svc d" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--sky-400), transparent 70%)"></span>
-            <h4>Online Supervision</h4>
+            <h3>Online Supervision</h3>
             <p>Clinical case consultation and professional development, online or within fifteen miles of West&nbsp;Olive.</p>
             <div class="price">$75<small>/ hour</small></div>
           </div>
           <div class="svc e" data-reveal>
             <span class="smear" style="background:radial-gradient(circle, var(--clay-400), transparent 70%)"></span>
-            <h4>Presentations</h4>
+            <h3>Presentations</h3>
             <p>Customized, evidence-based content with interactive components for your&nbsp;audience.</p>
             <div class="price">$150&ndash;200</div>
           </div>
@@ -226,6 +256,18 @@ import '../styles/journey.css';
               <summary>Who do you work&nbsp;with?</summary>
               <div class="wmat-faq-body">Children, adolescents, adults, and older adults, across many settings and a wide range of needs. You are welcome&nbsp;here.</div>
             </details>
+            <details>
+              <summary>Do you offer online sessions across&nbsp;Michigan?</summary>
+              <div class="wmat-faq-body">Yes &mdash; every session type is available over secure video anywhere in Michigan. Many clients mix in-person visits with online&nbsp;ones.</div>
+            </details>
+            <details>
+              <summary>Where do in-person sessions&nbsp;happen?</summary>
+              <div class="wmat-faq-body">At Amy&rsquo;s studio in West&nbsp;Olive, on the lakeshore between Grand&nbsp;Haven and Holland. Workshops and presentations also travel to organizations &mdash; see <a href="/service-areas/">all service areas</a> for&nbsp;details.</div>
+            </details>
+            <details>
+              <summary>Do I need to be good at&nbsp;art?</summary>
+              <div class="wmat-faq-body">Not at all. There is no wrong mark to make &mdash; art therapy is about the process, never the product, and every activity works for complete&nbsp;beginners.</div>
+            </details>
           </div>
         </div>
       </div>
@@ -237,7 +279,7 @@ import '../styles/journey.css';
       <div class="wrap amy-grid">
         <div class="amy-portrait" data-reveal="left">
           <div class="wash tear drift2" style="inset:-7%;background:radial-gradient(circle at 50% 50%, var(--gold-300), transparent 72%);opacity:.55;z-index:0"></div>
-          <img src="/assets/images/amy-pittsburgh.jpg" alt="Amy Rostollan-Hamman, ATR-BC" style="position:relative;z-index:2;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:5% 20%;border-radius:20px;display:block" />
+          <img src="/assets/images/amy-pittsburgh.jpg" alt="Amy Rostollan-Hamman, ATR-BC, smiling warmly at an art therapy conference, wearing an Art Therapy Association lanyard by a window overlooking a river and bridge" style="position:relative;z-index:2;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:5% 20%;border-radius:20px;display:block" />
           <div class="badge"><b>15+</b><span>years of practice</span></div>
         </div>
         <div data-reveal>
@@ -256,16 +298,17 @@ import '../styles/journey.css';
         <div data-reveal>
           <div class="chapter-num">where we serve</div>
           <h2 class="display" style="font-size:clamp(28px,4.6vw,56px);margin:10px 0 0">Rooted on the&nbsp;lakeshore</h2>
-          <p style="margin:16px auto 0;font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:var(--ink-700);max-width:52ch">Based in West&nbsp;Olive and serving the surrounding lakeshore. In-person across these areas, and online wherever you&nbsp;are.</p>
+          <p style="margin:16px auto 0;font-size:clamp(15px,1.4vw,18px);line-height:1.7;color:var(--ink-700);max-width:52ch">Based in West&nbsp;Olive and serving the surrounding lakeshore &mdash; including Spring&nbsp;Lake, Ferrysburg, Norton&nbsp;Shores, and Douglas. In-person across these areas, and online anywhere in&nbsp;Michigan.</p>
         </div>
         <div class="wmat-pills" style="margin-top:24px" data-reveal>
-          <span class="wmat-pill">West&nbsp;Olive</span>
-          <span class="wmat-pill">Grand&nbsp;Rapids</span>
-          <span class="wmat-pill">Holland</span>
-          <span class="wmat-pill">Grand&nbsp;Haven</span>
-          <span class="wmat-pill">Saugatuck</span>
-          <span class="wmat-pill">Spring&nbsp;Lake</span>
+          <a class="wmat-pill" href="/service-areas/">West&nbsp;Olive</a>
+          {serviceAreas.map((a) => (
+            <a class="wmat-pill" href={`/art-therapy-${a.slug}/`}>{a.name}</a>
+          ))}
         </div>
+        <p data-reveal style="margin:22px auto 0;font-size:clamp(15px,1.4vw,17px)">
+          <a href="/service-areas/" style="color:var(--teal-700);font-weight:600">Explore the lakeshore map &rarr;</a>
+        </p>
       </div>
     </section>
 
@@ -303,6 +346,13 @@ import '../styles/journey.css';
         <a href="#amy">About&nbsp;Amy</a>
         <a href="/blog">Blog</a>
         <a href="/contact">Contact</a>
+      </div>
+      <div class="site-footer-col">
+        <p class="site-foot-label">Serving</p>
+        <a href="/service-areas/">All service areas</a>
+        {serviceAreas.map((a) => (
+          <a href={`/art-therapy-${a.slug}/`}>{a.name}</a>
+        ))}
       </div>
       <div class="site-footer-col">
         <p class="site-foot-label">Reach Amy</p>
