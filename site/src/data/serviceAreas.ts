@@ -84,9 +84,9 @@ export const serviceAreas: ServiceArea[] = [
     metaDescription:
       'Art therapy near Holland, MI — in-person sessions twenty minutes up the shore in West Olive, online options, and all-ages support from an ATR-BC therapist.',
     headline: 'Art therapy near Holland',
-    hook: 'Twenty minutes up the shore from Tulip City — the studio’s nearest neighbor.',
+    hook: 'Twenty minutes down the shore from the studio — an easy Tulip City drive.',
     intro: [
-      'Holland is the studio’s nearest city neighbor — about twenty minutes down the shoreline — which makes in-person art therapy genuinely easy: close enough for an after-school appointment, far enough that the drive up the coast becomes a little decompression of its own.',
+      'The studio sits about twenty minutes up the shoreline from Holland, which makes in-person art therapy genuinely easy: close enough for an after-school appointment, far enough that the drive up the coast becomes a little decompression of its own.',
       'Families are a big part of this stretch of the lakeshore. Amy works with children, adolescents, and adults in a person-centered way: kids who don’t yet have words for big feelings often find them in paint and clay first, and teens tend to appreciate a therapy hour that doesn’t require sitting on a couch making eye contact. No one needs to be “good at art.”',
       'Individual sessions offer a sliding scale, group sessions run in small supportive circles, and everything is also available online when getting to West Olive doesn’t fit the week.',
     ],
@@ -154,22 +154,22 @@ export const serviceAreas: ServiceArea[] = [
     county: 'Ottawa County',
     title: 'Art Therapy in Grand Haven, MI | West Michigan Art Therapy',
     metaDescription:
-      'Art therapy for Grand Haven, Spring Lake & Ferrysburg — the studio is fifteen minutes down the shore in West Olive. All ages, in person or online.',
+      'Art therapy for Grand Haven, Spring Lake & Ferrysburg — the studio is twenty minutes down the shore in West Olive. All ages, in person or online.',
     headline: 'Art therapy in Grand Haven',
-    hook: 'The Tri-Cities — the closest stretch of shore to the studio.',
+    hook: 'The Tri-Cities — twenty minutes up the shore from the studio.',
     intro: [
-      'Grand Haven, Spring Lake, and Ferrysburg are the closest towns to the studio — about fifteen minutes up the coast — so if you’ve been wanting therapy that happens in person, at a table with real materials, this is the easiest stretch of shoreline to do it from.',
+      'Grand Haven, Spring Lake, and Ferrysburg sit about twenty minutes up the coast from the studio — so if you’ve been wanting therapy that happens in person, at a table with real materials, this is an easy stretch of shoreline to do it from.',
       'The Tri-Cities bring Amy the widest range of ages of anywhere she serves: young children sorting out big feelings, teens navigating pressure and identity, adults in transition, and older adults reflecting on a full life. Art therapy meets each of them differently — same table, same warm room, very different journeys. It is real, master’s-level mental-health care; it just happens to use paint as well as words.',
       'Group sessions are a local favorite — ninety minutes of guided, themed creating in a small circle — and individual sessions offer a sliding scale so cost doesn’t have to be the deciding factor.',
     ],
     driveNote:
-      'From Grand Haven, Spring Lake, or Ferrysburg, the West Olive studio is about 15 minutes south along US-31.',
-    driveMinutes: 15,
+      'From Grand Haven, Spring Lake, or Ferrysburg, the West Olive studio is about 20 minutes south along US-31.',
+    driveMinutes: 20,
     nearby: ['Spring Lake', 'Ferrysburg'],
     faqs: [
       {
         q: 'Where do sessions happen if I live in Grand Haven?',
-        a: 'Most Tri-Cities clients come to the West Olive studio, about 15 minutes south. Every session type is also available online.',
+        a: 'Most Tri-Cities clients come to the West Olive studio, about 20 minutes south. Every session type is also available online.',
       },
       {
         q: 'Do you work with older adults?',
