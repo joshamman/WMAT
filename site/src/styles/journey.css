@@ -205,6 +205,38 @@ section { position: relative; }
 }
 .mark-clear:hover { color: var(--ink-900); }
 
+.mark-tools {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap;
+  gap: 10px 16px; width: min(1100px, 92vw); margin: 18px auto 0;
+}
+.mark-swatches, .mark-sizes {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: color-mix(in srgb, var(--white) 70%, transparent);
+  border: 1px solid var(--border-soft); border-radius: 999px;
+  padding: 6px 8px; backdrop-filter: blur(4px);
+}
+.mark-swatch {
+  width: 30px; height: 30px; padding: 0; background: none;
+  border: 1.5px solid var(--ink-700); border-radius: 50%; cursor: pointer;
+  display: block; position: relative;
+  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), border-width 0.2s ease;
+}
+.mark-swatch--auto { overflow: hidden; }
+.mark-splat-mini { position: absolute; width: 15px; height: 15px; opacity: 0.88; }
+.mark-swatch:hover { transform: scale(1.12); }
+.mark-swatch.is-active {
+  border-width: 2.5px;
+  transform: scale(1.16);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink-900) 18%, transparent);
+}
+.mark-size {
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  color: var(--ink-500); background: none; border: none; border-radius: 999px;
+  padding: 6px 14px; cursor: pointer; transition: background 0.2s ease, color 0.2s ease;
+}
+.mark-size:hover { color: var(--ink-900); }
+.mark-size.is-active { background: var(--teal-600); color: var(--cream-50); }
+
 /* ---------- Generic wide editorial blocks ---------- */
 .wrap { max-width: 1200px; margin: 0 auto; padding-inline: clamp(20px, 5vw, 56px); position: relative; z-index: 1; }
 .eyebrow-line { display: inline-flex; align-items: center; gap: 12px; }
@@ -333,7 +365,8 @@ section { position: relative; }
 .btn-paint.ghost:hover, .btn-paint.ghost:focus-visible { color: var(--cream-50); }
 
 /* Visible keyboard focus */
-.j-cta:focus-visible, .btn-paint:focus-visible, .j-nav a:focus-visible, .j-logo:focus-visible, .mark-clear:focus-visible, .svc a:focus-visible { outline: 3px solid var(--teal-700); outline-offset: 2px; border-radius: 6px; }
+.j-cta:focus-visible, .btn-paint:focus-visible, .j-nav a:focus-visible, .j-logo:focus-visible, .mark-clear:focus-visible, .svc a:focus-visible, .mark-swatch:focus-visible, .mark-size:focus-visible { outline: 3px solid var(--teal-700); outline-offset: 2px; border-radius: 6px; }
+.mark-swatch:focus-visible { border-radius: 50%; }
 .btn-paint.ghost:focus-visible, .closing a:focus-visible, .site-footer a:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }
 
 /* Widow control on display + body type */

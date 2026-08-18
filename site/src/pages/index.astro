@@ -68,6 +68,30 @@ const homeFaqs = [
         </div>
         <button class="mark-clear" id="mark-clear" type="button" tabindex="-1">&#8635;&nbsp; Start fresh</button>
       </div>
+
+      <!-- Swatch fills below must match `palette` in journey.js — the one place stroke colors are defined. -->
+      <div class="mark-tools" id="mark-tools" data-reveal>
+        <div class="mark-swatches" role="group" aria-label="Brush color">
+          <button class="mark-swatch mark-swatch--auto is-active" type="button" data-auto aria-pressed="true" aria-label="Surprise me (random colors)">
+            <span class="mark-splat-mini" style="background:#266F70; border-radius: 58% 42% 60% 40% / 45% 55% 42% 58%; top:2px; left:2px;"></span>
+            <span class="mark-splat-mini" style="background:#E8B33D; border-radius: 44% 56% 39% 61% / 60% 40% 58% 42%; top:0; right:1px;"></span>
+            <span class="mark-splat-mini" style="background:#A66E3D; border-radius: 50% 50% 55% 45% / 48% 52% 45% 55%; bottom:0; left:8px;"></span>
+          </button>
+          <button class="mark-swatch" type="button" data-color="#266F70" style="background:#266F70; border-radius: 62% 38% 51% 49% / 45% 55% 48% 52%;" aria-pressed="false" aria-label="Paint with deep teal"></button>
+          <button class="mark-swatch" type="button" data-color="#2F8889" style="background:#2F8889; border-radius: 41% 59% 63% 37% / 55% 42% 58% 45%;" aria-pressed="false" aria-label="Paint with teal"></button>
+          <button class="mark-swatch" type="button" data-color="#5DA8CC" style="background:#5DA8CC; border-radius: 55% 45% 40% 60% / 40% 60% 55% 45%;" aria-pressed="false" aria-label="Paint with sky blue"></button>
+          <button class="mark-swatch" type="button" data-color="#142F49" style="background:#142F49; border-radius: 48% 52% 62% 38% / 58% 44% 56% 42%;" aria-pressed="false" aria-label="Paint with midnight navy"></button>
+          <button class="mark-swatch" type="button" data-color="#E8B33D" style="background:#E8B33D; border-radius: 60% 40% 45% 55% / 48% 58% 42% 52%;" aria-pressed="false" aria-label="Paint with gold"></button>
+          <button class="mark-swatch" type="button" data-color="#7E8B4A" style="background:#7E8B4A; border-radius: 44% 56% 58% 42% / 60% 46% 54% 40%;" aria-pressed="false" aria-label="Paint with sage green"></button>
+          <button class="mark-swatch" type="button" data-color="#A66E3D" style="background:#A66E3D; border-radius: 57% 43% 39% 61% / 50% 60% 40% 50%;" aria-pressed="false" aria-label="Paint with clay"></button>
+          <button class="mark-swatch" type="button" data-color="#3FA0A1" style="background:#3FA0A1; border-radius: 39% 61% 55% 45% / 62% 38% 60% 40%;" aria-pressed="false" aria-label="Paint with aqua"></button>
+        </div>
+        <div class="mark-sizes" role="group" aria-label="Brush size">
+          <button class="mark-size" data-size="0.65" type="button" aria-pressed="false">Fine</button>
+          <button class="mark-size is-active" data-size="1" type="button" aria-pressed="true">Medium</button>
+          <button class="mark-size" data-size="1.55" type="button" aria-pressed="false">Bold</button>
+        </div>
+      </div>
     </section>
 
     <!-- 02 · WHAT IT IS -->

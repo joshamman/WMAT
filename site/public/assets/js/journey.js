@@ -93,6 +93,7 @@
   var ctx = canvas ? canvas.getContext('2d') : null;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
+  // Kept in sync with the swatch fills in index.astro's #mark-tools.
   var palette = ['#266F70', '#2F8889', '#5DA8CC', '#142F49', '#E8B33D', '#7E8B4A', '#A66E3D', '#3FA0A1'];
 
   // Two layers: a "dry paper" stain canvas (offscreen) that accumulates faint
@@ -102,6 +103,10 @@
   var blooms = [];
   var rafOn = false, lastFrame = 0, painted = false, painting = false;
   var curColor = palette[0], lastSeed = null;
+  var autoColor = true;  // true = random color per stroke (default/original behavior)
+  var sizeScale = 1;     // brush-size multiplier, set by the Fine/Medium/Bold chips
+
+  function brushBase() { return Math.min(canvas.width, canvas.height) * sizeScale * 0.05; }
 
   function sizeCanvas() {
     if (!canvas || !stage) return;
@@ -191,7 +196,7 @@
   // A controlled brush mark (while the pointer moves): tight, and it keeps most
   // of its pigment as it settles, so strokes stay visible.
   function controlledSeed(x, y) {
-    var base = Math.min(canvas.width, canvas.height) * 0.05;
+    var base = brushBase();
     makeBloom(x, y, {
       r0: base * (0.45 + Math.random() * 0.2),
       r1: base * (1.25 + Math.random() * 0.5),
@@ -205,7 +210,7 @@
   // A wet bleed: ONLY while the pointer is held still. Pigment spreads outward
   // and lightens like water on soaked paper, growing the longer you linger.
   function wetSeed(p, level) {
-    var base = Math.min(canvas.width, canvas.height) * 0.05;
+    var base = brushBase();
     makeBloom(p.x, p.y, {
       r0: base * 0.5,
       r1: base * Math.min(5, 1.8 + level * 0.7),
@@ -217,7 +222,7 @@
   }
 
   function paintMove(p) {
-    var base = Math.min(canvas.width, canvas.height) * 0.05;
+    var base = brushBase();
     var gap = base * 0.7;
     lastMoveTime = performance.now();
     holdLevel = 0; holdAnchor = p;
@@ -228,7 +233,7 @@
       var steps = Math.floor(dist / gap);
       for (var i = 1; i <= steps; i++) {
         var t = i / steps;
-        if (Math.random() < 0.35) curColor = palette[Math.floor(Math.random() * palette.length)];
+        if (autoColor && Math.random() < 0.35) curColor = palette[Math.floor(Math.random() * palette.length)];
         controlledSeed(lastSeed.x + dx * t, lastSeed.y + dy * t);
       }
     }
@@ -242,7 +247,7 @@
 
   function startPaint(e) {
     painting = true; lastSeed = null; holdLevel = 0;
-    curColor = palette[Math.floor(Math.random() * palette.length)];
+    if (autoColor) curColor = palette[Math.floor(Math.random() * palette.length)];
     var p = pos(e); controlledSeed(p.x, p.y); lastSeed = p; holdAnchor = p;
     lastMoveTime = performance.now();
     if (!holdInterval) holdInterval = setInterval(holdTick, 120);
@@ -265,6 +270,31 @@
       composite();
       painted = false; if (hint) { hint.classList.remove('gone'); hint.style.opacity = ''; }
     });
+
+    var swatchBtns = document.querySelectorAll('.mark-swatch');
+    for (var si = 0; si < swatchBtns.length; si++) {
+      swatchBtns[si].addEventListener('click', function () {
+        autoColor = this.hasAttribute('data-auto');
+        if (!autoColor) curColor = this.getAttribute('data-color');
+        for (var j = 0; j < swatchBtns.length; j++) {
+          var active = swatchBtns[j] === this;
+          swatchBtns[j].classList.toggle('is-active', active);
+          swatchBtns[j].setAttribute('aria-pressed', active ? 'true' : 'false');
+        }
+      });
+    }
+
+    var sizeBtns = document.querySelectorAll('.mark-size');
+    for (var zi = 0; zi < sizeBtns.length; zi++) {
+      sizeBtns[zi].addEventListener('click', function () {
+        sizeScale = Number(this.getAttribute('data-size'));
+        for (var k = 0; k < sizeBtns.length; k++) {
+          var on = sizeBtns[k] === this;
+          sizeBtns[k].classList.toggle('is-active', on);
+          sizeBtns[k].setAttribute('aria-pressed', on ? 'true' : 'false');
+        }
+      });
+    }
   }
 
   // initial paint
