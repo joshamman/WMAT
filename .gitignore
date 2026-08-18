@@ -22,3 +22,7 @@ npm-debug.log*
 
 # Local static preview (regenerated, not shipped)
 home-preview.html
+
+# Unrelated personal files kept in this working copy
+/Amy Hamman - AATA 2026 CONFERENCE PROPOSAL SUBMISSION - Google Docs.pdf
+/Hospice Document.md
