@@ -93,8 +93,9 @@
   var ctx = canvas ? canvas.getContext('2d') : null;
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-  // Kept in sync with the swatch fills in index.astro's #mark-tools.
-  var palette = ['#266F70', '#2F8889', '#5DA8CC', '#142F49', '#E8B33D', '#7E8B4A', '#A66E3D', '#3FA0A1'];
+  // Kept in sync with the wash colors in index.astro's #mark-tools. Deliberately six:
+  // the two extra teals that used to sit at either end were near-duplicates of this one.
+  var palette = ['#2F8889', '#5DA8CC', '#142F49', '#E8B33D', '#7E8B4A', '#A66E3D'];
 
   // Two layers: a "dry paper" stain canvas (offscreen) that accumulates faint
   // settled pigment, plus active blooms that spread + fade each frame on top.

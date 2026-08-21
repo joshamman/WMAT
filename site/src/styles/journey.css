@@ -215,20 +215,36 @@ section { position: relative; }
   border: 1px solid var(--border-soft); border-radius: 999px;
   padding: 6px 8px; backdrop-filter: blur(4px);
 }
+/* The swatch buttons carry their own breathing room, so the tray closes up around them. */
+.mark-swatches { gap: 0; padding: 2px 6px; }
+/* A swatch is a stack of translucent washes; `multiply` makes the crossings read as
+   pigment laid down twice. `isolation` keeps that blending inside the swatch. */
 .mark-swatch {
-  width: 30px; height: 30px; padding: 0; background: none;
-  border: 1.5px solid var(--ink-700); border-radius: 50%; cursor: pointer;
-  display: block; position: relative;
-  transition: transform 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out), border-width 0.2s ease;
+  /* 44px box around a 34px paint shape — a comfortable tap target on a phone. */
+  width: 44px; height: 46px; padding: 0; border: none; background: none;
+  cursor: pointer; position: relative;
+  display: inline-flex; align-items: center; justify-content: center;
 }
-.mark-swatch--auto { overflow: hidden; }
-.mark-splat-mini { position: absolute; width: 15px; height: 15px; opacity: 0.88; }
-.mark-swatch:hover { transform: scale(1.12); }
-.mark-swatch.is-active {
-  border-width: 2.5px;
-  transform: scale(1.16);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ink-900) 18%, transparent);
+.mark-splat {
+  position: relative; width: 34px; height: 34px; isolation: isolate;
+  transition: transform 0.2s var(--ease-out), filter 0.2s var(--ease-out);
 }
+.mark-wash {
+  position: absolute; mix-blend-mode: multiply;
+  background-image: repeating-linear-gradient(88deg, rgba(255,255,255,0.13) 0 1.5px, transparent 1.5px 5px);
+}
+.mark-swatch:hover .mark-splat { transform: scale(1.12); }
+.mark-swatch.is-active .mark-splat {
+  transform: scale(1.22);
+  filter: drop-shadow(0 3px 5px color-mix(in srgb, var(--navy-900) 26%, transparent));
+}
+/* The picked swatch is marked by lift + an ink tick — shape and position, never color alone. */
+.mark-swatch.is-active::after {
+  content: ""; position: absolute; left: 50%; bottom: 2px;
+  width: 15px; height: 2px; margin-left: -7.5px;
+  border-radius: 2px; background: var(--ink-700); opacity: 0.55;
+}
+@media (prefers-reduced-motion: reduce) { .mark-splat { transition: none; } }
 .mark-size {
   font-family: var(--font-body); font-size: 12px; font-weight: 600;
   color: var(--ink-500); background: none; border: none; border-radius: 999px;
@@ -366,7 +382,7 @@ section { position: relative; }
 
 /* Visible keyboard focus */
 .j-cta:focus-visible, .btn-paint:focus-visible, .j-nav a:focus-visible, .j-logo:focus-visible, .mark-clear:focus-visible, .svc a:focus-visible, .mark-swatch:focus-visible, .mark-size:focus-visible { outline: 3px solid var(--teal-700); outline-offset: 2px; border-radius: 6px; }
-.mark-swatch:focus-visible { border-radius: 50%; }
+.mark-swatch:focus-visible { border-radius: 10px; }
 .btn-paint.ghost:focus-visible, .closing a:focus-visible, .site-footer a:focus-visible { outline: 3px solid var(--gold-300); outline-offset: 2px; }
 
 /* Widow control on display + body type */
