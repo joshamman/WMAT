@@ -51,7 +51,7 @@ export function business(): Record<string, unknown> {
     image: abs('/assets/images/og-default.png'),
     logo: abs('/assets/images/logo.svg'),
     priceRange: '$75-$350',
-    // City-level only, by design (home studio privacy).
+    // City-level only, by design (Amy works from home — privacy).
     address: { '@type': 'PostalAddress', addressLocality: 'West Olive', addressRegion: 'MI', addressCountry: 'US' },
     areaServed: [
       ...CITIES_SERVED.map((name) => ({ '@type': 'City', name })),

@@ -6,9 +6,12 @@
  * Copy rules (SEO + honesty):
  *  - Every intro is written around a DISTINCT local angle — never a template
  *    with the city name swapped.
- *  - Amy has ONE studio (West Olive). Copy says "serving / traveling to /
- *    online for" — never "our {city} office/location".
- *  - Drive times are friendly estimates from West Olive, not promises.
+ *  - Amy is based in West Olive (her home, not a client-facing office/studio).
+ *    In-person sessions meet at a location agreed on together — never "our
+ *    {city} office/location", and never implying clients visit her home.
+ *  - Drive times are friendly estimates of how far Amy would travel from West
+ *    Olive to meet you, not promises, and never framed as a commute clients
+ *    make to her.
  */
 
 export interface ServiceArea {
@@ -20,7 +23,7 @@ export interface ServiceArea {
   headline: string; // h1
   hook: string; // one-liner for hub cards + map preview
   intro: string[]; // 2–3 paragraphs of genuinely local copy
-  driveNote: string; // sentence about getting to the studio
+  driveNote: string; // sentence about how far Amy is from here
   driveMinutes: number; // approximate, for the map label
   nearby: string[]; // also-served towns folded into this page
   faqs: { q: string; a: string }[];
@@ -34,7 +37,7 @@ export interface ServiceArea {
   map: { x: number; y: number; accent: string; driveOffset?: { dx: number; dy: number } };
 }
 
-/** Amy's studio on the map (stylized coords, not geography). */
+/** Amy's home base on the map (stylized coords, not geography). */
 export const STUDIO = { x: 400, y: 440 };
 export const MAP_W = 1000;
 export const MAP_H = 800;
@@ -54,10 +57,10 @@ export const serviceAreas: ServiceArea[] = [
     intro: [
       'Grand Rapids has no shortage of creative energy — what West Michigan Art Therapy adds is the clinical side: a board-certified art therapist (ATR-BC) who uses the creative process, within a confidential therapeutic relationship, to support real mental-health goals.',
       'For the metro’s nonprofits, schools, healthcare teams, and workplaces, Amy travels to you. Workshops are built around your group’s needs — team-building, burnout and stress, grief in caregiving professions — and presentations pair evidence-based content with hands-on making, so your people leave having experienced the work, not just heard about it.',
-      'Individuals in Grand Rapids most often meet Amy online — sessions work beautifully over video with materials you already have at home. And when a drive to the lakeshore sounds like part of the therapy, the West Olive studio is about fifty minutes west, straight toward the water.',
+      'Individuals in Grand Rapids most often meet Amy online — sessions work beautifully over video with materials you already have at home. In-person sessions are also possible, at a location agreed on together; Amy is based about fifty minutes west, straight toward the water.',
     ],
     driveNote:
-      'The West Olive studio is about a 50-minute drive west of downtown Grand Rapids — most Grand Rapids clients choose online sessions, and workshops come to you.',
+      'Amy is about a 50-minute drive west of downtown Grand Rapids — most Grand Rapids clients choose online sessions, and workshops always come to you.',
     driveMinutes: 50,
     nearby: [],
     faqs: [
@@ -67,7 +70,7 @@ export const serviceAreas: ServiceArea[] = [
       },
       {
         q: 'Can I do individual art therapy from Grand Rapids?',
-        a: 'Absolutely — individual sessions ($100, sliding scale available) are offered online across Michigan, or in person at the West Olive studio, about 50 minutes west of the city.',
+        a: 'Absolutely — individual sessions ($100, sliding scale available) are offered online across Michigan, or in person at a location agreed on together; Amy is based about 50 minutes west of the city.',
       },
       {
         q: 'Do I need art experience for a workplace workshop?',
@@ -84,20 +87,20 @@ export const serviceAreas: ServiceArea[] = [
     metaDescription:
       'Art therapy near Holland, MI — in-person sessions twenty minutes up the shore in West Olive, online options, and all-ages support from an ATR-BC therapist.',
     headline: 'Art therapy near Holland',
-    hook: 'Twenty minutes down the shore from the studio — an easy Tulip City drive.',
+    hook: 'Twenty minutes down the shore from West Olive — an easy Tulip City drive.',
     intro: [
-      'The studio sits about twenty minutes up the shoreline from Holland, which makes in-person art therapy genuinely easy: close enough for an after-school appointment, far enough that the drive up the coast becomes a little decompression of its own.',
+      'Amy is based about twenty minutes up the shoreline from Holland, which makes in-person art therapy genuinely easy to arrange: close enough for an after-school appointment, and sessions meet wherever works best for you.',
       'Families are a big part of this stretch of the lakeshore. Amy works with children, adolescents, and adults in a person-centered way: kids who don’t yet have words for big feelings often find them in paint and clay first, and teens tend to appreciate a therapy hour that doesn’t require sitting on a couch making eye contact. No one needs to be “good at art.”',
-      'Individual sessions offer a sliding scale, group sessions run in small supportive circles, and everything is also available online when getting to West Olive doesn’t fit the week.',
+      'Individual sessions offer a sliding scale, group sessions run in small supportive circles, and everything is also available online for weeks when meeting in person doesn’t fit.',
     ],
     driveNote:
-      'From Holland, the West Olive studio is about 20 minutes north along the shore — an easy after-school or after-work drive.',
+      'From Holland, Amy is about 20 minutes north along the shore — an easy after-school or after-work meeting.',
     driveMinutes: 20,
     nearby: [],
     faqs: [
       {
-        q: 'How far is the studio from Holland?',
-        a: 'About 20 minutes north along the lakeshore, in West Olive. Online sessions are always available as an alternative.',
+        q: 'How far is Amy from Holland?',
+        a: 'About 20 minutes north along the lakeshore, in West Olive — and in-person sessions meet at a location agreed on together. Online sessions are always available as an alternative.',
       },
       {
         q: 'Do you work with children and teens?',
@@ -122,10 +125,10 @@ export const serviceAreas: ServiceArea[] = [
     intro: [
       'Muskegon holds a special place in this practice: alongside West Michigan Art Therapy, Amy serves as an art therapist in hospice care in the Muskegon area, sitting bedside with patients and families to make things that say what words can’t — memory pieces, painted keepsakes, legacy artwork that stays with a family long after.',
       'That end-of-life and grief experience shapes what she offers Muskegon and Norton Shores more broadly: support for people carrying loss, caregivers running on empty, and older adults who want to put a life’s story into something you can hold. Grief doesn’t follow a schedule, and neither does the way it comes out — art gives it somewhere to go.',
-      'Sessions happen online, at the West Olive studio about thirty-five minutes south along the shore, and — for organizations, senior communities, and care teams — as workshops and presentations that come to you.',
+      'Sessions happen online, in person at a location agreed on together (Amy is based about thirty-five minutes south along the shore), and — for organizations, senior communities, and care teams — as workshops and presentations that come to you.',
     ],
     driveNote:
-      'From Muskegon or Norton Shores, the studio is roughly 35 minutes south on the shoreline route — or meet online.',
+      'From Muskegon or Norton Shores, Amy is roughly 35 minutes south on the shoreline route — or meet online.',
     driveMinutes: 35,
     nearby: ['Norton Shores'],
     faqs: [
@@ -139,7 +142,7 @@ export const serviceAreas: ServiceArea[] = [
       },
       {
         q: 'Do you see clients from Norton Shores?',
-        a: 'Yes — Norton Shores, Muskegon, and the surrounding Muskegon County area, in person at the West Olive studio, online, or via workshops that travel to your organization.',
+        a: 'Yes — Norton Shores, Muskegon, and the surrounding Muskegon County area, in person at a location agreed on together, online, or via workshops that travel to your organization.',
       },
     ],
     related: {
@@ -154,22 +157,22 @@ export const serviceAreas: ServiceArea[] = [
     county: 'Ottawa County',
     title: 'Art Therapy in Grand Haven, MI | West Michigan Art Therapy',
     metaDescription:
-      'Art therapy for Grand Haven, Spring Lake & Ferrysburg — the studio is twenty minutes down the shore in West Olive. All ages, in person or online.',
+      'Art therapy for Grand Haven, Spring Lake & Ferrysburg — Amy is based twenty minutes down the shore in West Olive. All ages, in person or online.',
     headline: 'Art therapy in Grand Haven',
-    hook: 'The Tri-Cities — twenty minutes up the shore from the studio.',
+    hook: 'The Tri-Cities — twenty minutes up the shore from West Olive.',
     intro: [
-      'Grand Haven, Spring Lake, and Ferrysburg sit about twenty minutes up the coast from the studio — so if you’ve been wanting therapy that happens in person, at a table with real materials, this is an easy stretch of shoreline to do it from.',
+      'Grand Haven, Spring Lake, and Ferrysburg sit about twenty minutes up the coast from West Olive — so if you’ve been wanting therapy that happens in person, at a table with real materials, that’s easy to arrange from here.',
       'The Tri-Cities bring Amy the widest range of ages of anywhere she serves: young children sorting out big feelings, teens navigating pressure and identity, adults in transition, and older adults reflecting on a full life. Art therapy meets each of them differently — same table, same warm room, very different journeys. It is real, master’s-level mental-health care; it just happens to use paint as well as words.',
       'Group sessions are a local favorite — ninety minutes of guided, themed creating in a small circle — and individual sessions offer a sliding scale so cost doesn’t have to be the deciding factor.',
     ],
     driveNote:
-      'From Grand Haven, Spring Lake, or Ferrysburg, the West Olive studio is about 20 minutes south along US-31.',
+      'From Grand Haven, Spring Lake, or Ferrysburg, Amy is about 20 minutes south along US-31.',
     driveMinutes: 20,
     nearby: ['Spring Lake', 'Ferrysburg'],
     faqs: [
       {
         q: 'Where do sessions happen if I live in Grand Haven?',
-        a: 'Most Tri-Cities clients come to the West Olive studio, about 20 minutes south. Every session type is also available online.',
+        a: 'In person, at a location agreed on together — Amy is based about 20 minutes south, in West Olive. Every session type is also available online.',
       },
       {
         q: 'Do you work with older adults?',
@@ -188,16 +191,16 @@ export const serviceAreas: ServiceArea[] = [
     county: 'Allegan County',
     title: 'Art Therapy in Saugatuck, MI | West Michigan Art Therapy',
     metaDescription:
-      'Art therapy on Michigan’s Art Coast — serving Saugatuck & Douglas with person-centered sessions, in person near West Olive or online.',
+      'Art therapy on Michigan’s Art Coast — serving Saugatuck & Douglas with person-centered sessions, in person at a location arranged with Amy or online.',
     headline: 'Art therapy on the Art Coast',
     hook: 'Saugatuck & Douglas — where the Art Coast meets art as therapy.',
     intro: [
       'Saugatuck and Douglas are literally nicknamed “the Art Coast of Michigan” — a shoreline of galleries, studios, and people who already know that making things matters. Art therapy is the other side of that coin: not art for exhibition, but art as a clinical, confidential path through what’s heavy. Same materials, completely different purpose.',
       'That distinction matters here more than anywhere. Practicing artists sometimes assume therapy through art can’t offer them anything new — then discover how different it feels to make something no one will critique, price, or even see. And people who’d never call themselves artists find the Art Coast’s spirit is for them, too: in art therapy there is no wrong mark.',
-      'Amy sees Saugatuck and Douglas clients online and at the West Olive studio, about half an hour up the lakeshore, and brings workshops to galleries, organizations, and groups along the south shore.',
+      'Amy sees Saugatuck and Douglas clients online and in person at a location agreed on together — she’s based about half an hour up the lakeshore — and brings workshops to galleries, organizations, and groups along the south shore.',
     ],
     driveNote:
-      'From Saugatuck or Douglas, the studio is about 30 minutes north up the lakeshore — or meet online.',
+      'From Saugatuck or Douglas, Amy is about 30 minutes north up the lakeshore — or meet online.',
     driveMinutes: 30,
     nearby: ['Douglas'],
     faqs: [
@@ -222,7 +225,7 @@ export const serviceAreas: ServiceArea[] = [
 export const supportingTowns = serviceAreas.flatMap((a) => a.nearby);
 
 /**
- * Zoomed viewBox for a city — frames the studio, the city, and the painted
+ * Zoomed viewBox for a city — frames West Olive, the city, and the painted
  * route between them, at the map's 5:4 aspect. Returns [x, y, w, h].
  */
 export function focusBox(area: ServiceArea): [number, number, number, number] {
@@ -241,7 +244,7 @@ export function focusBox(area: ServiceArea): [number, number, number, number] {
   return [round1(cx - w / 2), round1(cy - h / 2), round1(w), round1(h)];
 }
 
-/** A gently bowed painterly route from the studio to a city (bows inland). */
+/** A gently bowed painterly route from West Olive to a city (bows inland). */
 export function routePath(area: ServiceArea): string {
   const from = STUDIO;
   const to = area.map;
@@ -260,7 +263,7 @@ export function routePath(area: ServiceArea): string {
 }
 
 /** Point ~60% along the route, toward the city (for the drive-time label —
- *  keeps it clear of the studio's own labels). */
+ *  keeps it clear of West Olive's own labels). */
 export function routeMidpoint(area: ServiceArea): { x: number; y: number } {
   const m = routePath(area).match(/Q ([\d.]+) ([\d.]+) ([\d.]+) ([\d.]+)/);
   const from = STUDIO;

@@ -28,7 +28,7 @@ Key facts:
 - Therapist: Amy Rostollan-Hamman, ATR-BC (board certification via the Art Therapy Credentials Board, atcb.org). Art therapy is a master's-level mental health profession — not arts and crafts, and no art skill is required.
 - Services & pricing: Individual sessions $100/session (sliding scale available); Group sessions $150/session; Workshops $200–350; Online supervision for art therapists $75/hour; Educational presentations $150–200.
 - Payment: cash, check, and PayPal. Insurance is not currently accepted.
-- Format: every service is offered online (statewide in Michigan) or in person at the West Olive studio; workshops and presentations travel to organizations.
+- Format: every service is offered online (statewide in Michigan) or in person at a location agreed on together (Amy is based in West Olive); workshops and presentations travel to organizations.
 - Specialties include hospice and end-of-life care (legacy artwork), grief support, and strengths-based, trauma-informed work with youth.
 - Location: West Olive, MI (city-level by design — no street address published). Serving ${['West Olive', ...serviceAreas.map((a) => a.name)].join(', ')} and the counties of ${counties.join(', ')}.
 - Contact: amy@westmichiganarttherapy.com or ${SITE}/contact/ (no phone line — email is the fastest way to reach Amy).

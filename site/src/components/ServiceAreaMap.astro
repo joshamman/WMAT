@@ -3,7 +3,7 @@
  * ServiceAreaMap — a stylized, hand-drawn-feeling watercolor map of the
  * West Michigan lakeshore. Cities are paint daubs (real links); selecting one
  * glides the SVG viewBox down the coast and paints a brush-stroke route from
- * Amy's West Olive studio, with the drive time riding along it.
+ * Amy's West Olive home base, with the drive time riding along it.
  *
  * Modes:
  *  - interactive (hub): clicks preview a city card beside the map; the card
@@ -122,7 +122,7 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
         <text x="0" y="48">N</text>
       </g>
 
-      <!-- telehealth ripple from the studio -->
+      <!-- telehealth ripple from West Olive -->
       <g aria-hidden="true">
         <circle class="am-ripple" cx={STUDIO.x} cy={STUDIO.y} r="18"></circle>
         <circle class="am-ripple am-ripple-2" cx={STUDIO.x} cy={STUDIO.y} r="18"></circle>
@@ -141,13 +141,13 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
         }
       </g>
 
-      <!-- Amy's studio: the gold sun -->
+      <!-- Amy's home base: the gold sun -->
       <g class="am-studio" aria-hidden="true">
         <circle cx={STUDIO.x} cy={STUDIO.y} r="30" fill="var(--gold-300, #F2C84B)" opacity="0.5" filter="url(#am-wc)"></circle>
         <circle class="am-sun" cx={STUDIO.x} cy={STUDIO.y} r="15" fill="var(--gold-400, #E8B33D)" filter="url(#am-wc)"></circle>
         <circle cx={STUDIO.x} cy={STUDIO.y} r="23" fill="none" stroke="var(--gold-600, #A9781C)" stroke-opacity="0.75" stroke-width="2.5"></circle>
         <text class="am-label am-studio-label" x={STUDIO.x + 34} y={STUDIO.y + 2}>West Olive</text>
-        <text class="am-sublabel" x={STUDIO.x + 34} y={STUDIO.y + 26}>Amy’s studio</text>
+        <text class="am-sublabel" x={STUDIO.x + 34} y={STUDIO.y + 26}>Amy’s home base</text>
       </g>
 
       <!-- city daubs (real links) -->
@@ -207,7 +207,7 @@ const labelSide = (slug: string) => (slug === 'grand-rapids' ? 'left' : 'right')
             <p class="wmat-eyebrow am-eyebrow">Where we serve</p>
             <h3 class="am-card-name">Pick a spot on the shore</h3>
             <p class="am-card-text">
-              Choose a city to glide down the coast — the brush paints the way from Amy’s studio. Every stop is also
+              Choose a city to glide down the coast — the brush paints the way from West Olive. Every stop is also
               one click from its own page below.
             </p>
           </div>
